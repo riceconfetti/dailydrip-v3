@@ -17,7 +17,7 @@ export async function getStaticPaths() {
 const { gameId } = Astro.params;
 
 import Layout from "$layouts/Layout.astro";
-import VerisonCard from "$components/VerisonCard.astro";
+import VerisonCard from "$components/card/VerisonCard.astro";
 import type { Version } from "$types/db";
 
 const filter = {
