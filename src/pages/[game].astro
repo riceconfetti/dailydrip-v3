@@ -1,0 +1,79 @@
+---
+import directus from "$services/directus";
+import { readItems, readItem } from "@directus/sdk";
+
+export async function getStaticPaths() {
+  const games = await directus.request(readItems("games", { fields: ["id"] }));
+  return games.map((g) => ({
+    params: { game: g.id },
+  }));
+}
+
+const { game } = Astro.params;
+
+import type { Version } from "$types/db";
+import Layout from "$layouts/Layout.astro";
+import VerisonCard from "$components/VerisonCard.astro";
+
+const filter = {
+  game: {
+    id: {
+      _eq: game,
+    },
+  },
+};
+
+Object.assign(filter, {
+  events: {
+    startDate: {
+      _gte: "$NOW(-4 weeks)",
+    },
+  },
+});
+
+let versions: Version[] = await directus.request(
+  readItems("versions", {
+    fields: ["*"],
+    filter: filter,
+  }),
+);
+
+versions.sort((a, b) => a.semVer - b.semVer);
+
+const getEvents = async (id: any) =>
+  await directus.request(readItem("events", id));
+
+versions = await Promise.all(
+  versions.map(async (v: any) => {
+    v.events = await Promise.all(
+      v.events.map(async (e: any) => await getEvents(e)),
+    );
+    return v;
+  }),
+);
+
+const getPhase = async (id: any) =>
+  await directus.request(readItem("phases", id));
+
+versions = await Promise.all(
+  versions.map(async (v: any) => {
+    v.events = await Promise.all(
+      v.events.map(async (e: any) => {
+        e.phase = await getPhase(e.phase);
+        return e;
+      }),
+    );
+    return v;
+  }),
+);
+
+versions.forEach((v) =>
+  v.events.sort((a, b) => Number(a.phase.phase) - Number(b.phase.phase)),
+);
+---
+
+<Layout title="daily drip">
+  <div class="p-4 md:p-6 xl:p8 flex flex-col gap-4 items-center w-full">
+    {versions.map((version) => <VerisonCard {version} />)}
+  </div>
+</Layout>

@@ -1,0 +1,18 @@
+---
+import Corner from "./Corner.astro";
+---
+
+<div class="@container absolute inset-0">
+  <Corner position="nw" />
+  <Corner position="ne" />
+  <Corner position="se" />
+  <Corner position="sw" />
+  <div
+    class="border-y-2 border-(--cardAccent) absolute inset-[0.6rem] inset-x-7 @xs:inset-x-[2.1rem] z-11"
+  >
+  </div>
+  <div
+    class="border-x-2 border-(--cardAccent) absolute inset-[0.6rem] inset-y-7 @xs:inset-y-[2.1rem] z-11"
+  >
+  </div>
+</div>

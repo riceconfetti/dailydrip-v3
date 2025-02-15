@@ -1,0 +1,78 @@
+@import "tailwindcss";
+
+@import "tailwindcss/theme.css" layer(theme);
+@import "tailwindcss/preflight.css" layer(base);
+@import "tailwindcss/utilities.css" layer(utilities);
+
+@layer theme, base, components, utilities;
+@theme {
+  --color-transparent: transparent;
+  --color-dark: #232323;
+  --color-light: #d1d1d1;
+  --color-text-dark: #d1d1d1;
+  --color-text-light: #232323;
+
+  --color-accent-gold: oklch(71.41% 0.0856 77.07);
+  --color-accent-gold-50: oklch(95% 0.0856 77.07);
+  --color-accent-gold-100: oklch(90% 0.0856 77.07);
+  --color-accent-gold-150: oklch(85% 0.0856 77.07);
+  --color-accent-gold-200: oklch(80% 0.0856 77.07);
+  --color-accent-gold-300: oklch(70% 0.0856 77.07);
+  --color-accent-gold-400: oklch(60% 0.0856 77.07);
+  --color-accent-gold-500: oklch(50% 0.0856 77.07);
+  --color-accent-gold-600: oklch(40% 0.0856 77.07);
+  --color-accent-gold-700: oklch(30% 0.0856 77.07);
+  --color-accent-gold-800: oklch(20% 0.0856 77.07);
+  --color-accent-gold-900: oklch(10% 0.0856 77.07);
+  --color-accent-gold-950: oklch(5% 0.0856 77.07);
+
+  --color-accent-purple: oklch(58.18% 0.1021 316.75);
+  --color-accent-purple-50: oklch(95% 0.1021 316.75);
+  --color-accent-purple-100: oklch(90% 0.1021 316.75);
+  --color-accent-purple-200: oklch(80% 0.1021 316.75);
+  --color-accent-purple-300: oklch(70% 0.1021 316.75);
+  --color-accent-purple-400: oklch(60% 0.1021 316.75);
+  --color-accent-purple-500: oklch(50% 0.1021 316.75);
+  --color-accent-purple-600: oklch(40% 0.1021 316.75);
+  --color-accent-purple-700: oklch(30% 0.1021 316.75);
+  --color-accent-purple-800: oklch(20% 0.1021 316.75);
+  --color-accent-purple-900: oklch(10% 0.1021 316.75);
+  --color-accent-purple-950: oklch(5% 0.1021 316.75);
+
+  --font-heading: "Playfair Display SC";
+  --font-subheading: "Playfair Display";
+  --font-body: "Crimson Text";
+
+  --inset-shadow-card: inset 0px 0px 12px 6px rgba(0, 0, 0, 45%);
+  --drop-shadow-card: 0 6px 3px rgba(0, 0, 0, 45%);
+
+  --container-7xs: 8rem;
+  --container-6xs: 10rem;
+  --container-5xs: 12rem;
+  --container-4xs: 14rem;
+}
+@custom-variant @icon (@container (0.625 <= aspect-ratio <= 1.6) and (width <= 16rem) and (height <= 16rem));
+@custom-variant @squarish (@container (0.625 <= aspect-ratio <= 1.6));
+@custom-variant @landscape-aspect (@container (orientation: landscape) and (aspect-ratio > 1.6));
+@custom-variant @portrait-aspect (@container (orientation: portrait) and (aspect-ratio < 0.625));
+
+@custom-variant @landscape (@container (orientation: landscape));
+@custom-variant @portrait (@container (orientation: portrait));
+
+@custom-variant @portrait-7xs (@container (orientation: portrait) and (height >= 8rem));
+@custom-variant @portrait-6xs (@container (orientation: portrait) and (height >= 10rem));
+@custom-variant @portrait-5xs (@container (orientation: portrait) and (height >= 12rem));
+@custom-variant @portrait-4xs (@container (orientation: portrait) and (height >= 14rem));
+@custom-variant @portrait-3xs (@container (orientation: portrait) and (height >= 16rem));
+@custom-variant @portrait-2xs (@container (orientation: portrait) and (height >= 18rem));
+@custom-variant @portrait-xs (@container (orientation: portrait) and (height >= 20rem));
+@custom-variant @portrait-sm (@container (orientation: portrait) and (height >= 24rem));
+@custom-variant @portrait-md (@container (orientation: portrait) and (height >= 28rem));
+@custom-variant @portrait-lg (@container (orientation: portrait) and (height >= 32rem));
+@custom-variant @portrait-xl (@container (orientation: portrait) and (height >= 36rem));
+@custom-variant @portrait-2xl (@container (orientation: portrait) and (height >= 42rem));
+@custom-variant @portrait-3xl (@container (orientation: portrait) and (height >= 48rem));
+@custom-variant @portrait-4xl (@container (orientation: portrait) and (height >= 56rem));
+@custom-variant @portrait-5xl (@container (orientation: portrait) and (height >= 64rem));
+@custom-variant @portrait-6xl (@container (orientation: portrait) and (height >= 72rem));
+@custom-variant @portrait-7xl (@container (orientation: portrait) and (height >= 80rem));

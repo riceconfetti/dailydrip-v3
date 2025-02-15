@@ -1,0 +1,22 @@
+{
+  "extends": "astro/tsconfigs/strict",
+  "include": [".astro/types.d.ts", "**/*"],
+  "exclude": ["dist"],
+  "compilerOptions": {
+    "baseUrl": ".",
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "moduleResolution": "node",
+    "paths": {
+      "$components/*": ["src/components/*"],
+      "$assets/*": ["src/assets/*"],
+      "$services/*": ["src/services/*"],
+      "$content/*": ["src/content/*"],
+      "$layouts/*": ["src/layouts/*"],
+      "$pages/*": ["src/pages/*"],
+      "$types/*": ["src/types/*"],
+      "$store/*": ["src/store/*"],
+      "$scripts/*": ["src/scripts/*"]
+    }
+  }
+}

@@ -1,0 +1,252 @@
+---
+const { character, spec, class: className } = Astro.props;
+
+import { Image } from "astro:assets";
+import { tv } from "tailwind-variants";
+import directus from "$services/directus";
+import { readItems, readItem } from "@directus/sdk";
+
+import { setValRecursive } from "src/scripts/setValRecursive";
+import ProxyService from "$services/imgproxy";
+
+import Frost_Icon from "$assets/overlays/Frost_Icon.png";
+import Frost_Portrait from "$assets/overlays/Frost_Portrait.png";
+import Frost_Landscape from "$assets/overlays/Frost_Portrait.png";
+import Holo_Portrait from "$assets/overlays/Holo_Portrait.png";
+import Holo_Landscape from "$assets/overlays/Holo_Landscape.png";
+import Holo_Icon from "$assets/overlays/Holo_Icon.png";
+
+import Border from "./deco-border/Border.astro";
+
+const colorIndex = 0;
+const debut = false;
+const variants = ["portrait", "landscape", "icon"];
+
+const vars = {
+  "--primaryColor":
+    character.colors != null
+      ? `oklch(from ${character.colors[colorIndex].hex} 20% 0.0666 h)`
+      : "oklch(from #000 l c h)",
+  "--secondaryColor":
+    character.colors != null
+      ? `oklch(from ${character.colors[colorIndex].hex} 60% 0.0666 h/15%)`
+      : "oklch(from #000 70% c h)",
+  "--cardAccent":
+    character.rarity == 5
+      ? "var(--color-accent-gold-150)"
+      : "var(--color-accent-purple-200)",
+};
+
+const game = await directus.request(readItem("games", character.game));
+const primary = await directus.request(
+  readItem("attributes", character.primary_attribute),
+);
+const secondary = await directus.request(
+  readItem("attributes", character.secondary_attribute),
+);
+
+const backgroundPath = game?.elementMain
+  ? `/backgrounds/${game?.id}/${primary?.name}.webp`
+  : `/backgrounds/${game?.id}/${secondary?.name}.webp`;
+
+const imgPath = `/characters/${character.game}/${character.id}.webp`;
+const placeholder = game?.elementMain
+  ? `/placeholders/${game?.id}/${secondary?.name}.png`
+  : `/placeholders/${game?.id}/${primary?.name}.png`;
+
+// Object.assign(vars, {
+//   "--placeholder": `url("${ProxyService.getImage(placeholder, [], "webp")}")`,
+//   "--placeholder-raw": `url("${placeholder}")`,
+// });
+
+let options: any = {
+  portrait: {
+    bannerCrop: { x: 0.3, y: 0 },
+    index: { x: 0, y: 0.07 },
+  },
+  landscape: {
+    bannerCrop: { x: 0, y: 0.4 },
+    index: { x: 0, y: 0.06 },
+  },
+};
+
+if (character.card_edits != null) {
+  const edits = character.card_edits;
+  const variants = edits.map((e: any) => e.variant);
+  variants.forEach((v: any) => {
+    options[v] = setValRecursive(
+      edits.find((e: any) => e.variant == v).style,
+      options[v],
+    );
+  });
+}
+
+const characterTransforms = {
+  portrait: [
+    {
+      key: "gravity",
+      params: [
+        "fp",
+        character.focalPoint.x + options.portrait.index.x,
+        character.focalPoint.y + options.portrait.index.y,
+      ],
+    },
+    {
+      key: "crop",
+      params: [
+        options.portrait.bannerCrop.x * character.crop.x,
+        options.portrait.bannerCrop.y * character.crop.y,
+      ],
+    },
+    { key: "resize", params: ["fill", 740, 1200, 1, 1] },
+  ],
+  landscape: [
+    {
+      key: "gravity",
+      params: [
+        "fp",
+        character.focalPoint.x + options.landscape.index.x,
+        character.focalPoint.y + options.landscape.index.y,
+      ],
+    },
+    {
+      key: "crop",
+      params: [
+        options.landscape.bannerCrop.x * character.crop.x,
+        options.landscape.bannerCrop.y * character.crop.y,
+      ],
+    },
+    { key: "resize", params: ["fill", 1200, 740, 1, 1] },
+  ],
+  icon: [
+    {
+      key: "gravity",
+      params: ["fp", character.focalPoint.x, character.focalPoint.y + 0.02],
+    },
+    {
+      key: "crop",
+      params: [500 * character.crop.x, 500 * character.crop.y],
+    },
+    { key: "resize", params: ["fill", 740, 740] },
+  ],
+};
+const backgroundTransforms = {
+  portrait: [],
+  landscape: [{ key: "rotate", params: [270] }],
+};
+
+const splash = variants.reduce((prev, curr) => {
+  Object.assign(prev, {
+    //@ts-ignore
+    [curr]: ProxyService.getImage(imgPath, characterTransforms[curr], "webp"),
+  });
+  return prev;
+}, {});
+const background = variants.reduce((prev, curr) => {
+  Object.assign(prev, {
+    [curr]: ProxyService.getImage(
+      backgroundPath,
+      //@ts-ignore
+      backgroundTransforms[curr],
+      "webp",
+    ),
+  });
+  return prev;
+}, {});
+
+variants.forEach((v) => {
+  //@ts-ignore
+  Object.assign(vars, { [`--char-${v}`]: `url("${splash[v]}")` });
+});
+variants.forEach((v) => {
+  //@ts-ignore
+  Object.assign(vars, { [`--bg-${v}`]: `url("${background[v]}")` });
+});
+
+let variant = "portrait";
+
+const card = tv({
+  slots: {
+    base: "size-full bg-linear-0 from-(--primaryColor) via-(--secondaryColor) bg-cover bg-center bg-no-repeat @icon:bg-[image:linear-gradient(var(--tw-gradient-stops)),_var(--char-icon),_var(--bg-icon)] @landscape:bg-[image:linear-gradient(var(--tw-gradient-stops)),_var(--char-landscape),_var(--bg-landscape)] @portrait:bg-[image:linear-gradient(var(--tw-gradient-stops)),_var(--char-portrait),_var(--bg-portrait)]",
+    outline:
+      "absolute inset-1 z-10 flex flex-col justify-end rounded-lg border-2 border-(--cardAccent) p-1 text-center text-(--cardAccent) inset-shadow-card @3xs:p-4",
+    name: "font-heading font-bold shadow-black drop-shadow-md",
+    banner: "font-subheading italic shadow-black drop-shadow-md",
+    frost: "absolute inset-0 z-10 h-full w-full mix-blend-screen",
+    holo: "absolute inset-0 z-10 mix-blend-screen",
+  },
+  variants: {
+    status: {
+      debut: {},
+      speculation: {},
+      default: {
+        frost: "hidden",
+        holo: "hidden",
+      },
+    },
+    rarity: {
+      5: {
+        name: "text-sm @sm:text-2xl @md:text-3xl @3xl:text-4xl @icon:text-xs",
+        banner: "text-[0.5rem] @3xs:text-xs @icon:hidden",
+      },
+      4: {
+        name: "text-xs @6xs:text-lg @3xs:text-xl @sm:text-2xl",
+        banner: "hidden",
+      },
+    },
+  },
+});
+
+const Holo = {
+  portrait: Holo_Portrait,
+  landscape: Holo_Landscape,
+  icon: Holo_Icon,
+};
+
+const Frost = {
+  portrait: Frost_Portrait,
+  landscape: Frost_Landscape,
+  icon: Frost_Icon,
+};
+
+const { base, outline, name, banner, frost, holo } = card({
+  rarity: character.rarity,
+  status: "default",
+});
+---
+
+<!-- CARD -->
+<div
+  class:list={["@container-[size] size-full relative", className]}
+  style={vars}
+>
+  <div class={base()}>
+    <!-- Text & Outline -->
+    <div class={outline()}>
+      <h2 class={name()}>
+        {character.name}
+      </h2>
+
+      <h3 class={banner()}>
+        {character.bannerName}
+      </h3>
+    </div>
+  </div>
+
+  <Image
+    src={//@ts-ignore
+    Frost[variant]}
+    alt="Spec"
+    class={frost()}
+  />
+
+  <div class={holo()}>
+    <Image
+      src={//@ts-ignore
+      Holo[variant]}
+      alt="Spec"
+      class="size-full"
+    />
+    <Border />
+  </div>
+</div>

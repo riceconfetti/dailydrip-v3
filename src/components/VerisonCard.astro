@@ -1,0 +1,44 @@
+---
+import VersionHeader from "$components/VersionHeader.astro";
+import PhaseCard from "./PhaseCard.astro";
+
+import directus from "$services/directus";
+import { readItem } from "@directus/sdk";
+
+let { version } = Astro.props;
+let events = version.events;
+let game = version.game;
+
+events = await Promise.all(
+  events.map(async (e: any) => {
+    e.featured_characters = await Promise.all(
+      e.featured_characters.map(async (id: any) => {
+        const charId = (
+          await directus.request(readItem("events_characters", id))
+        ).characters_id;
+        return await directus.request(readItem("characters", charId));
+      }),
+    );
+    e.featured_weapons = await Promise.all(
+      e.featured_weapons.map(async (id: any) => {
+        const weapId = (await directus.request(readItem("events_weapons", id)))
+          .weapons_id;
+        return await directus.request(readItem("weapons", weapId));
+      }),
+    );
+    return e;
+  }),
+);
+---
+
+<section
+  class="@container size-full grow flex flex-col gap-3 bg-white bg-opacity-30 p-4 shadow-md max-w-7xl"
+>
+  <VersionHeader {version} {game} />
+
+  <div
+    class="h-full grow flex flex-col gap-3 lg:grid lg:grid-cols-2 lg:gap-5 w-full"
+  >
+    {events.map((event: any) => <PhaseCard {event} />)}
+  </div>
+</section>

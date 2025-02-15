@@ -1,0 +1,58 @@
+---
+import directus from "$services/directus";
+import { readItem } from "@directus/sdk";
+
+import Layout from "$layouts/Layout.astro";
+import CharacterCard from "$components/card/CharacterCard.astro";
+import Editor from "$components/Editor.svelte";
+
+export const prerender = false;
+const { gameId, charId } = Astro.params;
+
+let character = await directus.request(readItem("characters", charId!));
+let game = await directus.request(readItem("games", gameId!));
+
+const title = "Daily Drip | " + game.name + " | " + character.name;
+
+const landscape = {
+  "7xs": "w-[8rem]",
+  "6xs": "w-[10rem]",
+  "5xs": "w-[12rem]",
+  "4xs": "w-[14rem]",
+  "3xs": "w-[16rem]",
+  "2xs": "w-[18rem]",
+  xs: "w-[20rem]",
+  sm: "w-[24rem]",
+  md: "w-[28rem]",
+  lg: "w-[32rem]",
+  xl: "w-[36rem]",
+  "2xl": "w-[42rem]",
+  "3xl": "w-[48rem]",
+  "4xl": "w-[56rem]",
+  "5xl": "w-[64rem]",
+};
+
+const portrait = {
+  "7xs": "h-[8rem]",
+  "6xs": "h-[10rem]",
+  "5xs": "h-[12rem]",
+  "4xs": "h-[14rem]",
+  "3xs": "h-[16rem]",
+  "2xs": "h-[18rem]",
+  xs: "h-[20rem]",
+  sm: "h-[24rem]",
+  md: "h-[28rem]",
+  lg: "h-[32rem]",
+  xl: "h-[36rem]",
+  "2xl": "h-[42rem]",
+  "3xl": "h-[48rem]",
+  "4xl": "h-[56rem]",
+  "5xl": "h-[64rem]",
+};
+---
+
+<Layout {title} baseURL="/preview/">
+  <Editor client:load>
+    <CharacterCard {character} />
+  </Editor>
+</Layout>
