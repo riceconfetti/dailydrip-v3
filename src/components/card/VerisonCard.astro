@@ -32,10 +32,42 @@ events = await Promise.all(
   events.map(async (e: any) => {
     e.featured_characters = await Promise.all(
       e.featured_characters.map(async (id: any) => {
-        const charId = (
-          await directus.request(readItem("events_characters", id))
-        ).characters_id;
-        return await directus.request(readItem("characters", charId));
+        let characterEvent = await directus.request(
+          readItem("events_characters", id),
+        );
+        const charId = characterEvent.characters_id;
+        let character = await directus.request(readItem("characters", charId));
+        Object.assign(character, { debut: false });
+        let events = character.events;
+
+        if (events != null) {
+          events = await Promise.all(
+            events.map(async (event: any) => {
+              const eventsId = (
+                await directus.request(readItem("events_characters", event))
+              ).events_id;
+              const eventObj = await directus.request(
+                readItem("events", eventsId),
+              );
+              return eventObj;
+            }),
+          );
+          events.sort((a: any, b: any) => {
+            //@ts-ignore
+            return new Date(a.startDate) - new Date(b.startDate);
+          });
+
+          if (e.id == events[0].id) {
+            // console.log(e.id);
+            // console.log(character.events[0].id);
+            Object.assign(character, { debut: true });
+          }
+        }
+
+        Object.assign(character, { spec: characterEvent.spec });
+        // console.log(character);
+
+        return character;
       }),
     );
     e.featured_weapons = await Promise.all(

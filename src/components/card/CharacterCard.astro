@@ -1,5 +1,5 @@
 ---
-const { character, spec, class: className } = Astro.props;
+const { character, class: className } = Astro.props;
 
 import { Image } from "astro:assets";
 import { tv } from "tailwind-variants";
@@ -15,11 +15,9 @@ import Frost_Landscape from "$assets/overlays/Frost_Portrait.png";
 import Holo_Portrait from "$assets/overlays/Holo_Portrait.png";
 import Holo_Landscape from "$assets/overlays/Holo_Landscape.png";
 import Holo_Icon from "$assets/overlays/Holo_Icon.png";
-
 import Border from "./deco-border/Border.astro";
 
 const colorIndex = 0;
-const debut = false;
 const variants = ["portrait", "landscape", "icon"];
 
 const vars = {
@@ -172,16 +170,19 @@ const card = tv({
       "absolute inset-1 z-10 flex flex-col justify-end rounded-lg border-2 border-(--cardAccent) p-1 text-center text-(--cardAccent) inset-shadow-card @3xs:p-4",
     name: "font-heading font-bold shadow-black drop-shadow-md",
     banner: "font-subheading italic shadow-black drop-shadow-md",
-    frost: "absolute inset-0 z-10 h-full w-full mix-blend-screen",
-    holo: "absolute inset-0 z-10 mix-blend-screen",
+    frost: "absolute inset-0 z-10 hidden h-full w-full mix-blend-screen",
+    holo: "absolute inset-0 z-10 hidden mix-blend-screen",
   },
   variants: {
-    status: {
-      debut: {},
-      speculation: {},
-      default: {
-        frost: "hidden",
-        holo: "hidden",
+    debut: {
+      true: {
+        holo: "block",
+        outline: "p-2 @3xs:p-6",
+      },
+    },
+    speculation: {
+      true: {
+        frost: "block",
       },
     },
     rarity: {
@@ -211,7 +212,8 @@ const Frost = {
 
 const { base, outline, name, banner, frost, holo } = card({
   rarity: character.rarity,
-  status: "default",
+  speculation: character.spec,
+  debut: character.debut,
 });
 ---
 

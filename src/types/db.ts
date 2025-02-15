@@ -101,6 +101,7 @@ export type EventCharacter = {
   id: number;
   characters_id: string;
   events_id: string;
+  spec: boolean;
 };
 
 export type EventWeapon = {

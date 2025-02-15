@@ -7,8 +7,10 @@ import WeaponCard from "./WeaponCard.astro";
 import PhaseHeader from "./PhaseHeader.svelte";
 import { tv } from "tailwind-variants";
 
-let fiveStars = event.featured_characters.filter((c: any) => c.rarity == 5);
-let fourStars = event.featured_characters.filter((c: any) => c.rarity == 4);
+let characters = event.featured_characters;
+
+let fiveStars = characters.filter((c: any) => c.rarity == 5);
+let fourStars = characters.filter((c: any) => c.rarity == 4);
 let weapons = event.featured_weapons;
 
 const count: 1 | 2 | 3 =
