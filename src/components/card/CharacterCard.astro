@@ -219,7 +219,10 @@ const { base, outline, name, banner, frost, holo } = card({
 
 <!-- CARD -->
 <div
-  class:list={["@container-[size] size-full relative", className]}
+  class:list={[
+    "@container-[size] size-full relative min-h-16 min-w-16",
+    className,
+  ]}
   style={vars}
 >
   <div class={base()}>
