@@ -2,19 +2,24 @@
 import directus from "$services/directus";
 import { readItems, readItem } from "@directus/sdk";
 import { PUBLIC_DEPLOY_MODE } from "astro:env/client";
+let game = {};
 
 const isPreview = PUBLIC_DEPLOY_MODE == "preview";
-
-export const prerender = PUBLIC_DEPLOY_MODE == "publish";
+export const prerender = PUBLIC_DEPLOY_MODE == "publish" ? true : false;
 
 export async function getStaticPaths() {
   const games = await directus.request(readItems("games", { fields: ["id"] }));
-  return games.map((g) => ({
-    params: { gameId: g.id },
+  return games.map((game) => ({
+    params: { gameId: game.id },
+    props: { game },
   }));
 }
 
-const { gameId } = Astro.params;
+if (isPreview) {
+  game = await directus.request(readItem("games", Astro.params.gameId));
+} else {
+  const { game } = Astro.props;
+}
 
 import Layout from "$layouts/Layout.astro";
 import VerisonCard from "$components/card/VerisonCard.astro";
@@ -23,7 +28,7 @@ import type { Version } from "$types/db";
 const filter = {
   game: {
     id: {
-      _eq: gameId,
+      _eq: Astro.params.gameId,
     },
   },
 };
@@ -46,9 +51,11 @@ let versions: Version[] = await directus.request(
 );
 
 versions.sort((a, b) => a.semVer - b.semVer);
+//@ts-ignore
+const title = "The Daily Drip | " + game.name;
 ---
 
-<Layout title="daily drip">
+<Layout {title}>
   <div class="p-4 md:p-6 xl:p8 flex flex-col gap-4 items-center w-full">
     {versions.map((version) => <VerisonCard {version} />)}
   </div>
