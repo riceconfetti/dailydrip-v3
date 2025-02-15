@@ -6,9 +6,9 @@ import timezone from "dayjs/plugin/timezone";
 dayjs.extend(utc);
 dayjs.extend(timezone);
 let { version } = Astro.props;
-
 const startDate = version.events[0].startDate;
 const phase = version.events[0].phase;
+
 let currzone = dayjs.tz.guess();
 const tz = "+08:00";
 ---

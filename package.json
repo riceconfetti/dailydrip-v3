@@ -9,7 +9,7 @@
     "astro": "astro"
   },
   "dependencies": {
-    "@astrojs/node": "^9.0.2",
+    "@astrojs/node": "^9.1.0",
     "@astrojs/svelte": "^7.0.4",
     "@directus/sdk": "^19.0.1",
     "@fontsource-variable/playfair-display": "^5.1.1",
@@ -19,19 +19,19 @@
     "@tailwindcss/postcss": "^4.0.6",
     "astro": "^5.2.5",
     "chroma-js": "^3.1.2",
-    "dayjs": "^1.11.13",
     "dotenv": "^16.4.7",
     "extract-colors": "^4.1.1",
     "ldrs": "^1.0.2",
     "nanostores": "^0.11.3",
     "remixicon": "^4.6.0",
-    "svelte": "^5.19.9",
+    "svelte": "^5.20.1",
     "tailwind-variants": "^0.3.1",
     "tailwindcss": "^4.0.6",
     "typescript": "^5.7.3"
   },
   "devDependencies": {
     "@types/node": "^22.13.1",
+    "dayjs": "^1.11.13",
     "prettier": "^3.5.0",
     "prettier-plugin-astro": "^0.14.1",
     "prettier-plugin-tailwindcss": "^0.6.11"

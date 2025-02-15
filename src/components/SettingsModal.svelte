@@ -74,7 +74,7 @@
     </ul>
     <hr class="border-accent-gold-500" />
     <div class="flex gap-2 justify-end items-center">
-      <button id="setting_close" class="rounded bg-dark text-light p-1 px-2"
+      <button class="setting_close rounded bg-dark text-light p-1 px-2"
         >Close</button
       >
     </div>

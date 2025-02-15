@@ -12,6 +12,10 @@ export default defineConfig({
       IMGPROXY_KEY: envField.string({ context: "server", access: "public" }),
       IMGPROXY_SALT: envField.string({ context: "server", access: "public" }),
       DIRECTUS_TOKEN: envField.string({ context: "client", access: "public" }),
+      PUBLIC_DEPLOY_MODE: envField.string({
+        context: "client",
+        access: "public",
+      }),
     },
   },
 

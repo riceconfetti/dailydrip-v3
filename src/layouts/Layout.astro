@@ -27,6 +27,7 @@ import "../app.css";
 
 import NavBar from "$components/NavBar.astro";
 import SettingsModal from "$components/SettingsModal.svelte";
+import { PUBLIC_DEPLOY_MODE } from "astro:env/client";
 
 interface Props {
   title: string;
@@ -71,7 +72,7 @@ const { title, baseURL = "/" } = Astro.props;
         id="loader"
         class:list={[
           "fixed inset-0 text-accent-gold-500 z-50 bg-dark  flex-col items-center justify-center transition-opacity",
-          Boolean(process.env.PUBLIC_PREVIEW) ? "hidden" : "flex",
+          PUBLIC_DEPLOY_MODE == "preview" ? "hidden" : "flex",
         ]}
       >
         <l-square
@@ -83,7 +84,9 @@ const { title, baseURL = "/" } = Astro.props;
           color="rgb(193 156 100)"></l-square>
       </div>
       <NavBar {baseURL} />
-      <div class="z-10 p-2 w-full flex flex-1 justify-center flex-col">
+      <div
+        class="z-10 p-2 w-full flex flex-1 justify-center items-center flex-col"
+      >
         <slot />
       </div>
       <p

@@ -1,0 +1,55 @@
+---
+import directus from "$services/directus";
+import { readItems, readItem } from "@directus/sdk";
+import { PUBLIC_DEPLOY_MODE } from "astro:env/client";
+
+const isPreview = PUBLIC_DEPLOY_MODE == "preview";
+
+export const prerender = PUBLIC_DEPLOY_MODE == "publish";
+
+export async function getStaticPaths() {
+  const games = await directus.request(readItems("games", { fields: ["id"] }));
+  return games.map((g) => ({
+    params: { gameId: g.id },
+  }));
+}
+
+const { gameId } = Astro.params;
+
+import Layout from "$layouts/Layout.astro";
+import VerisonCard from "$components/VerisonCard.astro";
+import type { Version } from "$types/db";
+
+const filter = {
+  game: {
+    id: {
+      _eq: gameId,
+    },
+  },
+};
+
+if (!isPreview) {
+  Object.assign(filter, {
+    events: {
+      startDate: {
+        _gte: "$NOW(-4 weeks)",
+      },
+    },
+  });
+}
+
+let versions: Version[] = await directus.request(
+  readItems("versions", {
+    fields: ["*"],
+    filter: filter,
+  }),
+);
+
+versions.sort((a, b) => a.semVer - b.semVer);
+---
+
+<Layout title="daily drip">
+  <div class="p-4 md:p-6 xl:p8 flex flex-col gap-4 items-center w-full">
+    {versions.map((version) => <VerisonCard {version} />)}
+  </div>
+</Layout>

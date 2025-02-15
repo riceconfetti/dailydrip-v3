@@ -1,0 +1,51 @@
+---
+import directus from "$services/directus";
+import { readItem } from "@directus/sdk";
+import { PUBLIC_DEPLOY_MODE } from "astro:env/client";
+import ProxyService from "$services/imgproxy";
+
+import Layout from "$layouts/Layout.astro";
+import CharacterCard from "$components/card/CharacterCard.astro";
+import Editor from "$components/Editor.svelte";
+
+export const prerender = false;
+const { gameId, charId } = Astro.params;
+
+let character = await directus.request(readItem("characters", charId!));
+let game = await directus.request(readItem("games", gameId!));
+
+if (PUBLIC_DEPLOY_MODE == "publish") return Astro.rewrite("/404");
+
+const title = "Daily Drip | " + game.name + " | " + character.name;
+
+let imgPath = `/characters/${character.game}/${character.id}.webp`;
+const transforms = [
+  // { key: "trim", params: [1, "FF00FF"] },
+  {
+    key: "gravity",
+    params: ["fp", character.focalPoint.x, character.focalPoint.y],
+  },
+  {
+    key: "crop",
+    params: [125 * character.crop.x, 125 * character.crop.y],
+  },
+  { key: "resize", params: ["fill", 100, 100] },
+];
+
+const iconPath = ProxyService.getImage(imgPath, transforms);
+---
+
+<Layout {title}>
+  <div class="grid grid-rows-[1fr_auto] gap-2 justify-items-center">
+    <Editor client:load>
+      <CharacterCard {character} />
+    </Editor>
+    <div
+      class="relative size-40 aspect-square rounded-full overflow-clip border-2 border-accent-gold-500"
+    >
+      <div class="w-full absolute h-1/2 border-b border-black"></div>
+      <div class="h-full absolute w-1/2 border-r border-black"></div>
+      <img src={iconPath} class="size-full" />
+    </div>
+  </div>
+</Layout>

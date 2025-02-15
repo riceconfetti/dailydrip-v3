@@ -1,0 +1,52 @@
+---
+import directus from "$services/directus";
+import { readItem, readItems } from "@directus/sdk";
+import Layout from "$layouts/Layout.astro";
+import VerisonCard from "$components/VerisonCard.astro";
+import { PUBLIC_DEPLOY_MODE } from "astro:env/client";
+let game: any = {};
+let version: any = {};
+
+const isPreview = PUBLIC_DEPLOY_MODE == "preview";
+
+export const prerender = PUBLIC_DEPLOY_MODE == "publish";
+
+export async function getStaticPaths() {
+  const versions = await directus.request(
+    readItems("versions", { fields: ["id", "game"] }),
+  );
+
+  return await Promise.all(
+    versions.map(async (version: any) => {
+      const game = await directus.request(readItem("games", version.game));
+      return {
+        params: { versId: version.id, gameId: version.game },
+        props: { version, game },
+      };
+    }),
+  );
+}
+
+if (isPreview) {
+  version = await directus.request(readItem("versions", Astro.params.versId));
+  game = await directus.request(readItem("games", Astro.params.gameId));
+} else {
+  const { game, version } = Astro.props;
+}
+
+const verFormat = new Intl.NumberFormat("en-US", {
+  minimumFractionDigits: 1,
+});
+
+version.game = game;
+
+const title =
+  "The Daily Drip | " +
+  game.name +
+  " | Version " +
+  verFormat.format(version.semVer);
+---
+
+<Layout {title}>
+  <div class="p-4 md:p-6 xl:p8 w-full"><VerisonCard {version} /></div>
+</Layout>

@@ -6,8 +6,27 @@ import directus from "$services/directus";
 import { readItem } from "@directus/sdk";
 
 let { version } = Astro.props;
-let events = version.events;
+
+const getEvents = async (id: any) =>
+  await directus.request(readItem("events", id));
+
+const getPhase = async (id: any) =>
+  await directus.request(readItem("phases", id));
+
+let events = await Promise.all(
+  version.events.map(async (e: any) => await getEvents(e)),
+);
+
 let game = version.game;
+
+events = await Promise.all(
+  events.map(async (e: any) => {
+    e.phase = await getPhase(e.phase);
+    return e;
+  }),
+);
+
+events.sort((a, b) => Number(a.phase.phase) - Number(b.phase.phase));
 
 events = await Promise.all(
   events.map(async (e: any) => {
@@ -29,12 +48,14 @@ events = await Promise.all(
     return e;
   }),
 );
+
+version.events = events;
 ---
 
 <section
   class="@container size-full grow flex flex-col gap-3 bg-white bg-opacity-30 p-4 shadow-md max-w-7xl"
 >
-  <VersionHeader {version} {game} />
+  <VersionHeader {version} />
 
   <div
     class="h-full grow flex flex-col gap-3 lg:grid lg:grid-cols-2 lg:gap-5 w-full"

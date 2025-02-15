@@ -57,7 +57,8 @@
       },
     },
   });
-  let width, height;
+  let width = "sm",
+    height = "2xl";
 </script>
 
 <div class="size-full flex flex-col gap-6 justify-start items-center p-6">
