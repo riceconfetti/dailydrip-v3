@@ -28,7 +28,7 @@ const vars = {
   "--secondaryColor":
     character.colors != null
       ? `oklch(from ${character.colors[colorIndex].hex} 60% 0.0666 h/15%)`
-      : "oklch(from #000 70% c h)",
+      : "oklch(from #000 l c h /70%)",
   "--cardAccent":
     character.rarity == 5
       ? "var(--color-accent-gold-150)"
