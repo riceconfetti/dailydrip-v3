@@ -42,11 +42,13 @@ const phaseCard = tv({
       },
       3: {
         //3 or more limited
-        base: "grid-cols-[5fr_3fr_1fr] grid-rows-[repeat(4,min-content)]",
+        base: "grid-cols-[5fr_3fr_1fr] grid-rows-[repeat(3,min-content)_2fr]",
       },
     },
     rarity: {
-      5: {},
+      5: {
+        box: "first:min-h-[40cqw]",
+      },
       4: {},
     },
   },
@@ -55,21 +57,21 @@ const phaseCard = tv({
       rarity: 5,
       count: 1,
       class: {
-        box: "col-span-full row-span-2 grid min-h-[50cqw] grid-rows-[5fr_1fr]",
+        box: "col-span-full row-span-2 grid grid-rows-[5fr_1fr]",
       },
     },
     {
       rarity: 5,
       count: 2,
       class: {
-        box: "row-span-1 grid min-h-[50cqw] grid-rows-[5fr_1fr]",
+        box: "row-span-1 grid grid-rows-[5fr_1fr]",
       },
     },
     {
       rarity: 5,
       count: 3,
       class: {
-        box: "col-span-2 col-start-2 grid grid-cols-subgrid first:col-span-1 first:col-start-1 first:row-span-3 first:min-h-[50cqw] first:grid-rows-[5fr_1fr]",
+        box: "col-span-2 col-start-2 grid grid-cols-subgrid first:col-span-1 first:col-start-1 first:row-span-3 first:grid-rows-[5fr_1fr]",
       },
     },
     {
@@ -85,7 +87,6 @@ const phaseCard = tv({
       count: [2, 3],
       class: {
         character: "aspect-square",
-        weapon: "aspect-16/10",
         box: "col-span-full grid auto-cols-fr grid-flow-col",
       },
     },

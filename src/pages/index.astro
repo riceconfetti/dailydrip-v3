@@ -1,6 +1,19 @@
 ---
 import Layout from "$layouts/Layout.astro";
 import Calendar from "$components/Calendar.svelte";
+
+import directus from "$services/directus";
+import { readItems, readItem } from "@directus/sdk";
+
+let events = await directus.request(
+  readItems("events", { fields: ["id", "game", "phase", "startDate"] }),
+);
+let phases = await directus.request(readItems("phases", { fields: ["*"] }));
+
+events = events.map((event: any) => {
+  event.phase = phases.find((phase) => event.phase == phase.id);
+  return event;
+});
 ---
 
 <Layout title="The Daily Drip">
@@ -16,7 +29,7 @@ import Calendar from "$components/Calendar.svelte";
       </p>
     </div>
     <div class="flex flex-col lg:flex-row gap-8 h-full min-h-0">
-      <Calendar client:load />
+      <Calendar client:load {events} />
       <!--<Events /> -->
     </div>
   </section>

@@ -1,11 +1,37 @@
 <script>
+  const { events } = $props();
   import { Calendar } from "bits-ui";
+  import { getServer } from "$store/settings.svelte";
+  import {
+    parseAbsoluteToLocal,
+    toCalendarDate,
+    getLocalTimeZone,
+    today,
+  } from "@internationalized/date";
+
+  events.forEach((e) => {
+    const server = getServer(e.game);
+    const tz = e.phase.phase == "1" ? "+08:00" : server?.value?.timezone;
+    e.dateTime = parseAbsoluteToLocal(e.startDate + "T" + e.phase.start + tz);
+  });
+
+  const calendarEvents = events.map((e) =>
+    toCalendarDate(e.dateTime).toString(),
+  );
+  // console.log(calendarEvents);
+
+  const isDateUnavailable = (date) => {
+    return calendarEvents.includes(date);
+  };
+  let value = $state(today(getLocalTimeZone()));
 </script>
 
 <Calendar.Root
-  class="flex w-full flex-col p-4 text-center md:grid md:h-full md:grid-rows-[fit-content(--spacing(32))] md:min-h-0"
+  class="font-body flex w-full flex-col p-4 text-center md:grid md:h-full md:grid-rows-[fit-content(--spacing(32))] md:min-h-0"
   fixedWeeks={true}
+  {isDateUnavailable}
   weekdayFormat="short"
+  bind:value
 >
   {#snippet children({ months, weekdays })}
     <Calendar.Header
@@ -34,7 +60,7 @@
           >
             {#each weekdays as day}
               <Calendar.HeadCell class="align-center text-xs">
-                {day}
+                {day.slice(0, 3)}
               </Calendar.HeadCell>
             {/each}
           </Calendar.GridRow>
@@ -50,9 +76,11 @@
                 <Calendar.Cell
                   {date}
                   month={month.value}
-                  class="min-h-0 p-2 md:aspect-square md:h-full md:w-full md:border-dark/20 md:p-1 md:px-2"
+                  class="min-h-0 p-2 md:aspect-square md:h-full md:w-full md:border-dark/20 md:p-1 md:px-2 data-[disabled]:text-dark/40"
                 >
-                  <Calendar.Day />
+                  <Calendar.Day class="data-[unavailable]:line-through">
+                    {date.day}
+                  </Calendar.Day>
                 </Calendar.Cell>
               {/each}
             </Calendar.GridRow>

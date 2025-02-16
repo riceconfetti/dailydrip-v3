@@ -167,9 +167,10 @@ const card = tv({
   slots: {
     base: "size-full bg-linear-0 from-(--primaryColor) via-(--secondaryColor) bg-cover bg-center bg-no-repeat @icon:bg-[image:linear-gradient(var(--tw-gradient-stops)),_var(--char-icon),_var(--bg-icon)] @landscape:bg-[image:linear-gradient(var(--tw-gradient-stops)),_var(--char-landscape),_var(--bg-landscape)] @portrait:bg-[image:linear-gradient(var(--tw-gradient-stops)),_var(--char-portrait),_var(--bg-portrait)]",
     outline:
-      "absolute inset-1 z-10 flex flex-col justify-end rounded-lg border-2 border-(--cardAccent) p-1 text-center text-(--cardAccent) inset-shadow-card @3xs:p-4",
-    name: "font-heading font-bold shadow-black drop-shadow-md",
-    banner: "font-subheading italic shadow-black drop-shadow-md",
+      "absolute inset-1 z-10 flex flex-col justify-end rounded-lg border-2 border-(--cardAccent) p-1 text-center text-(--cardAccent) inset-shadow-card @3xs:@min-h-5xs:p-4 @xl:@min-h-lg:p-8",
+    name: "font-heading text-xs font-bold text-balance shadow-black drop-shadow-md @6xs:text-sm @5xs:@min-h-5xs:text-xl @sm:@min-h-xs:text-2xl @xl:@min-h-lg:text-3xl",
+    banner:
+      "font-subheading text-[0.5rem] text-balance italic shadow-black drop-shadow-md @3xs:text-xs @5xs:@min-h-5xs:text-sm @xs:@min-h-2xs:text-base @sm:@min-h-xs:text-lg @xl:@min-h-lg:text-xl",
     frost: "absolute inset-0 z-10 hidden h-full w-full mix-blend-screen",
     holo: "absolute inset-0 z-10 hidden mix-blend-screen",
   },
@@ -177,7 +178,7 @@ const card = tv({
     debut: {
       true: {
         holo: "block",
-        outline: "p-2 @3xs:p-6",
+        outline: "p-2 @3xs:@min-h-5xs:p-6 @xl:@min-h-lg:p-10",
       },
     },
     speculation: {
@@ -187,11 +188,9 @@ const card = tv({
     },
     rarity: {
       5: {
-        name: "text-sm @sm:text-2xl @md:text-3xl @3xl:text-4xl @icon:text-xs",
-        banner: "text-[0.5rem] @3xs:text-xs @icon:hidden",
+        banner: "@max-4xs:hidden @icon:hidden @max-h-6xs:hidden",
       },
       4: {
-        name: "text-xs @6xs:text-lg @3xs:text-xl @sm:text-2xl",
         banner: "hidden",
       },
     },

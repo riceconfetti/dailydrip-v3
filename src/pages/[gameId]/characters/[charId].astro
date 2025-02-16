@@ -14,6 +14,14 @@ const { gameId, charId } = Astro.params;
 let character = await directus.request(readItem("characters", charId!));
 let game = await directus.request(readItem("games", gameId!));
 
+let debut = structuredClone(character);
+let spec = structuredClone(character);
+let both = structuredClone(character);
+
+Object.assign(debut, { debut: true });
+Object.assign(spec, { spec: true });
+Object.assign(both, { debut: true, spec: true });
+
 if (PUBLIC_DEPLOY_MODE == "publish") return Astro.rewrite("/404");
 
 const title = "Daily Drip | " + game.name + " | " + character.name;
@@ -32,13 +40,37 @@ const transforms = [
   { key: "resize", params: ["fill", 100, 100] },
 ];
 
+const sizes = [
+  "7xs",
+  "6xs",
+  "5xs",
+  "4xs",
+  "3xs",
+  "2xs",
+  "xs",
+  "sm",
+  "md",
+  "lg",
+  "xl",
+  "2xl",
+  "3xl",
+  "4xl",
+  "5xl",
+];
+
+const width = Astro.url.searchParams.get("width") || "sm";
+const height = Astro.url.searchParams.get("height") || "2xl";
+
 const iconPath = ProxyService.getImage(imgPath, transforms);
 ---
 
 <Layout {title}>
   <div class="grid grid-rows-[1fr_auto] gap-2 justify-items-center">
-    <Editor client:load>
-      <CharacterCard {character} />
+    <Editor client:load {width} {height}>
+      <CharacterCard {character} slot="base" />
+      <CharacterCard character={debut} slot="debut" />
+      <CharacterCard character={spec} slot="spec" />
+      <CharacterCard character={both} slot="both" />
     </Editor>
     <div
       class="relative size-40 aspect-square rounded-full overflow-clip border-2 border-accent-gold-500"
