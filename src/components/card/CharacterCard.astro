@@ -18,11 +18,11 @@ const vars = {
   "--primaryColor":
     character.colors != null
       ? `oklch(from ${character.colors[colorIndex].hex} 20% 0.0666 h)`
-      : "oklch(from #000 l c h)",
+      : "oklch(from #101010 l c h)",
   "--secondaryColor":
     character.colors != null
       ? `oklch(from ${character.colors[colorIndex].hex} 60% 0.0666 h/15%)`
-      : "oklch(from #000 l c h /70%)",
+      : "oklch(from #101010 l c h /70%)",
   "--cardAccent":
     character.rarity == 5
       ? "var(--color-accent-gold-150)"
@@ -43,13 +43,12 @@ const backgroundPath = game?.elementMain
 
 const imgPath = `/characters/${character.game}/${character.id}.webp`;
 const placeholder = game?.elementMain
-  ? `/placeholders/${game?.id}/${secondary?.name}.png`
-  : `/placeholders/${game?.id}/${primary?.name}.png`;
+  ? `/placeholders/${game?.id}/${secondary?.name}.webp`
+  : `/placeholders/${game?.id}/${primary?.name}.webp`;
 
-// Object.assign(vars, {
-//   "--placeholder": `url("${ProxyService.getImage(placeholder, [], "webp")}")`,
-//   "--placeholder-raw": `url("${placeholder}")`,
-// });
+Object.assign(vars, {
+  "--placeholder": `url("${ProxyService.getImage(placeholder, [], "webp")}")`,
+});
 
 let options: any = {
   portrait: {
@@ -134,6 +133,7 @@ const splash = variants.reduce((prev, curr) => {
   });
   return prev;
 }, {});
+
 const background = variants.reduce((prev, curr) => {
   Object.assign(prev, {
     [curr]: ProxyService.getImage(
@@ -232,6 +232,10 @@ const { base, outline, name, banner, frost, holo } = card({
   style={vars}
 >
   <div class={base()}>
+    <div
+      class="bg-[image:var(--placeholder)] absolute inset-0 bg-[size:50cqw_50cqw] bg-no-repeat bg-center mix-blend-hard-light"
+    >
+    </div>
     <!-- Text & Outline -->
     <div class={outline()}>
       <h2 class={name()}>
