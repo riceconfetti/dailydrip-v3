@@ -187,7 +187,7 @@ const card = tv({
     charBg:
       "absolute inset-0 bg-cover bg-center bg-no-repeat @icon:bg-[image:var(--char-icon)] @landscape:bg-[image:var(--char-landscape)] @portrait:bg-[image:var(--char-portrait)] @square:bg-[image:lvar(--char-portrait)]",
     placeholderBg:
-      "absolute inset-0 hidden bg-[image:var(--placeholder)] bg-center bg-no-repeat @landscape:bg-[size:50cqh_50cqh] @portrait:bg-[size:50cqw_50cqw] @square:bg-[size:50cqw_50cqw]",
+      "absolute inset-0 hidden bg-[image:var(--placeholder)] bg-[50%_45%] bg-no-repeat @landscape:bg-[size:35cqh_35cqh] @portrait:bg-[size:35cqw_35cqw] @square:bg-[size:35cqw_35cqw]",
     overlay:
       "absolute inset-0 bg-linear-0 from-(--primaryColor) via-(--secondaryColor)",
     outline:
@@ -228,9 +228,9 @@ const card = tv({
 });
 
 //@ts-ignore
-let hasSplash = await fetch(ProxyService.getImage(imgPath, [], "webp")).then(
-  (res) => res.ok,
-);
+let hasSplash = await fetch(ProxyService.getImage(imgPath, [], "webp"))
+  .then((res) => res.ok)
+  .catch((e) => console.log(e));
 
 const {
   base,
@@ -259,9 +259,9 @@ const {
   style={vars}
 >
   <div class={base()}>
-    <div class={placeholderBg()}></div>
     <div class={charBg()}></div>
     <div class={overlay()}></div>
+    <div class={placeholderBg()}></div>
     <!-- Text & Outline -->
     <div class={outline()}>
       <h2 class={name()}>
