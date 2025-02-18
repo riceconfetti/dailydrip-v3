@@ -4,17 +4,11 @@ const { character, class: className } = Astro.props;
 import { Image } from "astro:assets";
 import { tv } from "tailwind-variants";
 import directus from "$services/directus";
-import { readItems, readItem } from "@directus/sdk";
+import { readItem } from "@directus/sdk";
 
 import { setValRecursive } from "src/scripts/setValRecursive";
 import ProxyService from "$services/imgproxy";
 
-import Frost_Icon from "$assets/overlays/Frost_Icon.png";
-import Frost_Portrait from "$assets/overlays/Frost_Portrait.png";
-import Frost_Landscape from "$assets/overlays/Frost_Portrait.png";
-import Holo_Portrait from "$assets/overlays/Holo_Portrait.png";
-import Holo_Landscape from "$assets/overlays/Holo_Landscape.png";
-import Holo_Icon from "$assets/overlays/Holo_Icon.png";
 import Border from "./deco-border/Border.astro";
 
 const colorIndex = 0;
@@ -123,7 +117,7 @@ const characterTransforms = {
     },
     {
       key: "crop",
-      params: [500 * character.crop.x, 500 * character.crop.y],
+      params: [400 * character.crop.x, 400 * character.crop.y],
     },
     { key: "resize", params: ["fill", 740, 740] },
   ],
@@ -152,27 +146,52 @@ const background = variants.reduce((prev, curr) => {
   return prev;
 }, {});
 
+const Holo = variants.reduce((prev, curr) => {
+  Object.assign(prev, {
+    [curr]: ProxyService.getImage(
+      "/overlays/Holo_" + curr.at(0)?.toUpperCase() + curr.slice(1) + ".png",
+      //@ts-ignore
+      [],
+      "webp",
+    ),
+  });
+  return prev;
+}, {});
+
+const Frost = variants.reduce((prev, curr) => {
+  Object.assign(prev, {
+    [curr]: ProxyService.getImage(
+      "/overlays/Frost_" + curr.at(0)?.toUpperCase() + curr.slice(1) + ".png",
+      //@ts-ignore
+      [],
+      "webp",
+    ),
+  });
+  return prev;
+}, {});
+
 variants.forEach((v) => {
   //@ts-ignore
   Object.assign(vars, { [`--char-${v}`]: `url("${splash[v]}")` });
-});
-variants.forEach((v) => {
   //@ts-ignore
   Object.assign(vars, { [`--bg-${v}`]: `url("${background[v]}")` });
+  //@ts-ignore
+  Object.assign(vars, { [`--holo-${v}`]: `url("${Holo[v]}")` });
+  //@ts-ignore
+  Object.assign(vars, { [`--frost-${v}`]: `url("${Frost[v]}")` });
 });
-
-let variant = "portrait";
 
 const card = tv({
   slots: {
-    base: "size-full bg-linear-0 from-(--primaryColor) via-(--secondaryColor) bg-cover bg-center bg-no-repeat @icon:bg-[image:linear-gradient(var(--tw-gradient-stops)),_var(--char-icon),_var(--bg-icon)] @landscape:bg-[image:linear-gradient(var(--tw-gradient-stops)),_var(--char-landscape),_var(--bg-landscape)] @portrait:bg-[image:linear-gradient(var(--tw-gradient-stops)),_var(--char-portrait),_var(--bg-portrait)]",
+    base: "size-full bg-linear-0 from-(--primaryColor) via-(--secondaryColor) bg-cover bg-center bg-no-repeat @icon:bg-[image:linear-gradient(var(--tw-gradient-stops)),_var(--char-icon),_var(--bg-icon)] @landscape:bg-[image:linear-gradient(var(--tw-gradient-stops)),_var(--char-landscape),_var(--bg-landscape)] @portrait:bg-[image:linear-gradient(var(--tw-gradient-stops)),_var(--char-portrait),_var(--bg-portrait)] @square:bg-[image:linear-gradient(var(--tw-gradient-stops)),_var(--char-portrait),_var(--bg-portrait)]",
     outline:
       "absolute inset-[0.15rem] z-10 flex flex-col justify-end rounded-sm border-1 border-(--cardAccent) p-1 text-center text-(--cardAccent) inset-shadow-card @5xs:inset-1 @5xs:border-2 @3xs:@min-h-5xs:p-4 @xl:@min-h-lg:p-8",
     name: "font-heading text-xs font-bold text-balance shadow-black drop-shadow-md @6xs:text-sm @5xs:@min-h-5xs:text-xl @sm:@min-h-xs:text-2xl @xl:@min-h-lg:text-3xl",
     banner:
       "font-subheading text-[0.5rem] text-balance italic shadow-black drop-shadow-md @3xs:text-xs @5xs:@min-h-5xs:text-sm @xs:@min-h-2xs:text-base @sm:@min-h-xs:text-lg @xl:@min-h-lg:text-xl",
-    frost: "absolute inset-0 z-10 hidden h-full w-full mix-blend-screen",
-    holo: "absolute inset-0 z-10 hidden mix-blend-screen",
+    frost:
+      "z-10 hidden size-full bg-cover mix-blend-screen @icon:bg-[image:var(-frost-icon)] @landscape:bg-[image:var(--frost-landscape)] @portrait:bg-[image:var(--frost-portrait)] @square:bg-[image:var(--frost-icon)]",
+    holo: "absolute inset-0 z-10 hidden size-full bg-cover mix-blend-screen @icon:bg-[image:var(--holo-icon)] @landscape:bg-[image:var(--holo-landscape)] @portrait:bg-[image:var(--holo-portrait)] @square:bg-[image:var(--holo-icon)]",
   },
   variants: {
     debut: {
@@ -196,18 +215,6 @@ const card = tv({
     },
   },
 });
-
-const Holo = {
-  portrait: Holo_Portrait,
-  landscape: Holo_Landscape,
-  icon: Holo_Icon,
-};
-
-const Frost = {
-  portrait: Frost_Portrait,
-  landscape: Frost_Landscape,
-  icon: Frost_Icon,
-};
 
 const { base, outline, name, banner, frost, holo } = card({
   rarity: character.rarity,
@@ -237,20 +244,11 @@ const { base, outline, name, banner, frost, holo } = card({
     </div>
   </div>
 
-  <Image
-    src={//@ts-ignore
-    Frost[variant]}
-    alt="Spec"
-    class={frost()}
-  />
-
-  <div class={holo()}>
-    <Image
-      src={//@ts-ignore
-      Holo[variant]}
-      alt="Spec"
-      class="size-full"
-    />
-    <Border />
+  <!-- OVERLAYS -->
+  <div class="absolute inset-0">
+    <div class={holo()}>
+      <Border />
+    </div>
+    <div class={frost()}></div>
   </div>
 </div>
