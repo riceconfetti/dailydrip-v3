@@ -24,7 +24,7 @@ const servers = $derived.by(() => {
   });
 });
 
-const getServers = () => servers;
+export const getServers = () => servers;
 
 //@ts-ignore
 export const getServer = (game) => {

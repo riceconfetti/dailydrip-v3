@@ -3,13 +3,13 @@ const { position = "nw" } = Astro.props;
 import { tv } from "tailwind-variants";
 
 const corner = tv({
-  base: "absolute z-11 flex aspect-square w-9 overflow-hidden @xs:w-12",
+  base: "absolute z-11 flex aspect-square w-5 overflow-hidden @5xs:w-7 @xs:w-11",
   variants: {
     position: {
-      nw: "top-[.7rem] left-[.7rem]",
-      ne: "top-[.7rem] right-[.7rem] scale-x-[-1]",
-      se: "right-[.7rem] bottom-[.7rem] scale-x-[-1] scale-y-[-1]",
-      sw: "bottom-[.7rem] left-[.7rem] scale-y-[-1]",
+      nw: "top-corner-sm left-corner-sm @5xs:top-corner-md @5xs:left-corner-md @xs:top-corner-lg @xs:left-corner-lg",
+      ne: "top-corner-sm right-corner-sm scale-x-[-1] @5xs:top-corner-md @5xs:right-corner-md @xs:top-corner-lg @xs:right-corner-lg",
+      se: "right-corner-sm bottom-corner-sm scale-x-[-1] scale-y-[-1] @5xs:right-corner-md @5xs:bottom-corner-md @xs:right-corner-lg @xs:bottom-corner-lg",
+      sw: "bottom-corner-sm left-corner-sm scale-y-[-1] @5xs:bottom-corner-md @5xs:left-corner-md @xs:bottom-corner-lg @xs:left-corner-lg",
     },
   },
   defaultVariants: {
@@ -20,10 +20,10 @@ const corner = tv({
 
 <div class={corner({ position: position })}>
   <i
-    class="ri-gemini-fill top-0 left-0 text-[.5rem] @xs:text-xs absolute text-(--cardAccent)"
+    class="ri-gemini-fill top-0 left-0 text-[.25rem] @5xs:text-[.4rem] @xs:text-xs absolute text-(--cardAccent)"
   ></i>
   <div
-    class="absolute w-full aspect-square rounded-full text-(--cardAccent) border-2 -top-1/2 -left-1/2"
+    class="absolute w-full aspect-square rounded-full text-(--cardAccent) border-1 -top-1/2 -left-1/2 @5xs:border-2"
   >
   </div>
 </div>

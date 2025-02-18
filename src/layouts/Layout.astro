@@ -63,7 +63,7 @@ const { title, baseURL = "/" } = Astro.props;
     <title>{title}</title>
   </head>
   <body class="relative h-dvh w-dvw bg-light" onload="myFunction()">
-    <SettingsModal client:only />
+    <SettingsModal client:load />
     <main
       id="content"
       class="relative flex flex-col overflow-x-hidden size-full items-center pb-2"

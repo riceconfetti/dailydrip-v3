@@ -49,6 +49,7 @@ let versions: Version[] = await directus.request(
     filter: filter,
   }),
 );
+// console.log(versions);
 
 versions.sort((a, b) => a.semVer - b.semVer);
 //@ts-ignore
@@ -56,7 +57,7 @@ const title = "The Daily Drip | " + game.name;
 ---
 
 <Layout {title}>
-  <div class="p-4 md:p-6 xl:p8 flex flex-col gap-4 items-center w-full">
+  <div class="p-0 sm:p-4 md:p-6 xl:p8 flex flex-col gap-4 items-center w-full">
     {versions.map((version) => <VerisonCard {version} />)}
   </div>
 </Layout>

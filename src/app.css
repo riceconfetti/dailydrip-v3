@@ -6,6 +6,10 @@
 
 @layer theme, base, components, utilities;
 @theme {
+  --spacing-corner-sm: 0.4rem;
+  --spacing-corner-md: 0.55rem;
+  --spacing-corner-lg: 0.65rem;
+
   --color-transparent: transparent;
   --color-dark: #232323;
   --color-light: #d1d1d1;

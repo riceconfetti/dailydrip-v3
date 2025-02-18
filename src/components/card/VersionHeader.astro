@@ -6,6 +6,9 @@ import timezone from "dayjs/plugin/timezone";
 dayjs.extend(utc);
 dayjs.extend(timezone);
 let { version } = Astro.props;
+const verFormat = new Intl.NumberFormat("en-US", {
+  minimumFractionDigits: 1,
+});
 const startDate = version.events[0].startDate;
 const phase = version.events[0].phase;
 
@@ -15,9 +18,9 @@ const tz = "+08:00";
 
 <div class="flex flex-col gap-2 sm:col-span-2">
   <div
-    class="font-heading flex justify-between border-y border-accent-gold py-1 text-2xs text-accent-gold sm:text-sm md:text-base"
+    class="font-heading flex justify-between border-y border-accent-gold py-1 text-[0.5rem] text-accent-gold sm:text-sm md:text-base"
   >
-    <p>Version {version.semVer}</p>
+    <p>Version {verFormat.format(version.semVer)}</p>
     <p>
       {
         dayjs(startDate + "T" + phase.start + tz)

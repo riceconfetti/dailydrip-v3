@@ -6,21 +6,47 @@ import directus from "$services/directus";
 import { readItems, readItem } from "@directus/sdk";
 
 let events = await directus.request(
-  readItems("events", { fields: ["id", "game", "phase", "startDate"] }),
+  readItems("events", {
+    fields: [
+      "id",
+      "game",
+      "phase",
+      "startDate",
+      "version",
+      "featured_characters",
+    ],
+  }),
 );
 let phases = await directus.request(readItems("phases", { fields: ["*"] }));
+let games = await directus.request(readItems("games", { fields: ["*"] }));
 
-events = events.map((event: any) => {
-  event.phase = phases.find((phase) => event.phase == phase.id);
-  return event;
-});
+events = await Promise.all(
+  events.map(async (event: any) => {
+    event.phase = phases.find((phase) => event.phase == phase.id);
+    event.game = games.find((game) => event.game == game.id);
+    event.version = await directus.request(readItem("versions", event.version));
+    let characters = await Promise.all(
+      event.featured_characters.map(async (character: any) => {
+        let id = (
+          await directus.request(readItem("events_characters", character))
+        ).characters_id;
+        character = await directus.request(readItem("characters", id));
+        return character;
+      }),
+    );
+    event.featured_characters = characters.filter(
+      (character) => character.rarity == 5,
+    );
+    return event;
+  }),
+);
 ---
 
 <Layout title="The Daily Drip">
   <section
-    class="p-2 lg:min-h-0 lg:p-4 flex flex-col gap-4 box-border lg:max-w-7xl lg:h-full lg:overflow-auto"
+    class="p-2 size-full lg:min-h-0 lg:p-4 flex flex-col gap-4 box-border lg:max-w-7xl lg:h-full lg:overflow-auto"
   >
-    <div class="p-4 bg-dark/20 rounded-md md:col-span-2 h-min">
+    <div class="p-4 w-full bg-dark/20 rounded-md md:col-span-2 h-min">
       <p class="font-subheading text-sm">
         Welcome to <span class="font-bold text-center">The Daily Drip</span>,
         your place for gacha game leaks and speculations! These are my personal
@@ -29,7 +55,7 @@ events = events.map((event: any) => {
       </p>
     </div>
     <div class="flex flex-col lg:flex-row gap-8 h-full min-h-0">
-      <Calendar client:load {events} />
+      <!-- <Calendar client:load {events} /> -->
       <!--<Events /> -->
     </div>
   </section>

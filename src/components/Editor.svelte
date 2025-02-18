@@ -2,6 +2,8 @@
   import { onMount } from "svelte";
   import { tv } from "tailwind-variants";
   const sizes = [
+    "9xs",
+    "8xs",
     "7xs",
     "6xs",
     "5xs",
@@ -23,6 +25,8 @@
     base: "",
     variants: {
       width: {
+        "9xs": "w-[4rem]",
+        "8xs": "w-[6rem]",
         "7xs": "w-[8rem]",
         "6xs": "w-[10rem]",
         "5xs": "w-[12rem]",
@@ -40,6 +44,8 @@
         "5xl": "w-[64rem]",
       },
       height: {
+        "9xs": "h-[4rem]",
+        "8xs": "h-[6rem]",
         "7xs": "h-[8rem]",
         "6xs": "h-[10rem]",
         "5xs": "h-[12rem]",
