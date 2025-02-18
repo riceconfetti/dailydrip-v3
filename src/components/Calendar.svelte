@@ -16,7 +16,6 @@
         : timeZones.find(({ key }) => key == e.game.id).value;
     const isoString = e.startDate + "T" + e.phase.start + tz;
     e.iso = isoString;
-    console.log(e.iso);
   });
 
   let interEvents = events.map((e) => {
@@ -32,7 +31,6 @@
           : timeZones.find(({ key }) => key == e.game.id).value;
       const isoString = e.startDate + "T" + e.phase.start + tz;
       e.iso = isoString;
-      console.log(e.iso);
     });
 
     interEvents = events.map((e) => {
