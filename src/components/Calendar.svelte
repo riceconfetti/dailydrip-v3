@@ -2,57 +2,69 @@
   const { events } = $props();
   import serverJSON from "$store/servers.json";
   import { Calendar } from "bits-ui";
-  import { getServers, getServer, settings } from "$store/settings.svelte";
+  import { settings, getTimezones } from "$store/settings.svelte";
   import {
     parseAbsoluteToLocal,
     toCalendarDate,
   } from "@internationalized/date";
 
-  const games = [...new Set(events.map((e) => e.game.id))];
-  const servers = $derived.by(() => {
-    return Object.keys(settings).map((key) => {
-      let value = serverJSON.find(
-        (s) => s.game == key && s.name == settings[key],
-      );
-      return { key: key, value: value };
+  let timeZones = $derived(getTimezones(settings));
+  events.forEach((e) => {
+    const tz =
+      e.phase.phase == "1"
+        ? "+08:00"
+        : timeZones.find(({ key }) => key == e.game.id).value;
+    const isoString = e.startDate + "T" + e.phase.start + tz;
+    e.iso = isoString;
+    console.log(e.iso);
+  });
+
+  let interEvents = events.map((e) => {
+    let zoned = parseAbsoluteToLocal(e.iso);
+    return toCalendarDate(zoned).toString();
+  });
+
+  $effect(() => {
+    events.forEach((e) => {
+      const tz =
+        e.phase.phase == "1"
+          ? "+08:00"
+          : timeZones.find(({ key }) => key == e.game.id).value;
+      const isoString = e.startDate + "T" + e.phase.start + tz;
+      e.iso = isoString;
+      console.log(e.iso);
+    });
+
+    interEvents = events.map((e) => {
+      let zoned = parseAbsoluteToLocal(e.iso);
+      return toCalendarDate(zoned).toString();
     });
   });
 
-  $inspect(servers);
-
-  events.sort(
-    (a, b) =>
-      a.version.semVer +
-      Number(a.phase.phase) / 100 -
-      (b.version.semVer + Number(b.phase.phase) / 100),
-  );
-  events.forEach((e) => {
-    const server = getServer(e.game.id);
-    const tz = e.phase.phase == "1" ? "+08:00" : server?.value?.timezone;
-    const str = e.startDate + "T" + e.phase.start + tz;
-    // console.log(str);
-    e.dateTime = parseAbsoluteToLocal(e.startDate + "T" + e.phase.start + tz);
-  });
-
-  const calendarEvents = events.map((e) =>
-    toCalendarDate(e.dateTime).toString(),
-  );
-
-  // console.log(events.map((e) => e.startDate));
-
   const isDateUnavailable = (date) => {
-    return calendarEvents.includes(date.toString());
+    return interEvents.includes(date.toString());
   };
 
   const verFormat = new Intl.NumberFormat("en-US", {
     minimumFractionDigits: 1,
   });
+
+  const gameColors = {
+    bg_starrail: "--bg-starrail",
+    bg_genshin: "--bg-genshin",
+    bg_wuwa: "--bg-wuwa",
+    bg_zzz: "--bg-zzz",
+    text_starrail: "--text-starrail",
+    text_genshin: "--text-genshin",
+    text_wuwa: "--text-wuwa",
+    text_zzz: "--text-zzz",
+  };
 </script>
 
 <Calendar.Root
   class="font-body w-full flex flex-col p-4 text-center md:grid h-full grid-rows-[fit-content(--spacing(32))] min-h-0"
-  {isDateUnavailable}
   fixedWeeks={true}
+  {isDateUnavailable}
   weekdayFormat="short"
   type="single"
 >
@@ -102,21 +114,43 @@
                   class="relative min-h-0 aspect-square h-full w-full border-dark/20 p-2 data-[disabled]:text-dark/40"
                 >
                   {@const event = isDateUnavailable(date)
-                    ? events.find(
-                        (e) => toCalendarDate(e.dateTime).compare(date) == 0,
-                      )
+                    ? events.find((e) => {
+                        let zoned = parseAbsoluteToLocal(e.iso);
+                        return toCalendarDate(zoned).compare(date) === 0;
+                      })
                     : false}
                   <Calendar.Day
-                    class="absolute inset-0 flex flex-col group items-center justify-center md:justify-start md:items-start  @container-[size] size-full gap-1 p-2"
+                    class="absolute inset-0 flex flex-col  items-center justify-center md:justify-start md:items-start  @container-[size] size-full gap-1 p-2"
                   >
-                    <div class="flex items-center">
+                    <div
+                      class="flex items-center group"
+                      data-event={isDateUnavailable(date)}
+                    >
                       <div
-                        class="group-data-[unavailable]:bg-accent-gold px-1 md:h-[17cqh] aspect-square flex items-center justify-center rounded-xs"
+                        style:--accentColor={"var(" +
+                          gameColors[
+                            "bg_" + (event ? event.game.id : "default")
+                          ] +
+                          ")"}
+                        style:--textColor={"var(" +
+                          gameColors[
+                            "text_" + (event ? event.game.id : "default")
+                          ] +
+                          ")"}
+                        style:--bg-starrail="oklch(50.3% 0.1828 262.59)"
+                        style:--bg-genshin="oklch(79.08% 0.0829 0)"
+                        style:--bg-wuwa="oklch(19.14% 0.0247 266.53)"
+                        style:--bg-zzz="oklch(56% 0.1431 43.41)"
+                        style:--text-starrail="var(--color-text-dark)"
+                        style:--text-genshin="var(--color-text-light)"
+                        style:--text-wuwa="var(--color-text-dark)"
+                        style:--text-zzz="var(--color-text-light)"
+                        class="group-data-[event=true]:bg-(--accentColor) group-data-[event=true]:text-(--textColor) px-1 md:h-[17cqh] aspect-square flex items-center justify-center rounded-xs"
                       >
                         <p>{date.day}</p>
                       </div>
                       <p
-                        class="hidden block ml-1 w-full font-subheading text-xs font-semibold"
+                        class="hidden md:block ml-1 w-full font-subheading text-xs font-semibold"
                       >
                         {event ? event.game.name : ""}
                       </p>

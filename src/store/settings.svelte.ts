@@ -24,6 +24,15 @@ const servers = $derived.by(() => {
   });
 });
 
+export const getTimezones = (settings: Settings) => {
+  return Object.keys(settings).map((key) => {
+    let value = serverJSON.find(
+      (s) => s.game == key && s.name == settings[key],
+    );
+    return { key: key, value: value?.timezone };
+  });
+};
+
 export const getServers = () => servers;
 
 //@ts-ignore

@@ -40,6 +40,13 @@ events = await Promise.all(
     return event;
   }),
 );
+
+events.sort(
+  (a, b) =>
+    a.version.semVer +
+    Number(a.phase.phase) / 100 -
+    (b.version.semVer + Number(b.phase.phase) / 100),
+);
 ---
 
 <Layout title="The Daily Drip">
@@ -55,7 +62,7 @@ events = await Promise.all(
       </p>
     </div>
     <div class="flex flex-col lg:flex-row gap-8 h-full min-h-0">
-      <!-- <Calendar client:load {events} /> -->
+      <Calendar client:load {events} />
       <!--<Events /> -->
     </div>
   </section>
