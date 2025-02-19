@@ -68,7 +68,7 @@
 >
   {#snippet children({ months, weekdays })}
     <Calendar.Header
-      class="font-heading font-bold flex items-center justify-between gap-22"
+      class="font-heading font-bold flex items-center justify-between md:gap-22 w-full"
     >
       <Calendar.PrevButton
         class="rounded-9px bg-background-alt hover:bg-muted active:scale-98 inline-flex size-10 items-center justify-center active:transition-all"
