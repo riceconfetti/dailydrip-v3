@@ -9,8 +9,14 @@ let { version } = Astro.props;
 const verFormat = new Intl.NumberFormat("en-US", {
   minimumFractionDigits: 1,
 });
-const startDate = version.events[0].startDate;
-const phase = version.events[0].phase;
+let startDate, phase;
+if (version.events.length > 0) {
+  startDate = version.events[0].startDate;
+  phase = version.events[0].phase;
+} else {
+  startDate = "2020-01-01";
+  phase = { start: "12:00" };
+}
 
 let currzone = dayjs.tz.guess();
 const tz = "+08:00";
