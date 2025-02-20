@@ -8,7 +8,7 @@ let game: any = {};
 let version: any = {};
 
 export const prerender = false;
-const isPreview = PUBLIC_DEPLOY_MODE == "preview";
+const isPreview = PUBLIC_DEPLOY_MODE == "server";
 const { gameId, versId } = Astro.params;
 
 if ((versId != undefined || gameId != undefined) && isPreview) {

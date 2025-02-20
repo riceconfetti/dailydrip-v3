@@ -72,7 +72,7 @@ const { title, baseURL = "/" } = Astro.props;
         id="loader"
         class:list={[
           "fixed inset-0 text-accent-gold-500 z-50 bg-dark  flex-col items-center justify-center transition-opacity",
-          PUBLIC_DEPLOY_MODE == "preview" ? "hidden" : "flex",
+          PUBLIC_DEPLOY_MODE == "server" ? "hidden" : "flex",
         ]}
       >
         <l-square

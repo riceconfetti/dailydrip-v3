@@ -9,6 +9,7 @@ import { setValRecursive } from "src/scripts/setValRecursive";
 import ProxyService from "$services/imgproxy";
 
 import Border from "./deco-border/Border.astro";
+import Placeholder from "./Placeholder.svelte";
 
 const colorIndex = 0;
 const variants = ["portrait", "landscape", "icon"];
@@ -44,6 +45,7 @@ const backgroundPath = game?.elementMain
   : `/backgrounds/${game?.id}/${secondary?.name}.webp`;
 
 const imgPath = `/characters/${character.game}/${character.id}.webp`;
+const fullSplash = ProxyService.getImage(imgPath, [], "webp");
 const placeholder = game?.elementMain
   ? `/placeholders/${game?.id}/${secondary?.name}.webp`
   : `/placeholders/${game?.id}/${primary?.name}.webp`;
@@ -55,7 +57,7 @@ Object.assign(vars, {
 let options: any = {
   portrait: {
     bannerCrop: { x: 0.3, y: 0 },
-    index: { x: 0, y: 0.07 },
+    index: { x: 0, y: 0.12 },
   },
   landscape: {
     bannerCrop: { x: 0, y: 0.4 },
@@ -63,20 +65,19 @@ let options: any = {
   },
 };
 
-// if (character.card_edits != null) {
-//   const edits = character.card_edits;
-//   console.log(edits);
-//   const variants = edits.map((e: any) => e.variant);
+if (character.card_edits != null) {
+  const edits = character.card_edits;
+  const variants = edits.map((e: any) => e.variant);
 
-//   variants.forEach((v: any) => {
-//     if (Object.keys(options).includes(v)) {
-//       options[v] = setValRecursive(
-//         options[v],
-//         edits.find((e: any) => e.variant == v).style,
-//       );
-//     }
-//   });
-// }
+  variants.forEach((v: any) => {
+    if (Object.keys(options).includes(v)) {
+      options[v] = setValRecursive(
+        options[v],
+        edits.find((e: any) => e.variant == v).style,
+      );
+    }
+  });
+}
 
 const characterTransforms = {
   portrait: [
@@ -190,9 +191,8 @@ const card = tv({
   slots: {
     base: "size-full bg-linear-0 from-(--primaryColor) via-(--secondaryColor) bg-cover bg-center bg-no-repeat @icon:bg-[image:var(--bg-icon)] @landscape:bg-[image:var(--bg-landscape)] @portrait:bg-[image:var(--bg-portrait)] @square:bg-[image:var(--bg-portrait)]",
     charBg:
-      "absolute inset-0 bg-cover bg-center bg-no-repeat @icon:bg-[image:var(--char-icon)] @landscape:bg-[image:var(--char-landscape)] @portrait:bg-[image:var(--char-portrait)] @square:bg-[image:var(--char-portrait)]",
-    placeholderBg:
-      "absolute inset-0 hidden bg-[image:var(--placeholder)] bg-[50%_45%] bg-no-repeat @landscape:bg-[size:35cqh_35cqh] @portrait:bg-[size:35cqw_35cqw] @square:bg-[size:35cqw_35cqw]",
+      "absolute inset-0 bg-cover bg-top bg-no-repeat @icon:bg-[image:var(--char-icon)] @landscape:bg-[image:var(--char-landscape)] @portrait:bg-[image:var(--char-portrait)] @square:bg-[image:var(--char-landscape)]",
+
     overlay:
       "absolute inset-0 bg-linear-0 from-(--primaryColor) via-(--secondaryColor)",
     outline:
@@ -205,11 +205,6 @@ const card = tv({
     holo: "absolute inset-0 z-10 hidden size-full bg-cover mix-blend-screen @icon:bg-[image:var(--holo-icon)] @landscape:bg-[image:var(--holo-landscape)] @portrait:bg-[image:var(--holo-portrait)] @square:bg-[image:var(--holo-icon)]",
   },
   variants: {
-    placeholder: {
-      true: {
-        placeholderBg: "block",
-      },
-    },
     debut: {
       true: {
         holo: "block",
@@ -232,26 +227,10 @@ const card = tv({
   },
 });
 
-//@ts-ignore
-let hasSplash = await fetch(ProxyService.getImage(imgPath, [], "webp"))
-  .then((res) => res.ok)
-  .catch((e) => console.log(e));
-
-const {
-  base,
-  charBg,
-  placeholderBg,
-  overlay,
-  outline,
-  name,
-  banner,
-  frost,
-  holo,
-} = card({
+const { base, charBg, overlay, outline, name, banner, frost, holo } = card({
   rarity: character.rarity,
   speculation: character.spec,
   debut: character.debut,
-  placeholder: !hasSplash,
 });
 ---
 
@@ -266,7 +245,7 @@ const {
   <div class={base()}>
     <div class={charBg()}></div>
     <div class={overlay()}></div>
-    <div class={placeholderBg()}></div>
+    <Placeholder url={fullSplash} client:load />
     <!-- Text & Outline -->
     <div class={outline()}>
       <h2 class={name()}>

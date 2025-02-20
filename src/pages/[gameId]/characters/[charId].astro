@@ -22,7 +22,7 @@ Object.assign(debut, { debut: true });
 Object.assign(spec, { spec: true });
 Object.assign(both, { debut: true, spec: true });
 
-if (PUBLIC_DEPLOY_MODE == "publish") return Astro.rewrite("/404");
+if (PUBLIC_DEPLOY_MODE == "static") return Astro.rewrite("/404");
 
 const title = "Daily Drip | " + game.name + " | " + character.name;
 

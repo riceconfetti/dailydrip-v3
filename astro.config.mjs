@@ -1,5 +1,7 @@
 import { defineConfig, envField } from "astro/config";
 import svelte from "@astrojs/svelte";
+import { loadEnv } from "vite";
+const { PUBLIC_DEPLOY_MODE } = loadEnv(process.env.NODE_ENV, process.cwd(), "");
 
 import node from "@astrojs/node";
 
@@ -18,7 +20,7 @@ export default defineConfig({
       }),
     },
   },
-
+  output: PUBLIC_DEPLOY_MODE,
   adapter: node({
     mode: "standalone",
   }),

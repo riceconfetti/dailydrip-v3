@@ -31,12 +31,13 @@
     ).tz(currzone),
   );
 
-  let bannerTime;
-  if (dayjs(startDate).isBefore(dayjs()) && dayjs(endDate).isAfter(dayjs())) {
-    bannerTime = "Ending " + dayjs(endDate).fromNow();
-  } else {
-    bannerTime = "Starting " + dayjs(startDate).fromNow();
-  }
+  let bannerTime = $derived.by(() => {
+    if (dayjs(startDate).isBefore(dayjs()) && dayjs(endDate).isAfter(dayjs())) {
+      return "Ending " + dayjs(endDate).fromNow();
+    } else {
+      return "Starting " + dayjs(startDate).fromNow();
+    }
+  });
 </script>
 
 <p>{bannerTime}</p>

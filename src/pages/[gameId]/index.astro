@@ -4,8 +4,7 @@ import { readItems, readItem } from "@directus/sdk";
 import { PUBLIC_DEPLOY_MODE } from "astro:env/client";
 let game = {};
 
-const isPreview = PUBLIC_DEPLOY_MODE == "preview";
-export const prerender = PUBLIC_DEPLOY_MODE == "publish" ? true : false;
+const isPreview = PUBLIC_DEPLOY_MODE == "server";
 
 export async function getStaticPaths() {
   const games = await directus.request(readItems("games", { fields: ["id"] }));
@@ -15,7 +14,7 @@ export async function getStaticPaths() {
   }));
 }
 
-if (isPreview) {
+if (isPreview && Astro.params.gameId) {
   game = await directus.request(readItem("games", Astro.params.gameId));
 } else {
   const { game } = Astro.props;

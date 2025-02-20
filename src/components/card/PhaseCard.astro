@@ -25,7 +25,7 @@ fiveStars = await Promise.all(
 
 const phaseCard = tv({
   slots: {
-    base: "grid-rows-auto grid size-full grid-cols-2 gap-2",
+    base: "grid-rows-auto grid size-full grid-cols-2 grid-rows-[repeat(3,min-content)] gap-2",
     box: "gap-2",
     character: "",
     weapon: "",
@@ -34,22 +34,22 @@ const phaseCard = tv({
     count: {
       1: {
         //1 limited
-        base: "grid-cols-1 grid-rows-[repeat(3,min-content)]",
+        base: "grid-cols-1",
       },
-      2: {
-        //2 limiteds
-        base: "grid-rows-[5fr_2fr]",
-      },
+      2: {},
       3: {
         //3 or more limited
-        base: "grid-cols-[5fr_3fr_1fr] grid-rows-[repeat(3,min-content)_2fr]",
+        base: "grid-cols-[5fr_3fr_1fr] grid-rows-[repeat(3,min-content)]",
       },
     },
     rarity: {
       5: {
-        box: "first:min-h-[40cqw]",
+        box: "first:min-h-[50cqw]",
       },
-      4: {},
+      4: {
+        box: "col-span-full grid grid-flow-row grid-cols-[repeat(auto-fit,_minmax(15%,_1fr))]",
+        character: "aspect-square",
+      },
     },
   },
   compoundVariants: [
@@ -74,22 +74,6 @@ const phaseCard = tv({
         box: "col-span-2 col-start-2 grid grid-cols-subgrid first:col-span-1 first:col-start-1 first:row-span-3 first:grid-rows-[5fr_1fr]",
       },
     },
-    {
-      rarity: 4,
-      count: 1,
-      class: {
-        box: "col-span-full grid grid-flow-row grid-cols-[repeat(auto-fit,_minmax(20%,_1fr))]",
-        character: "aspect-square",
-      },
-    },
-    {
-      rarity: 4,
-      count: [2, 3],
-      class: {
-        character: "aspect-square",
-        box: "col-span-full grid auto-cols-fr grid-flow-col",
-      },
-    },
   ],
 });
 
@@ -103,7 +87,15 @@ const { base, box, character, weapon } = phaseCard({ count: count, rarity: 5 });
       fiveStars.map((c: any) => (
         <div class={box({ rarity: 5 })}>
           <CharacterCard character={c} class={character()} />
-          <WeaponCard weapon={c.signature} class={weapon()} />
+          {weapons.filter((w: any) => w.rarity == 5).length > 0 &&
+            weapons
+              .filter((w: any) => w.rarity == 5)
+              .map((w: any) => (
+                <WeaponCard weapon={w} class={weapon({ rarity: 5 })} />
+              ))}
+          {weapons.filter((w: any) => w.rarity == 5).length == 0 && (
+            <WeaponCard weapon={c.signature} class={weapon({ rarity: 5 })} />
+          )}
         </div>
       ))
     }
@@ -120,9 +112,11 @@ const { base, box, character, weapon } = phaseCard({ count: count, rarity: 5 });
     </div>
     <div class={box({ rarity: 4 })}>
       {
-        weapons.map((w: any) => (
-          <WeaponCard weapon={w} class={weapon({ rarity: 4 })} />
-        ))
+        weapons.map((w: any) => {
+          if (w.rarity == 4) {
+            return <WeaponCard weapon={w} class={weapon({ rarity: 4 })} />;
+          }
+        })
       }
     </div>
   </div>
