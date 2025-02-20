@@ -1,7 +1,8 @@
-export const setValRecursive = (newObj: any, currObj: any) => {
+export const setValRecursive = (currObj: any, newObj: any) => {
   Object.keys(newObj).forEach((k: any) => {
+    // console.log(currObj);
     if (typeof newObj[k] == "object" && currObj[k] != null) {
-      setValRecursive(newObj[k], currObj[k]);
+      setValRecursive(currObj[k], newObj[k]);
     } else {
       currObj[k] = newObj[k];
     }

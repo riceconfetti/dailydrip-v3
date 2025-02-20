@@ -5,6 +5,7 @@
 @import "tailwindcss/utilities.css" layer(utilities);
 
 @layer theme, base, components, utilities;
+
 @theme {
   --spacing-corner-sm: 0.4rem;
   --spacing-corner-md: 0.55rem;
@@ -118,3 +119,7 @@
 @custom-variant @max-h-5xl (@container (height <= 64rem));
 @custom-variant @max-h-6xl (@container (height <= 72rem));
 @custom-variant @max-h-7xl (@container (height <= 80rem));
+
+@utility mask-to-l {
+  mask: linear-gradient(to left, rgba(0, 0, 0, 1) 20%, rgba(0, 0, 0, 0.2) 70%);
+}

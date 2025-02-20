@@ -1,7 +1,6 @@
 ---
 const { character, class: className } = Astro.props;
 
-import { Image } from "astro:assets";
 import { tv } from "tailwind-variants";
 import directus from "$services/directus";
 import { readItem } from "@directus/sdk";
@@ -13,6 +12,9 @@ import Border from "./deco-border/Border.astro";
 
 const colorIndex = 0;
 const variants = ["portrait", "landscape", "icon"];
+interface Variants {
+  [key: string]: any;
+}
 
 const vars = {
   "--primaryColor":
@@ -61,16 +63,20 @@ let options: any = {
   },
 };
 
-if (character.card_edits != null) {
-  const edits = character.card_edits;
-  const variants = edits.map((e: any) => e.variant);
-  variants.forEach((v: any) => {
-    options[v] = setValRecursive(
-      edits.find((e: any) => e.variant == v).style,
-      options[v],
-    );
-  });
-}
+// if (character.card_edits != null) {
+//   const edits = character.card_edits;
+//   console.log(edits);
+//   const variants = edits.map((e: any) => e.variant);
+
+//   variants.forEach((v: any) => {
+//     if (Object.keys(options).includes(v)) {
+//       options[v] = setValRecursive(
+//         options[v],
+//         edits.find((e: any) => e.variant == v).style,
+//       );
+//     }
+//   });
+// }
 
 const characterTransforms = {
   portrait: [
@@ -126,7 +132,7 @@ const backgroundTransforms = {
   landscape: [{ key: "rotate", params: [270] }],
 };
 
-const splash = variants.reduce((prev, curr) => {
+const splash: Variants = variants.reduce((prev, curr) => {
   Object.assign(prev, {
     //@ts-ignore
     [curr]: ProxyService.getImage(imgPath, characterTransforms[curr], "webp"),
@@ -134,7 +140,7 @@ const splash = variants.reduce((prev, curr) => {
   return prev;
 }, {});
 
-const background = variants.reduce((prev, curr) => {
+const background: Variants = variants.reduce((prev, curr) => {
   Object.assign(prev, {
     [curr]: ProxyService.getImage(
       backgroundPath,
@@ -146,7 +152,7 @@ const background = variants.reduce((prev, curr) => {
   return prev;
 }, {});
 
-const Holo = variants.reduce((prev, curr) => {
+const Holo: Variants = variants.reduce((prev, curr) => {
   Object.assign(prev, {
     [curr]: ProxyService.getImage(
       "/overlays/Holo_" + curr.at(0)?.toUpperCase() + curr.slice(1) + ".png",
@@ -158,7 +164,7 @@ const Holo = variants.reduce((prev, curr) => {
   return prev;
 }, {});
 
-const Frost = variants.reduce((prev, curr) => {
+const Frost: Variants = variants.reduce((prev, curr) => {
   Object.assign(prev, {
     [curr]: ProxyService.getImage(
       "/overlays/Frost_" + curr.at(0)?.toUpperCase() + curr.slice(1) + ".png",
@@ -171,14 +177,13 @@ const Frost = variants.reduce((prev, curr) => {
 }, {});
 
 variants.forEach((v) => {
-  //@ts-ignore
-  Object.assign(vars, { [`--char-${v}`]: `url("${splash[v]}")` });
-  //@ts-ignore
-  Object.assign(vars, { [`--bg-${v}`]: `url("${background[v]}")` });
-  //@ts-ignore
-  Object.assign(vars, { [`--holo-${v}`]: `url("${Holo[v]}")` });
-  //@ts-ignore
-  Object.assign(vars, { [`--frost-${v}`]: `url("${Frost[v]}")` });
+  Object.assign(
+    vars,
+    { [`--char-${v}`]: `url("${splash[v]}")` },
+    { [`--bg-${v}`]: `url("${background[v]}")` },
+    { [`--holo-${v}`]: `url("${Holo[v]}")` },
+    { [`--frost-${v}`]: `url("${Frost[v]}")` },
+  );
 });
 
 const card = tv({

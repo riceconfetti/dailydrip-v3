@@ -1,6 +1,7 @@
 ---
 import Layout from "$layouts/Layout.astro";
 import Calendar from "$components/Calendar.svelte";
+import HomeEvents from "$components/HomeEvents.astro";
 
 import directus from "$services/directus";
 import { readItems, readItem } from "@directus/sdk";
@@ -51,7 +52,7 @@ events.sort(
 
 <Layout title="The Daily Drip">
   <section
-    class="p-2 size-full lg:min-h-0 lg:p-4 flex flex-col gap-4 box-border lg:max-w-7xl lg:h-full lg:overflow-auto"
+    class="absolute inset-0 p-2 size-full lg:min-h-0 lg:p-4 flex flex-col gap-4 box-border lg:h-full overflow-auto xl:overflow-hidden"
   >
     <div class="p-4 w-full bg-dark/20 rounded-md md:col-span-2 h-min">
       <p class="font-subheading text-sm">
@@ -61,9 +62,11 @@ events.sort(
         own risk!
       </p>
     </div>
-    <div class="flex flex-col lg:flex-row gap-8 h-full min-h-0">
+    <div
+      class="flex flex-col xl:grid xl:grid-cols-2 gap-8 h-full min-h-0 w-full xl:overflow-hidden"
+    >
       <Calendar client:load {events} />
-      <!--<Events /> -->
+      <HomeEvents />
     </div>
   </section>
 </Layout>

@@ -1,0 +1,147 @@
+---
+const { bannerEvent, class: className } = Astro.props;
+
+import { tv } from "tailwind-variants";
+import directus from "$services/directus";
+import { readItem } from "@directus/sdk";
+
+import { setValRecursive } from "src/scripts/setValRecursive";
+import ProxyService from "$services/imgproxy";
+
+import Border from "./deco-border/Border.astro";
+import BannerTime from "./BannerTime.svelte";
+import { undefined } from "astro:schema";
+
+const colorIndex = 0;
+
+const vars = {
+  "--primaryColor":
+    bannerEvent.colors != null
+      ? `oklch(from ${bannerEvent.colors[colorIndex].hex} 20% 0.0666 h)`
+      : "oklch(from #101010 l c h)",
+  "--secondaryColor":
+    bannerEvent.colors != null
+      ? `oklch(from ${bannerEvent.colors[colorIndex + 1].hex} 60% 0.0666 h)`
+      : "oklch(from #101010 l c h /70%)",
+  "--cardAccent":
+    bannerEvent.rarity == 5
+      ? "var(--color-accent-gold-150)"
+      : "var(--color-accent-purple-200)",
+};
+
+const imgPath = `/characters/${bannerEvent.game}/${bannerEvent.id}.webp`;
+
+let options: any = {
+  bannerCrop: { x: 0.83, y: 0.4 },
+  height: 400,
+};
+
+if (bannerEvent.card_edits != null) {
+  const bannerEdits = bannerEvent.card_edits.find(
+    (e: any) => e.variant == "banner",
+  );
+  if (bannerEdits != undefined) {
+    options = setValRecursive(options, bannerEdits.style);
+  }
+}
+
+const characterTransforms = [
+  {
+    key: "gravity",
+    params: ["fp", 0, bannerEvent.focalPoint.y],
+  },
+  {
+    key: "crop",
+    params: [
+      options.bannerCrop.x * bannerEvent.crop.x,
+      options.bannerCrop.y * bannerEvent.crop.y,
+    ],
+  },
+  {
+    key: "height",
+    params: [options.height],
+  },
+];
+
+const splash = ProxyService.getImage(imgPath, characterTransforms, "webp");
+
+const Holo = ProxyService.getImage("/overlays/Holo_Landscape.png", [], "webp");
+
+Object.assign(vars, { [`--char`]: `url("${splash}")` });
+Object.assign(vars, { [`--holo`]: `url("${Holo}")` });
+
+const card = tv({
+  slots: {
+    base: "size-full bg-linear-90 from-(--primaryColor) to-(--secondaryColor) bg-cover bg-center bg-no-repeat",
+    charBg:
+      "absolute inset-0 bg-[image:var(--char)] bg-contain bg-right bg-no-repeat mask-to-l",
+    outline:
+      "absolute inset-[0.15rem] z-10 flex items-center rounded-sm border-1 border-(--cardAccent) p-2 text-center text-(--cardAccent) inset-shadow-card @5xs:inset-1 @5xs:border-2 @3xs:@min-h-5xs:p-4 @xl:@min-h-lg:p-8",
+    name: "font-heading text-xs font-bold text-balance shadow-black drop-shadow-md @6xs:text-sm @5xs:@min-h-5xs:text-xl @sm:@min-h-xs:text-2xl @xl:@min-h-lg:text-3xl",
+    banner:
+      "font-subheading text-[0.5rem] text-balance italic shadow-black drop-shadow-md @3xs:text-xs @5xs:@min-h-5xs:text-sm @xs:@min-h-2xs:text-base @sm:@min-h-xs:text-lg @xl:@min-h-lg:text-xl",
+    frost:
+      "z-10 hidden size-full bg-cover mix-blend-screen @icon:bg-[image:var(-frost-icon)] @landscape:bg-[image:var(--frost-landscape)] @portrait:bg-[image:var(--frost-portrait)] @square:bg-[image:var(--frost-icon)]",
+    holo: "absolute inset-0 z-10 hidden size-full bg-cover mix-blend-screen @icon:bg-[image:var(--holo-icon)] @landscape:bg-[image:var(--holo-landscape)] @portrait:bg-[image:var(--holo-portrait)] @square:bg-[image:var(--holo-icon)]",
+  },
+  variants: {
+    debut: {
+      true: {
+        holo: "block",
+        outline: "p-2 @3xs:@min-h-5xs:p-4 @xl:@min-h-lg:p-6",
+      },
+    },
+    speculation: {
+      true: {
+        frost: "block",
+      },
+    },
+    rarity: {
+      5: {
+        banner: "@max-6xs:hidden @icon:hidden @max-h-6xs:hidden",
+      },
+      4: {
+        banner: "hidden",
+      },
+    },
+  },
+});
+
+const { base, charBg, outline, name, banner, frost, holo } = card({
+  debut: bannerEvent.debut,
+});
+---
+
+<!-- CARD -->
+<div
+  class:list={[
+    "@container-[size] size-full aspect-10/3 relative min-h-16 min-w-16",
+    className,
+  ]}
+  style={vars}
+>
+  <div class={base()}>
+    <div class={charBg()}></div>
+
+    <!-- Text & Outline -->
+    <div class={outline()}>
+      <div class="flex flex-col gap-1 items-start">
+        <h2 class={name()}>
+          {bannerEvent.bannerName}
+        </h2>
+
+        <h3 class={banner()}>
+          <BannerTime client:load {bannerEvent} />
+        </h3>
+      </div>
+    </div>
+  </div>
+
+  <!-- OVERLAYS -->
+  <div class="absolute inset-0">
+    <div class={holo()}>
+      <Border />
+    </div>
+    <div class={frost()}></div>
+  </div>
+</div>

@@ -1,14 +1,85 @@
 ---
+import dayjs from "dayjs";
+import utc from "dayjs/plugin/utc";
+import timezone from "dayjs/plugin/timezone";
+dayjs.extend(utc);
+dayjs.extend(timezone);
+import directus from "$services/directus";
+import { readItems, readItem } from "@directus/sdk";
+import BannerCard from "$components/card/BannerCard.astro";
 
+let events: any = await directus.request(
+  readItems("events_characters", {
+    fields: ["*"],
+    limit: -1,
+    filter: { _or: [{ spec: { _eq: false } }, { spec: { _null: true } }] },
+  }),
+);
+
+events = await Promise.all(
+  events.map(async (evenChar: any) => {
+    let character = await directus.request(
+      readItem("characters", evenChar.characters_id, {
+        fields: [
+          "id",
+          "rarity",
+          "game",
+          "bannerName",
+          "name",
+          "focalPoint",
+          "crop",
+          "colors",
+          "card_edits",
+        ],
+      }),
+    );
+    let event: any = await directus.request(
+      readItem("events", evenChar.events_id, {
+        fields: ["startDate", "endDate", "phase"],
+      }),
+    );
+    let { phase, ...rest } = event;
+    phase = await directus.request(readItem("phases", event.phase));
+
+    let bannerEvent = { phase };
+    Object.assign(bannerEvent, character, rest);
+    // console.log(bannerEvent);
+    return bannerEvent;
+  }),
+);
+
+let currentEvents = events.filter(
+  (event: any) =>
+    dayjs(event.startDate).isBefore(dayjs()) &&
+    dayjs(event.endDate).isAfter(dayjs()) &&
+    event.rarity == 5,
+);
+let upcomingEvents = events.filter(
+  (event: any) => dayjs(event.startDate).isAfter(dayjs()) && event.rarity == 5,
+);
+
+// events.forEach((e: any) => {
+//   console.log(e.name);
+// });
 ---
 
 <section
-  class="overlay flex w-full flex-col gap-2 transition md:flex-row lg:min-h-0 lg:flex-col lg:overflow-auto lg:p-4"
+  class="flex w-full flex-col gap-2 transition md:max-xl:grid md:grid-cols-2 xl:min-h-0 xl:flex-col xl:overflow-auto xl:p-4"
 >
   <div class="flex w-full flex-col gap-2">
-    <h2 class="playfair-display-semibold text-dark">Current Events</h2>
+    <h2 class="font-subheading font-semibold text-dark">Current Events</h2>
+    {
+      currentEvents.map((bannerEvent: any) => {
+        return <BannerCard {bannerEvent} />;
+      })
+    }
   </div>
   <div class="flex w-full flex-col gap-2">
-    <h2 class="playfair-display-semibold text-dark">Upcoming Events</h2>
+    <h2 class="font-subheading font-semibold text-dark">Upcoming Events</h2>
+    {
+      upcomingEvents.map((bannerEvent: any) => {
+        return <BannerCard {bannerEvent} />;
+      })
+    }
   </div>
 </section>

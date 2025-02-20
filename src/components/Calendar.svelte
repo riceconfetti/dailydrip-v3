@@ -60,7 +60,7 @@
 </script>
 
 <Calendar.Root
-  class="font-body w-full flex flex-col p-4 text-center md:grid h-full grid-rows-[fit-content(--spacing(32))] min-h-0"
+  class="font-body w-full flex flex-col p-4 text-center md:grid max-lg:aspect-square grid-rows-[fit-content(--spacing(32))]"
   fixedWeeks={true}
   {isDateUnavailable}
   weekdayFormat="short"
@@ -154,13 +154,13 @@
                       </p>
                     </div>
                     <div class="px-2 hidden lg:flex flex-col gap-1">
-                      <p class="w-full font-heading text-sm text-balance">
+                      <p class="w-full font-heading text-xs text-balance">
                         {event
                           ? "Version " + verFormat.format(event.version.semVer)
                           : ""}
                       </p>
                       <ul
-                        class=" w-full font-heading text-xs list-disc list-inside text-balance"
+                        class=" w-full font-subheading italic text-[.68rem] list-disc list-inside text-balance"
                       >
                         {#each event.featured_characters as character}
                           <li>{character.name}</li>
