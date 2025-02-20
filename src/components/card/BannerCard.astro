@@ -12,18 +12,16 @@ import Border from "./deco-border/Border.astro";
 import BannerTime from "./BannerTime.svelte";
 
 const colorIndex = 0;
-
+bannerEvent.colors.sort((a: any, b: any) => a.l - b.l);
 const vars = {
   "--primaryColor":
     bannerEvent.colors != null
-      ? //`oklch(20% 0.2 ${bannerEvent.colors[colorIndex].h})`
-        bannerEvent.colors.sort((a, b) => a.l - b.l)[colorIndex].css
+      ? bannerEvent.colors[colorIndex].css
       : "oklch(20% 0 0)",
   "--secondaryColor":
     bannerEvent.colors != null
       ? `oklch( 60% 0.0666 ${bannerEvent.colors[colorIndex + 1].h} )`
-      : //bannerEvent.colors.sort((b, a) => a.l - b.l)[colorIndex + 1].css
-        "oklch(60% 0 0)",
+      : "oklch(60% 0 0)",
   "--cardAccent":
     bannerEvent.rarity == 5
       ? "var(--color-accent-gold-150)"
@@ -116,7 +114,7 @@ const { base, charBg, outline, name, banner, frost, holo } = card({
 <!-- CARD -->
 <div
   class:list={[
-    "@container-[size] size-full aspect-10/3 relative min-h-16 min-w-16",
+    "@container-[size] w-full aspect-10/3 relative min-h-16 min-w-16",
     className,
   ]}
   style={vars}
