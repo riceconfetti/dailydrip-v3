@@ -20,12 +20,12 @@ interface Variants {
 const vars = {
   "--primaryColor":
     character.colors != null
-      ? `oklch(from ${character.colors[colorIndex].hex} 20% 0.0666 h)`
-      : "oklch(from #101010 l c h)",
+      ? `oklch(20% ${character.colors[colorIndex].c} ${character.colors[colorIndex].h})`
+      : "oklch(20% 0 0)",
   "--secondaryColor":
     character.colors != null
-      ? `oklch(from ${character.colors[colorIndex].hex} 60% 0.0666 h/15%)`
-      : "oklch(from #101010 l c h /15%)",
+      ? `oklch( ${character.colors[colorIndex].c} ${character.colors[colorIndex].h} /15%)`
+      : "oklch(60% 0 0 /15%)",
   "--cardAccent":
     character.rarity == 5
       ? "var(--color-accent-gold-150)"
