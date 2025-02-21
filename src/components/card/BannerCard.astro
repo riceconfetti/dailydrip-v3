@@ -17,7 +17,9 @@ const vars = {
   "--primaryColor":
     bannerEvent.colors != null
       ? //`oklch(20% 0.2 ${bannerEvent.colors[colorIndex].h})`
-        bannerEvent.colors.sort((a, b) => a.l - b.l)[colorIndex].css
+        bannerEvent.colors.sort(
+          (a: { l: number }, b: { l: number }) => a.l - b.l,
+        )[colorIndex].css
       : "oklch(20% 0 0)",
   "--secondaryColor":
     bannerEvent.colors != null
@@ -116,7 +118,7 @@ const { base, charBg, outline, name, banner, frost, holo } = card({
 <!-- CARD -->
 <div
   class:list={[
-    "@container-[size] size-full aspect-10/3 relative min-h-16 min-w-16",
+    "@container-[size] w-full aspect-10/3 relative min-h-16 min-w-16",
     className,
   ]}
   style={vars}
