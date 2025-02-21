@@ -60,7 +60,7 @@
 </script>
 
 <Calendar.Root
-  class="font-body w-full flex flex-col p-4 text-center md:grid aspect-square grid-rows-[fit-content(--spacing(32))]"
+  class="font-body max-lg:aspect-square w-full flex flex-col p-4 text-center md:grid  grid-rows-[fit-content(--spacing(32))]"
   fixedWeeks={true}
   {isDateUnavailable}
   weekdayFormat="short"
@@ -143,7 +143,7 @@
                         style:--text-genshin="var(--color-text-light)"
                         style:--text-wuwa="var(--color-text-dark)"
                         style:--text-zzz="var(--color-text-light)"
-                        class="group-data-[event=true]:bg-(--accentColor) group-data-[event=true]:text-(--textColor) px-1 md:h-[17cqh] aspect-square flex items-center justify-center rounded-xs"
+                        class="group-data-[event=true]:bg-(--accentColor) group-data-[event=true]:text-(--textColor) px-1 flex items-center justify-center rounded-xs"
                       >
                         <p>{date.day}</p>
                       </div>
@@ -160,7 +160,7 @@
                           : ""}
                       </p>
                       <ul
-                        class=" w-full font-subheading italic text-[.68rem] list-disc list-inside text-balance"
+                        class="hidden xl:inline-block w-full font-subheading italic text-[.68rem] list-disc list-inside text-balance"
                       >
                         {#each event.featured_characters as character}
                           <li>{character.name}</li>

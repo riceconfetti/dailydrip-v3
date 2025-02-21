@@ -1,5 +1,4 @@
 <script>
-  import { onMount } from "svelte";
   import { tv } from "tailwind-variants";
   const sizes = [
     "9xs",
@@ -69,7 +68,7 @@
   export let height = "xl";
 </script>
 
-<div class="size-full flex flex-col gap-6 justify-start items-center p-6">
+<div class="size-full flex flex-col gap-6 justify-start items-center">
   <div class="flex gap-7">
     <label for="width">Width:</label>
     <select id="width" bind:value={width}>
@@ -84,7 +83,7 @@
       {/each}
     </select>
   </div>
-  <div class="grid grid-rows-2 grid-cols-2 gap-3">
+  <div class="w-full flex flex-wrap justify-center gap-4">
     <div class={preview({ width: width, height: height })}>
       <slot name="base" />
     </div>
