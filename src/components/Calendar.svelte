@@ -52,10 +52,12 @@
     bg_genshin: "--bg-genshin",
     bg_wuwa: "--bg-wuwa",
     bg_zzz: "--bg-zzz",
+    bg_default: "transparent",
     text_starrail: "--text-starrail",
     text_genshin: "--text-genshin",
     text_wuwa: "--text-wuwa",
     text_zzz: "--text-zzz",
+    text_default: "transparent",
   };
 </script>
 
