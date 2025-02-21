@@ -11,6 +11,7 @@ import BannerCard from "$components/card/BannerCard.astro";
 import Editor from "$components/Editor.svelte";
 
 export const prerender = false;
+if (PUBLIC_DEPLOY_MODE == "static") return Astro.rewrite("/404");
 const { gameId, charId } = Astro.params;
 
 let character: any = await directus.request(readItem("characters", charId!));
@@ -25,8 +26,6 @@ let both = structuredClone(character);
 Object.assign(debut, { debut: true });
 Object.assign(spec, { spec: true });
 Object.assign(both, { debut: true, spec: true });
-
-if (PUBLIC_DEPLOY_MODE == "static") return Astro.rewrite("/404");
 
 const title = "Daily Drip | " + game.name + " | " + character.name;
 
@@ -117,7 +116,7 @@ Object.assign(bannerEvent, character, rest);
           }
         </div>
       </div>
-      <!-- <BannerCard {bannerEvent} server:defer /> -->
+      <BannerCard {bannerEvent} server:defer />
     </div>
     <Editor client:load {width} {height}>
       <CharacterCard {character} slot="base" />
