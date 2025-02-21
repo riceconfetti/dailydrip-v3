@@ -20,7 +20,7 @@ export default defineConfig({
       }),
     },
   },
-  output: PUBLIC_DEPLOY_MODE,
+  output: "static",
   adapter: node({
     mode: "standalone",
   }),

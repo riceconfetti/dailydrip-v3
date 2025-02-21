@@ -5,6 +5,7 @@ import { PUBLIC_DEPLOY_MODE } from "astro:env/client";
 let game = {};
 
 const isPreview = PUBLIC_DEPLOY_MODE == "server";
+export const prerender = PUBLIC_DEPLOY_MODE == "static";
 
 export async function getStaticPaths() {
   const games = await directus.request(readItems("games", { fields: ["id"] }));
