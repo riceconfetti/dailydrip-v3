@@ -3,20 +3,15 @@ import directus from "$services/directus";
 import { readItem } from "@directus/sdk";
 import { PUBLIC_DEPLOY_MODE } from "astro:env/client";
 import ProxyService from "$services/imgproxy";
-import chroma from "chroma-js";
 
 import Layout from "$layouts/Layout.astro";
 import CharacterCard from "$components/card/CharacterCard.astro";
-import BannerCard from "$components/card/BannerCard.astro";
 import Editor from "$components/Editor.svelte";
 
 export const prerender = false;
-if (PUBLIC_DEPLOY_MODE == "static") return Astro.rewrite("/404");
 const { gameId, charId } = Astro.params;
 
-let character: any = await directus.request(readItem("characters", charId!));
-if (character.game != gameId) return Astro.rewrite("/404");
-
+let character = await directus.request(readItem("characters", charId!));
 let game = await directus.request(readItem("games", gameId!));
 
 let debut = structuredClone(character);
@@ -27,7 +22,9 @@ Object.assign(debut, { debut: true });
 Object.assign(spec, { spec: true });
 Object.assign(both, { debut: true, spec: true });
 
-const title = "The Daily Drip | " + game.name + " | " + character.name;
+if (PUBLIC_DEPLOY_MODE == "static") return Astro.rewrite("/404");
+
+const title = "Daily Drip | " + game.name + " | " + character.name;
 
 let imgPath = `/characters/${character.game}/${character.id}.webp`;
 const transforms = [
@@ -40,7 +37,7 @@ const transforms = [
     key: "crop",
     params: [125 * character.crop.x, 125 * character.crop.y],
   },
-  { key: "resize", params: ["fill", 300, 300] },
+  { key: "resize", params: ["fill", 100, 100] },
 ];
 
 const sizes = [
@@ -67,62 +64,22 @@ const width = Astro.url.searchParams.get("width") || "sm";
 const height = Astro.url.searchParams.get("height") || "2xl";
 
 const iconPath = ProxyService.getImage(imgPath, transforms);
-
-const { events, ...rest } = character;
-let event: any = {
-  startDate: "2020-01-01",
-  endDate: "2020-02-01",
-  phase: 1,
-};
-
-let phase = await directus.request(readItem("phases", event.phase));
-let bannerEvent = { phase };
-Object.assign(bannerEvent, character, rest);
 ---
 
 <Layout {title}>
-  <div class="grid grid-rows-[auto_1fr] gap-3 justify-items-center">
-    <div class="flex flex-col gap-3 p-2">
-      <h1 class="text-5xl font-heading font-bold w-full text-left">
-        {character.name}
-      </h1>
-      <div class="flex gap-3 w-full justify-start">
-        <div
-          class="relative size-25 aspect-square rounded-full overflow-clip border-2 border-accent-gold-500"
-        >
-          <div class="w-full absolute h-1/2 border-b border-black"></div>
-          <div class="h-full absolute w-1/2 border-r border-black"></div>
-          <img src={iconPath} class="size-full" />
-        </div>
-        <div class="flex gap-2">
-          {
-            character.colors
-              .sort((a: any, b: any) => a.c - b.c)
-              .map((c: any) => (
-                <div
-                  class="w-25 p-2 aspect-square bg-(--currColor) font-subheading text-xs font-bold text-(--textColor)"
-                  style={{
-                    "--currColor": c.css,
-                    "--textColor":
-                      chroma.contrast(c.css, "#000") > 7 ? "#000" : "#fff",
-                  }}
-                >
-                  <p>L: {c.l}</p>
-                  <p>C: {c.c}</p>
-                  <p>H: {c.h}</p>
-                  <p>A: {c.area}</p>
-                </div>
-              ))
-          }
-        </div>
-      </div>
-      <BannerCard {bannerEvent} server:defer />
-    </div>
+  <div class="grid grid-rows-[1fr_auto] gap-2 justify-items-center">
     <Editor client:load {width} {height}>
       <CharacterCard {character} slot="base" />
       <CharacterCard character={debut} slot="debut" />
       <CharacterCard character={spec} slot="spec" />
       <CharacterCard character={both} slot="both" />
     </Editor>
+    <div
+      class="relative size-40 aspect-square rounded-full overflow-clip border-2 border-accent-gold-500"
+    >
+      <div class="w-full absolute h-1/2 border-b border-black"></div>
+      <div class="h-full absolute w-1/2 border-r border-black"></div>
+      <img src={iconPath} class="size-full" />
+    </div>
   </div>
 </Layout>

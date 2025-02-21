@@ -37,11 +37,15 @@ export type Character = {
     y: number;
   };
   colors: {
+    hex: string;
+    red: number;
+    green: number;
+    blue: number;
+    hue: number;
+    intensity: number;
+    lightness: number;
+    saturation: number;
     area: number;
-    l: number;
-    c: number;
-    h: number;
-    css: string;
   }[];
   card_edits: {
     variant: "portrait" | "landscape" | "icon" | "banner";

@@ -16,15 +16,15 @@ const variants = ["portrait", "landscape", "icon"];
 interface Variants {
   [key: string]: any;
 }
-character.colors.sort((a: any, b: any) => a.c - b.c);
+
 const vars = {
   "--primaryColor":
     character.colors != null
-      ? `oklch(30% ${character.colors[colorIndex].c} ${character.colors[colorIndex].h})`
-      : "oklch(30% 0 0)",
+      ? `oklch(20% ${character.colors[colorIndex].c} ${character.colors[colorIndex].h})`
+      : "oklch(20% 0 0)",
   "--secondaryColor":
     character.colors != null
-      ? `oklch(60% ${character.colors.toReversed()[colorIndex].c} ${character.colors.toReversed()[colorIndex].h} /15%)`
+      ? `oklch(60% ${character.colors[colorIndex].c} ${character.colors[colorIndex].h} /15%)`
       : "oklch(60% 0 0 /15%)",
   "--cardAccent":
     character.rarity == 5
@@ -189,19 +189,19 @@ variants.forEach((v) => {
 
 const card = tv({
   slots: {
-    base: "size-full bg-cover bg-center bg-no-repeat @icon:bg-[image:var(--bg-icon)] @landscape:bg-[image:var(--bg-landscape)] @portrait:bg-[image:var(--bg-portrait)] @square:bg-[image:var(--bg-portrait)]",
+    base: "size-full bg-linear-0 from-(--primaryColor) via-(--secondaryColor) bg-cover bg-center bg-no-repeat @icon:bg-[image:var(--bg-icon)] @landscape:bg-[image:var(--bg-landscape)] @portrait:bg-[image:var(--bg-portrait)] @square:bg-[image:var(--bg-portrait)]",
     charBg:
       "absolute inset-0 bg-cover bg-top bg-no-repeat @icon:bg-[image:var(--char-icon)] @landscape:bg-[image:var(--char-landscape)] @portrait:bg-[image:var(--char-portrait)] @square:bg-[image:var(--char-landscape)]",
 
     overlay:
-      "absolute inset-0 bg-linear-0/oklch from-(--primaryColor) via-(--secondaryColor)",
+      "absolute inset-0 bg-linear-0 from-(--primaryColor) via-(--secondaryColor)",
     outline:
       "absolute inset-[0.15rem] z-10 flex flex-col justify-end rounded-sm border-1 border-(--cardAccent) p-1 text-center text-(--cardAccent) inset-shadow-card @5xs:inset-1 @5xs:border-2 @3xs:@min-h-5xs:p-4 @xl:@min-h-lg:p-8",
     name: "font-heading text-xs font-bold text-balance shadow-black drop-shadow-md @6xs:text-sm @5xs:@min-h-5xs:text-xl @sm:@min-h-xs:text-2xl @xl:@min-h-lg:text-3xl",
     banner:
       "font-subheading text-[0.5rem] text-balance italic shadow-black drop-shadow-md @3xs:text-xs @5xs:@min-h-5xs:text-sm @xs:@min-h-2xs:text-base @sm:@min-h-xs:text-lg @xl:@min-h-lg:text-xl",
     frost:
-      "z-10 hidden size-full bg-cover mix-blend-screen @icon:bg-[image:var(--frost-icon)] @landscape:bg-[image:var(--frost-landscape)] @portrait:bg-[image:var(--frost-portrait)] @square:bg-[image:var(--frost-icon)]",
+      "z-10 hidden size-full bg-cover mix-blend-screen @icon:bg-[image:var(-frost-icon)] @landscape:bg-[image:var(--frost-landscape)] @portrait:bg-[image:var(--frost-portrait)] @square:bg-[image:var(--frost-icon)]",
     holo: "absolute inset-0 z-10 hidden size-full bg-cover mix-blend-screen @icon:bg-[image:var(--holo-icon)] @landscape:bg-[image:var(--holo-landscape)] @portrait:bg-[image:var(--holo-portrait)] @square:bg-[image:var(--holo-icon)]",
   },
   variants: {
