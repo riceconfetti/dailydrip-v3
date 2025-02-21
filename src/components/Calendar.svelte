@@ -60,7 +60,7 @@
 </script>
 
 <Calendar.Root
-  class="font-body w-full flex flex-col p-4 text-center md:grid max-lg:aspect-square grid-rows-[fit-content(--spacing(32))]"
+  class="font-body w-full flex flex-col p-4 text-center md:grid aspect-square grid-rows-[fit-content(--spacing(32))]"
   fixedWeeks={true}
   {isDateUnavailable}
   weekdayFormat="short"

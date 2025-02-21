@@ -6,6 +6,7 @@ import ProxyService from "$services/imgproxy";
 
 import Layout from "$layouts/Layout.astro";
 import CharacterCard from "$components/card/CharacterCard.astro";
+import BannerCard from "$components/card/BannerCard.astro";
 import Editor from "$components/Editor.svelte";
 
 export const prerender = false;
@@ -24,7 +25,7 @@ Object.assign(both, { debut: true, spec: true });
 
 if (PUBLIC_DEPLOY_MODE == "static") return Astro.rewrite("/404");
 
-const title = "Daily Drip | " + game.name + " | " + character.name;
+const title = "The Daily Drip | " + game.name + " | " + character.name;
 
 let imgPath = `/characters/${character.game}/${character.id}.webp`;
 const transforms = [
@@ -37,7 +38,7 @@ const transforms = [
     key: "crop",
     params: [125 * character.crop.x, 125 * character.crop.y],
   },
-  { key: "resize", params: ["fill", 100, 100] },
+  { key: "resize", params: ["fill", 300, 300] },
 ];
 
 const sizes = [
@@ -64,6 +65,16 @@ const width = Astro.url.searchParams.get("width") || "sm";
 const height = Astro.url.searchParams.get("height") || "2xl";
 
 const iconPath = ProxyService.getImage(imgPath, transforms);
+
+const { events, ...rest } = character;
+let event: any = {
+  startDate: "2020-01-01",
+  endDate: "2020-02-01",
+  phase: 1,
+};
+let phase = await directus.request(readItem("phases", event.phase));
+let bannerEvent = { phase };
+Object.assign(bannerEvent, character, rest);
 ---
 
 <Layout {title}>
@@ -102,6 +113,7 @@ const iconPath = ProxyService.getImage(imgPath, transforms);
             }
           </div>
         </div>
+        <BannerCard {bannerEvent} server:defer />
       </div>
       <Editor client:load {width} {height}>
         <CharacterCard {character} slot="base" />
