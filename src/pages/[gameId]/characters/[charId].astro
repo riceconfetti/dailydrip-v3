@@ -94,22 +94,20 @@ Object.assign(bannerEvent, character, rest);
           </div>
           <div class="flex gap-2">
             {
-              character.colors
-                .sort((a: any, b: any) => a.c - b.c)
-                .map((c: any) => (
-                  <div
-                    class="w-25 p-2 aspect-square bg-(--currColor) font-subheading text-xs font-bold text-(--textColor)"
-                    style={{
-                      "--currColor": c.css,
-                      "--textColor": c.l > 0.5 ? "#000" : "#fff",
-                    }}
-                  >
-                    <p>L: {c.l}</p>
-                    <p>C: {c.c}</p>
-                    <p>H: {c.h}</p>
-                    <p>A: {c.area}</p>
-                  </div>
-                ))
+              character.colors.map((c: any) => (
+                <div
+                  class="w-25 p-2 aspect-square bg-(--currColor) font-subheading text-xs font-bold text-(--textColor)"
+                  style={{
+                    "--currColor": c.css,
+                    "--textColor": c.l > 0.5 ? "#000" : "#fff",
+                  }}
+                >
+                  <p>L: {c.l}</p>
+                  <p>C: {c.c}</p>
+                  <p>H: {c.h}</p>
+                  <p>A: {c.area}</p>
+                </div>
+              ))
             }
           </div>
         </div>
