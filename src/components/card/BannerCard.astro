@@ -16,16 +16,14 @@ const colorIndex = 0;
 const vars = {
   "--primaryColor":
     bannerEvent.colors != null
-      ? //`oklch(20% 0.2 ${bannerEvent.colors[colorIndex].h})`
-        bannerEvent.colors.sort(
+      ? bannerEvent.colors.sort(
           (a: { l: number }, b: { l: number }) => a.l - b.l,
         )[colorIndex].css
       : "oklch(20% 0 0)",
   "--secondaryColor":
     bannerEvent.colors != null
-      ? `oklch( 60% 0.0666 ${bannerEvent.colors[colorIndex + 1].h} )`
-      : //bannerEvent.colors.sort((b, a) => a.l - b.l)[colorIndex + 1].css
-        "oklch(60% 0 0)",
+      ? bannerEvent.colors[bannerEvent.colors.length - 1].css
+      : "oklch(60% 0 0)",
   "--cardAccent":
     bannerEvent.rarity == 5
       ? "var(--color-accent-gold-150)"
