@@ -12,7 +12,7 @@ import Border from "./deco-border/Border.astro";
 import BannerTime from "./BannerTime.svelte";
 
 const colorIndex = 0;
-bannerEvent.colors.sort((a: any, b: any) => a.l - b.l);
+bannerEvent.colors.sort((a: any, b: any) => a.c - b.c);
 const vars = {
   "--primaryColor":
     bannerEvent.colors != null
@@ -20,7 +20,7 @@ const vars = {
       : "oklch(20% 0 0)",
   "--secondaryColor":
     bannerEvent.colors != null
-      ? `oklch( 60% 0.0666 ${bannerEvent.colors[colorIndex + 1].h} )`
+      ? bannerEvent.colors.toReversed()[colorIndex].css
       : "oklch(60% 0 0)",
   "--cardAccent":
     bannerEvent.rarity == 5
