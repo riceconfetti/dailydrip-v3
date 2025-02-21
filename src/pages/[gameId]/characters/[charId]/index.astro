@@ -7,12 +7,15 @@ import chroma from "chroma-js";
 
 import Layout from "$layouts/Layout.astro";
 import CharacterCard from "$components/card/CharacterCard.astro";
+import BannerCard from "$components/card/BannerCard.astro";
 import Editor from "$components/Editor.svelte";
 
 export const prerender = false;
 const { gameId, charId } = Astro.params;
 
-let character = await directus.request(readItem("characters", charId!));
+let character: any = await directus.request(readItem("characters", charId!));
+if (character.game != gameId) return Astro.rewrite("/404");
+
 let game = await directus.request(readItem("games", gameId!));
 
 let debut = structuredClone(character);
@@ -65,42 +68,56 @@ const width = Astro.url.searchParams.get("width") || "sm";
 const height = Astro.url.searchParams.get("height") || "2xl";
 
 const iconPath = ProxyService.getImage(imgPath, transforms);
+
+const { events, ...rest } = character;
+let event: any = {
+  startDate: "2020-01-01",
+  endDate: "2020-02-01",
+  phase: 1,
+};
+
+let phase = await directus.request(readItem("phases", event.phase));
+let bannerEvent = { phase };
+Object.assign(bannerEvent, character, rest);
 ---
 
 <Layout {title}>
-  <div class="grid grid-rows-[1fr_auto] gap-2 justify-items-center">
-    <h1 class="text-5xl font-heading font-bold w-full text-left p-3">
-      {character.name}
-    </h1>
-    <div class="flex gap-3 w-full justify-start p-3">
-      <div
-        class="relative size-25 aspect-square rounded-full overflow-clip border-2 border-accent-gold-500"
-      >
-        <div class="w-full absolute h-1/2 border-b border-black"></div>
-        <div class="h-full absolute w-1/2 border-r border-black"></div>
-        <img src={iconPath} class="size-full" />
+  <div class="grid grid-rows-[auto_1fr] gap-3 justify-items-center">
+    <div class="flex flex-col gap-3 p-2">
+      <h1 class="text-5xl font-heading font-bold w-full text-left">
+        {character.name}
+      </h1>
+      <div class="flex gap-3 w-full justify-start">
+        <div
+          class="relative size-25 aspect-square rounded-full overflow-clip border-2 border-accent-gold-500"
+        >
+          <div class="w-full absolute h-1/2 border-b border-black"></div>
+          <div class="h-full absolute w-1/2 border-r border-black"></div>
+          <img src={iconPath} class="size-full" />
+        </div>
+        <div class="flex gap-2">
+          {
+            character.colors
+              .sort((a: any, b: any) => a.c - b.c)
+              .map((c: any) => (
+                <div
+                  class="w-25 p-2 aspect-square bg-(--currColor) font-subheading text-xs font-bold text-(--textColor)"
+                  style={{
+                    "--currColor": c.css,
+                    "--textColor":
+                      chroma.contrast(c.css, "#000") > 7 ? "#000" : "#fff",
+                  }}
+                >
+                  <p>L: {c.l}</p>
+                  <p>C: {c.c}</p>
+                  <p>H: {c.h}</p>
+                  <p>A: {c.area}</p>
+                </div>
+              ))
+          }
+        </div>
       </div>
-      <div class="flex gap-2">
-        {
-          character.colors
-            .sort((a: any, b: any) => a.c - b.c)
-            .map((c) => (
-              <div
-                class="w-25 p-2 aspect-square bg-(--currColor) font-subheading text-xs font-bold text-(--textColor)"
-                style={{
-                  "--currColor": c.css,
-                  "--textColor":
-                    chroma.contrast(c.css, "#000") > 7 ? "#000" : "#fff",
-                }}
-              >
-                <p>L: {c.l}</p>
-                <p>C: {c.c}</p>
-                <p>H: {c.h}</p>
-                <p>A: {c.area}</p>
-              </div>
-            ))
-        }
-      </div>
+      <BannerCard {bannerEvent} />
     </div>
     <Editor client:load {width} {height}>
       <CharacterCard {character} slot="base" />
