@@ -16,7 +16,7 @@ const colorIndex = 0;
 const vars = {
   "--primaryColor":
     bannerEvent.colors != null
-      ? bannerEvent.colors.sort(
+      ? bannerEvent.colors.toSorted(
           (a: { l: number }, b: { l: number }) => a.l - b.l,
         )[colorIndex].css
       : "oklch(20% 0 0)",
