@@ -66,7 +66,7 @@ events.sort(
       class="flex flex-col xl:grid xl:grid-cols-2 gap-8 h-full min-h-0 w-full xl:overflow-hidden"
     >
       <Calendar client:load {events} />
-      <HomeEvents />
+      <HomeEvents server:defer />
     </div>
   </section>
 </Layout>
