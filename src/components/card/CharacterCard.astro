@@ -57,11 +57,11 @@ Object.assign(vars, {
 let options: any = {
   portrait: {
     bannerCrop: { x: 800, y: 0 },
-    index: { x: 0, y: 0.12 },
+    index: { x: 0, y: 0.08 },
   },
   landscape: {
-    bannerCrop: { x: 0, y: 0.4 },
-    index: { x: 0, y: 0.06 },
+    bannerCrop: { x: 0, y: 800 },
+    index: { x: 0, y: 0.04 },
   },
 };
 
@@ -191,7 +191,7 @@ const card = tv({
   slots: {
     base: "size-full bg-linear-0 from-(--primaryColor) via-(--secondaryColor) bg-cover bg-center bg-no-repeat @icon:bg-[image:var(--bg-icon)] @landscape:bg-[image:var(--bg-landscape)] @portrait:bg-[image:var(--bg-portrait)] @square:bg-[image:var(--bg-portrait)]",
     charBg:
-      "absolute inset-0 bg-cover bg-top bg-no-repeat @icon:bg-[image:var(--char-icon)] @landscape:bg-[image:var(--char-landscape)] @portrait:bg-[image:var(--char-portrait)] @square:bg-[image:var(--char-landscape)]",
+      "absolute inset-0 bg-cover bg-center bg-no-repeat @icon:bg-(image:--char-icon) @landscape:bg-(image:--char-landscape) @portrait:bg-(image:--char-portrait) @square:bg-(image:--char-landscape)",
 
     overlay:
       "absolute inset-0 bg-linear-0 from-(--primaryColor) via-(--secondaryColor)",
