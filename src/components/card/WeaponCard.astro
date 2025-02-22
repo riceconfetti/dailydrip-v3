@@ -22,7 +22,7 @@ const weaponCard = tv({
   slots: {
     base: "@container-[size] relative size-full min-h-16 min-w-16 overflow-clip before:absolute before:-inset-1 before:bg-black before:bg-[image:var(--overlay),var(--bgFull)] before:bg-cover before:bg-center before:blur-xs before:content-['']",
     outline: "absolute inset-1 z-10 rounded-xs border-2",
-    box: "absolute inset-0 flex size-full items-center justify-center p-2 @7xs:justify-between @squarish:justify-center @landscape-aspect:flex-row-reverse @landscape-aspect:bg-linear-90 @portrait-aspect:flex-col @portrait-aspect:bg-linear-0",
+    box: "absolute inset-0 flex size-full items-center justify-center p-2 @7xs:justify-between @squarish:justify-center @squarish:bg-linear-130 @landscape-aspect:flex-row-reverse @landscape-aspect:bg-linear-90 @portrait-aspect:flex-col @portrait-aspect:bg-linear-0",
     image: "aspect-square h-full object-contain p-1",
     name: "p-2 text-center font-heading text-[0.5rem] font-semibold @max-7xs:hidden @3xs:text-sm @xs:text-base @sm:text-lg @squarish:hidden @portrait-3xs:text-sm @portrait-xs:text-base @portrait-sm:text-lg",
   },
@@ -30,13 +30,13 @@ const weaponCard = tv({
     rarity: {
       5: {
         base: "bg-accent-gold-800/30",
-        box: "from-accent-gold-800 via-transparent",
+        box: "from-accent-gold-600",
         outline: "border-accent-gold-300",
         name: "text-accent-gold-200",
       },
       4: {
         base: "bg-accent-purple-800/30",
-        box: "from-accent-purple-800 via-transparent",
+        box: "from-accent-purple-600",
         outline: "border-accent-purple-300",
         name: "text-accent-purple-200",
       },

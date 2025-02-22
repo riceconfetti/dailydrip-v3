@@ -56,7 +56,7 @@ Object.assign(vars, {
 
 let options: any = {
   portrait: {
-    bannerCrop: { x: 0.3, y: 0 },
+    bannerCrop: { x: 800, y: 0 },
     index: { x: 0, y: 0.12 },
   },
   landscape: {
@@ -96,7 +96,7 @@ const characterTransforms = {
         options.portrait.bannerCrop.y * character.crop.y,
       ],
     },
-    { key: "resize", params: ["fill", 740, 1200, 1, 1] },
+    { key: "resize", params: ["fill", 600, 1200, 0, 0] },
   ],
   landscape: [
     {

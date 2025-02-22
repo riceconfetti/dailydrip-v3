@@ -33,7 +33,7 @@ const vars = {
 const imgPath = `/characters/${bannerEvent.game}/${bannerEvent.id}.webp`;
 
 let options: any = {
-  bannerCrop: { x: 0.83, y: 0.4 },
+  bannerCrop: { x: 1600, y: 800 },
   height: 400,
 };
 
@@ -49,7 +49,7 @@ if (bannerEvent.card_edits != null) {
 const characterTransforms = [
   {
     key: "gravity",
-    params: ["fp", 0, bannerEvent.focalPoint.y],
+    params: ["fp", 0, bannerEvent.focalPoint.y + 0.075],
   },
   {
     key: "crop",
