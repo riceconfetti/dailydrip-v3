@@ -54,6 +54,17 @@ Object.assign(vars, {
   "--placeholder": `url("${ProxyService.getImage(placeholder, [], "webp")}")`,
 });
 
+Object.assign(vars, {
+  "--attributeBg":
+    'url("' +
+    ProxyService.getImage(
+      backgroundPath,
+      [{ key: "crop", params: [0, 0] }],
+      "webp",
+    ) +
+    '")',
+});
+
 let options: any = {
   portrait: {
     bannerCrop: { x: 800, y: 0 },
@@ -128,27 +139,11 @@ const characterTransforms = {
     { key: "resize", params: ["fill", 740, 740] },
   ],
 };
-const backgroundTransforms = {
-  portrait: [],
-  landscape: [{ key: "rotate", params: [270] }],
-};
 
 const splash: Variants = variants.reduce((prev, curr) => {
   Object.assign(prev, {
     //@ts-ignore
     [curr]: ProxyService.getImage(imgPath, characterTransforms[curr], "webp"),
-  });
-  return prev;
-}, {});
-
-const background: Variants = variants.reduce((prev, curr) => {
-  Object.assign(prev, {
-    [curr]: ProxyService.getImage(
-      backgroundPath,
-      //@ts-ignore
-      backgroundTransforms[curr],
-      "webp",
-    ),
   });
   return prev;
 }, {});
@@ -181,7 +176,6 @@ variants.forEach((v) => {
   Object.assign(
     vars,
     { [`--char-${v}`]: `url("${splash[v]}")` },
-    { [`--bg-${v}`]: `url("${background[v]}")` },
     { [`--holo-${v}`]: `url("${Holo[v]}")` },
     { [`--frost-${v}`]: `url("${Frost[v]}")` },
   );
@@ -189,7 +183,7 @@ variants.forEach((v) => {
 
 const card = tv({
   slots: {
-    base: "size-full bg-linear-0 from-(--primaryColor) via-(--secondaryColor) bg-cover bg-center bg-no-repeat @icon:bg-[image:var(--bg-icon)] @landscape:bg-[image:var(--bg-landscape)] @portrait:bg-[image:var(--bg-portrait)] @square:bg-[image:var(--bg-portrait)]",
+    base: "size-full bg-linear-0 bg-(image:--attributeBg) from-(--primaryColor) via-(--secondaryColor) bg-cover bg-center bg-no-repeat",
     charBg:
       "absolute inset-0 bg-cover bg-center bg-no-repeat @icon:bg-(image:--char-icon) @landscape:bg-(image:--char-landscape) @portrait:bg-(image:--char-portrait) @square:bg-(image:--char-landscape)",
 
