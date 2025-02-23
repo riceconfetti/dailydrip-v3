@@ -12,6 +12,7 @@ import Border from "./deco-border/Border.astro";
 import Placeholder from "./Placeholder.svelte";
 
 const colorIndex = 0;
+const zoomOut = character.crop.x + character.crop.y > 2.5;
 const variants = ["portrait", "landscape", "icon"];
 interface Variants {
   [key: string]: any;
@@ -90,7 +91,7 @@ if (character.card_edits != null) {
   });
 }
 
-const characterTransforms = {
+const characterTransforms: Variants = {
   portrait: [
     {
       key: "gravity",
@@ -107,7 +108,11 @@ const characterTransforms = {
         options.portrait.bannerCrop.y * character.crop.y,
       ],
     },
-    { key: "resize", params: ["fill", 600, 1200, 0, 0] },
+    { key: "resize", params: ["fill", 600, 1200, 1, 1, "so"] },
+    {
+      key: "dpr",
+      params: [zoomOut ? 1 / ((character.crop.x + character.crop.y) / 2) : 1],
+    },
   ],
   landscape: [
     {
@@ -125,7 +130,6 @@ const characterTransforms = {
         options.landscape.bannerCrop.y * character.crop.y,
       ],
     },
-    { key: "resize", params: ["fill", 1200, 740, 1, 1] },
   ],
   icon: [
     {
@@ -142,8 +146,15 @@ const characterTransforms = {
 
 const splash: Variants = variants.reduce((prev, curr) => {
   Object.assign(prev, {
-    //@ts-ignore
-    [curr]: ProxyService.getImage(imgPath, characterTransforms[curr], "webp"),
+    [curr]:
+      zoomOut && curr == "portrait"
+        ? ProxyService.getImage(
+            ProxyService.getImage(imgPath, characterTransforms[curr], "webp"),
+            [{ key: "resize", params: ["fill", 400, 1100, 0, 1, "so"] }],
+            "webp",
+            false,
+          )
+        : ProxyService.getImage(imgPath, characterTransforms[curr], "webp"),
   });
   return prev;
 }, {});
@@ -152,7 +163,6 @@ const Holo: Variants = variants.reduce((prev, curr) => {
   Object.assign(prev, {
     [curr]: ProxyService.getImage(
       "/overlays/Holo_" + curr.at(0)?.toUpperCase() + curr.slice(1) + ".png",
-      //@ts-ignore
       [],
       "webp",
     ),

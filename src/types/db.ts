@@ -9,7 +9,8 @@ export type Game = {
       params: (string | number)[];
     }[];
   }[];
-  servers: Server[];
+  numOfRateUpCharacters: number;
+  numOfRateUpWeapons: number;
 };
 
 export type Attribute = {

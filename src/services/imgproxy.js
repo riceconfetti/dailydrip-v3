@@ -6,7 +6,7 @@ export default class ProxyService {
   static baseUrl = "s3://s3-daily-drip-015812eb-e529-49ee-b23a-d95053fe9ef9";
   static proxyUrl = "https://images.dailydrip.news";
 
-  static getImage(path, transforms, format) {
+  static getImage(path, transforms, format, s3 = true) {
     let processParams = "";
     if (transforms) {
       transforms.forEach((tf) => {
@@ -18,7 +18,9 @@ export default class ProxyService {
       });
     }
 
-    let target = processParams + "/" + btoa(this.baseUrl + path);
+    const targetPath = s3 ? this.baseUrl + path : path;
+
+    let target = processParams + "/" + btoa(targetPath);
     if (format != undefined) {
       target += "." + format;
     }

@@ -11,7 +11,18 @@ let characters = event.featured_characters;
 
 let fiveStars = characters.filter((c: any) => c.rarity == 5);
 let fourStars = characters.filter((c: any) => c.rarity == 4);
-let weapons = event.featured_weapons;
+let weaponsFiveStars = event.featured_weapons.filter((w: any) => w.rarity == 5);
+let weaponsFourStars = event.featured_weapons.filter((w: any) => w.rarity == 4);
+
+let game = await directus.request(readItem("games", event.game));
+while (weaponsFourStars.length < game.numOfRateUpWeapons) {
+  weaponsFourStars.push({
+    id: game.id,
+    game: game.id,
+    name: "??????",
+    rarity: 4,
+  });
+}
 
 const count: 1 | 2 | 3 =
   fiveStars.length == 1 ? 1 : fiveStars.length == 2 ? 2 : 3;
@@ -87,13 +98,11 @@ const { base, box, character, weapon } = phaseCard({ count: count, rarity: 5 });
       fiveStars.map((c: any) => (
         <div class={box({ rarity: 5 })}>
           <CharacterCard character={c} class={character()} />
-          {weapons.filter((w: any) => w.rarity == 5).length > 0 &&
-            weapons
-              .filter((w: any) => w.rarity == 5)
-              .map((w: any) => (
-                <WeaponCard weapon={w} class={weapon({ rarity: 5 })} />
-              ))}
-          {weapons.filter((w: any) => w.rarity == 5).length == 0 && (
+          {weaponsFiveStars.length > 0 &&
+            weaponsFiveStars.map((w: any) => (
+              <WeaponCard weapon={w} class={weapon({ rarity: 5 })} />
+            ))}
+          {weaponsFiveStars.length == 0 && (
             <WeaponCard weapon={c.signature} class={weapon({ rarity: 5 })} />
           )}
         </div>
@@ -112,10 +121,8 @@ const { base, box, character, weapon } = phaseCard({ count: count, rarity: 5 });
     </div>
     <div class={box({ rarity: 4 })}>
       {
-        weapons.map((w: any) => {
-          if (w.rarity == 4) {
-            return <WeaponCard weapon={w} class={weapon({ rarity: 4 })} />;
-          }
+        weaponsFourStars.map((w: any) => {
+          return <WeaponCard weapon={w} class={weapon({ rarity: 4 })} />;
         })
       }
     </div>
