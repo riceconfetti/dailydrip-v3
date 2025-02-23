@@ -2,6 +2,7 @@
 import directus from "$services/directus";
 import { readItems, readItem } from "@directus/sdk";
 import { PUBLIC_DEPLOY_MODE } from "astro:env/client";
+import GenericVersionCard from "$components/fallbacks/GenericVersionCard.astro";
 let game = {};
 
 const isPreview = PUBLIC_DEPLOY_MODE == "server";
@@ -17,7 +18,7 @@ export async function getStaticPaths() {
 if (isPreview && Astro.params.gameId) {
   game = await directus.request(readItem("games", Astro.params.gameId));
 } else {
-  const { game } = Astro.props;
+  game = Astro.props.game;
 }
 
 import Layout from "$layouts/Layout.astro";
@@ -59,6 +60,12 @@ const title = "The Daily Drip | " + game.name;
   <div
     class="p-0 sm:p-4 md:p-6 xl:p8 flex flex-col gap-4 items-center w-full overflow-auto"
   >
-    {versions.map((version) => <VerisonCard {version} server:defer />)}
+    {
+      versions.map((version) => (
+        <VerisonCard {version} server:defer>
+          <GenericVersionCard slot="fallback" />
+        </VerisonCard>
+      ))
+    }
   </div>
 </Layout>

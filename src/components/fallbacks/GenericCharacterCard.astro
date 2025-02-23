@@ -1,0 +1,26 @@
+---
+const { class: className } = Astro.props;
+
+import { tv } from "tailwind-variants";
+
+const card = tv({
+  slots: {
+    base: "size-full bg-slate-400 font-redacted",
+    overlay: "absolute inset-0",
+  },
+});
+
+const { base, overlay } = card({});
+---
+
+<!-- CARD -->
+<div
+  class:list={[
+    "@container-[size] size-full relative min-h-16 min-w-16",
+    className,
+  ]}
+>
+  <div class={base()}>
+    <div class={overlay()}></div>
+  </div>
+</div>
