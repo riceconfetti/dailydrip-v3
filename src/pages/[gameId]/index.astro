@@ -61,11 +61,15 @@ const title = "The Daily Drip | " + game.name;
     class="p-0 sm:p-4 md:p-6 xl:p8 flex flex-col gap-4 items-center w-full overflow-auto"
   >
     {
-      versions.map((version) => (
-        <VerisonCard {version} server:defer={isPreview}>
-          <GenericVersionCard slot="fallback" />
-        </VerisonCard>
-      ))
+      versions.map((version) =>
+        isPreview ? (
+          <VerisonCard {version} server:defer={isPreview}>
+            <GenericVersionCard slot="fallback" />
+          </VerisonCard>
+        ) : (
+          <VerisonCard {version}></VerisonCard>
+        ),
+      )
     }
   </div>
 </Layout>
