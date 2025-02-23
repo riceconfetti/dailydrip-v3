@@ -70,6 +70,7 @@ let options: any = {
   portrait: {
     bannerCrop: { x: 800, y: 0 },
     index: { x: 0, y: 0.08 },
+    dpr: 1 / ((character.crop.x + character.crop.y) / 2),
   },
   landscape: {
     bannerCrop: { x: 0, y: 800 },
@@ -111,7 +112,7 @@ const characterTransforms: Variants = {
     { key: "resize", params: ["fill", 600, 1200, 1, 1, "so"] },
     {
       key: "dpr",
-      params: [zoomOut ? 1 / ((character.crop.x + character.crop.y) / 2) : 1],
+      params: [zoomOut ? options.portrait.dpr : 1],
     },
   ],
   landscape: [
