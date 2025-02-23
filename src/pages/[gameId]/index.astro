@@ -62,7 +62,7 @@ const title = "The Daily Drip | " + game.name;
   >
     {
       versions.map((version) => (
-        <VerisonCard {version} server:defer>
+        <VerisonCard {version} server:defer={isPreview}>
           <GenericVersionCard slot="fallback" />
         </VerisonCard>
       ))
