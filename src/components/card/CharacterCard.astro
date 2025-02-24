@@ -73,6 +73,9 @@ let options: any = {
     bannerCrop: { x: 0, y: 800 },
     index: { x: 0, y: 0.04 },
   },
+  icon: {
+    index: { x: 0, y: 0.02 },
+  },
 };
 
 options.portrait.dpr = options.zoomOut
@@ -137,7 +140,11 @@ const characterTransforms: Variants = {
   icon: [
     {
       key: "gravity",
-      params: ["fp", character.focalPoint.x, character.focalPoint.y + 0.02],
+      params: [
+        "fp",
+        character.focalPoint.x + options.icon.index.x,
+        character.focalPoint.y + options.icon.index.y,
+      ],
     },
     {
       key: "crop",
