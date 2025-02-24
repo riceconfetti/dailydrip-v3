@@ -3,7 +3,7 @@ const { character, class: className } = Astro.props;
 
 import { tv } from "tailwind-variants";
 import directus from "$services/directus";
-import { readItem } from "@directus/sdk";
+import { readItem, withOptions } from "@directus/sdk";
 
 import { setValRecursive } from "src/scripts/setValRecursive";
 import ProxyService from "$services/imgproxy";
@@ -12,7 +12,6 @@ import Border from "./deco-border/Border.astro";
 import Placeholder from "./Placeholder.svelte";
 
 const colorIndex = 0;
-const zoomOut = character.crop.x + character.crop.y > 2.5;
 const variants = ["portrait", "landscape", "icon"];
 interface Variants {
   [key: string]: any;
@@ -47,9 +46,7 @@ const backgroundPath = game?.elementMain
 
 const imgPath = `/characters/${character.game}/${character.id}.webp`;
 const fullSplash = ProxyService.getImage(imgPath, [], "webp");
-const placeholder = game?.elementMain
-  ? `/placeholders/${game?.id}/${secondary?.name}.webp`
-  : `/placeholders/${game?.id}/${primary?.name}.webp`;
+const placeholder = `/placeholders/${game?.id}/${primary?.name}.webp`;
 
 Object.assign(vars, {
   "--placeholder": `url("${ProxyService.getImage(placeholder, [], "webp")}")`,
@@ -70,13 +67,17 @@ let options: any = {
   portrait: {
     bannerCrop: { x: 800, y: 0 },
     index: { x: 0, y: 0.08 },
-    dpr: 1 / ((character.crop.x + character.crop.y) / 2),
+    zoomOut: character.crop.x + character.crop.y > 2.5,
   },
   landscape: {
     bannerCrop: { x: 0, y: 800 },
     index: { x: 0, y: 0.04 },
   },
 };
+
+options.portrait.dpr = options.zoomOut
+  ? 1 / ((character.crop.x + character.crop.y) / 2)
+  : 1;
 
 if (character.card_edits != null) {
   const edits = character.card_edits;
@@ -112,7 +113,7 @@ const characterTransforms: Variants = {
     { key: "resize", params: ["fill", 600, 1200, 1, 1, "so"] },
     {
       key: "dpr",
-      params: [zoomOut ? options.portrait.dpr : 1],
+      params: [options.portrait.dpr],
     },
   ],
   landscape: [
@@ -148,7 +149,7 @@ const characterTransforms: Variants = {
 const splash: Variants = variants.reduce((prev, curr) => {
   Object.assign(prev, {
     [curr]:
-      zoomOut && curr == "portrait"
+      options.zoomOut && curr == "portrait"
         ? ProxyService.getImage(
             ProxyService.getImage(imgPath, characterTransforms[curr], "webp"),
             [{ key: "resize", params: ["fill", 400, 1100, 0, 1, "so"] }],
