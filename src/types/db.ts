@@ -72,6 +72,7 @@ export type GachaEvent = {
   endDate: string;
   featured_characters: Character[];
   featured_weapons: Weapon[];
+  status: "published" | "draft" | "archived";
 };
 
 export type Weapon = {
@@ -88,6 +89,7 @@ export type Version = {
   semVer: number;
   name: string;
   events: GachaEvent[];
+  status: "published" | "draft" | "archived";
 };
 
 export type Phase = {

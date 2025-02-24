@@ -16,6 +16,11 @@ let events = await directus.request(
       "version",
       "featured_characters",
     ],
+    filter: {
+      status: {
+        _eq: "published",
+      },
+    },
   }),
 );
 let phases = await directus.request(readItems("phases", { fields: ["*"] }));

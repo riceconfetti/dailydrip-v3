@@ -12,7 +12,9 @@ let events: any = await directus.request(
   readItems("events_characters", {
     fields: ["*"],
     limit: -1,
-    filter: { _or: [{ spec: { _eq: false } }, { spec: { _null: true } }] },
+    filter: {
+      _or: [{ spec: { _eq: false } }, { spec: { _null: true } }],
+    },
   }),
 );
 
@@ -35,7 +37,7 @@ events = await Promise.all(
     );
     let event: any = await directus.request(
       readItem("events", evenChar.events_id, {
-        fields: ["startDate", "endDate", "phase"],
+        fields: ["startDate", "endDate", "phase", "status"],
       }),
     );
     let { phase, ...rest } = event;
@@ -52,10 +54,14 @@ let currentEvents = events.filter(
   (event: any) =>
     dayjs(event.startDate).isBefore(dayjs()) &&
     dayjs(event.endDate).isAfter(dayjs()) &&
-    event.rarity == 5,
+    event.rarity == 5 &&
+    event.status == "published",
 );
 let upcomingEvents = events.filter(
-  (event: any) => dayjs(event.startDate).isAfter(dayjs()) && event.rarity == 5,
+  (event: any) =>
+    dayjs(event.startDate).isAfter(dayjs()) &&
+    event.rarity == 5 &&
+    event.status == "published",
 );
 
 // events.forEach((e: any) => {

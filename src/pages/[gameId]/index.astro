@@ -29,6 +29,11 @@ const filter = {
 
 if (!isPreview) {
   Object.assign(filter, {
+    status: {
+      _eq: "published",
+    },
+  });
+  Object.assign(filter, {
     events: {
       startDate: {
         _gte: "$NOW(-4 weeks)",
