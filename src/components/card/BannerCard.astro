@@ -58,10 +58,6 @@ const characterTransforms = [
       options.bannerCrop.y * bannerEvent.crop.y,
     ],
   },
-  {
-    key: "height",
-    params: [options.height],
-  },
 ];
 
 const splash = ProxyService.getImage(imgPath, characterTransforms, "webp");
