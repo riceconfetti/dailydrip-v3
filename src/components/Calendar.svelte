@@ -124,7 +124,7 @@
                       style:--text-genshin="var(--color-text-light)"
                       style:--text-wuwa="var(--color-text-dark)"
                       style:--text-zzz="var(--color-text-light)"
-                      class="absolute inset-0 flex flex-col items-center justify-center md:justify-start md:items-start size-full gap-2 lg:gap-1 p-1 md:p-2 lg:p-1"
+                      class="absolute inset-0 flex flex-col items-center justify-center md:justify-start md:items-start size-full gap-2 lg:gap-1 p-1 md:p-[0.325rem]"
                     >
                       <div
                         data-event={isDateUnavailable(date)}
@@ -137,7 +137,7 @@
                           : ""}
                         class="aspect-square md:w-[14cqw] lg:data-[event=true]:text-accent-gold-400 lg:data-[event=true]:font-bold lg:data-[event=true]:bg-inherit data-[event=true]:bg-(--accentColor) data-[event=true]:text-(--textColor) px-1 flex items-center justify-center rounded-xs"
                       >
-                        <p class="md:text-[10cqw] lg:text-[14cqw] leading-none">
+                        <p class="md:text-[10cqw] lg:text-[12cqw] leading-none">
                           {date.day}
                         </p>
                       </div>
