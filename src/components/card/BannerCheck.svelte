@@ -32,8 +32,8 @@
   );
 
   const display = $derived(
-    dayjs(startDate).isBefore(endDate) && dayjs(endDate).isAfter(dayjs())
-      ? "display"
+    dayjs(startDate).isBefore(dayjs()) && dayjs(endDate).isAfter(dayjs())
+      ? ""
       : "hidden",
   );
 </script>

@@ -110,9 +110,9 @@ const { base, charBg, outline, name, banner, frost, holo } = card({
 
 <!-- CARD -->
 <BannerCheck
+  client:load
   class={"@container-[size] w-full aspect-10/3 relative min-h-16 min-w-16 " +
     className}
-  client:load
   {bannerEvent}
 >
   <div class={base()} style={vars}>
