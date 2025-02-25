@@ -19,10 +19,10 @@
 
 <div
   id="settings"
-  class="absolute h-dvh w-dvw bg-dark/20 z-50 backdrop-blur-sm items-center justify-center hidden"
+  class="absolute h-dvh w-dvw bg-dark/20 z-50 backdrop-blur-sm items-center justify-center hidden p-4"
 >
   <div
-    class="bg-light rounded p-8 flex flex-col font-subheading font-semibold gap-4 w-3/5"
+    class="bg-light rounded p-4 flex flex-col font-subheading font-semibold gap-4 w-full sm:w-4/5 md:w-3/5"
   >
     <h2 class="font-heading font-bold-bold text-2xl">Settings</h2>
     <hr class="border-accent-gold-500" />

@@ -60,7 +60,7 @@
 </script>
 
 <Calendar.Root
-  class="font-body max-lg:aspect-square w-full flex flex-col p-4 text-center md:grid  grid-rows-[fit-content(--spacing(32))]"
+  class="font-body max-lg:aspect-square w-full flex flex-col px-2 text-center md:grid gap-1 grid-rows-[fit-content(--spacing(32))]"
   fixedWeeks={true}
   {isDateUnavailable}
   weekdayFormat="short"
@@ -85,15 +85,15 @@
 
     {#each months as month, i (i)}
       <Calendar.Grid
-        class="flex size-full border-collapse flex-col gap-4 text-left min-h-0"
+        class="flex size-full border-collapse flex-col gap-2 text-left min-h-0"
       >
         <Calendar.GridHead class="h-min block">
           <Calendar.GridRow
-            class="playfair-display-sc-bold grid grid-cols-7 justify-items-center text-dark text-opacity-50"
+            class="playfair-display-sc-bold grid grid-cols-7 justify-items-center text-dark/50"
           >
             {#each weekdays as day}
               <Calendar.HeadCell class="align-center text-xs">
-                <div>{day.slice(0, 3)}</div>
+                <div>{day.slice(0, 1)}</div>
               </Calendar.HeadCell>
             {/each}
           </Calendar.GridRow>
@@ -109,67 +109,68 @@
                 <Calendar.Cell
                   {date}
                   month={month.value}
-                  class="relative min-h-0 aspect-square h-full w-full border-dark/20 p-2 data-[disabled]:text-dark/40"
+                  class="relative min-h-0 aspect-square h-full w-full border-dark/20 data-[disabled]:text-dark/40"
                 >
                   {@const event = isDateUnavailable(date)
-                    ? events.find((e) => {
+                    ? events.filter((e) => {
                         let zoned = parseAbsoluteToLocal(e.iso);
                         return toCalendarDate(zoned).compare(date) === 0;
                       })
                     : false}
-                  <Calendar.Day
-                    class="absolute inset-0 flex flex-col  items-center justify-center md:justify-start md:items-start  @container-[size] size-full gap-1 p-2"
-                  >
+                  <Calendar.Day class="absolute inset-0 @container-[size]">
+                    <!-- EVENT DAY COLOR BADGE -->
                     <div
-                      class="flex items-center group"
-                      data-event={isDateUnavailable(date)}
+                      style:--bg-starrail="oklch(50.3% 0.1828 262.59)"
+                      style:--bg-genshin="oklch(79.08% 0.0829 0)"
+                      style:--bg-wuwa="oklch(19.14% 0.0247 266.53)"
+                      style:--bg-zzz="oklch(56% 0.1431 43.41)"
+                      style:--text-starrail="var(--color-text-dark)"
+                      style:--text-genshin="var(--color-text-light)"
+                      style:--text-wuwa="var(--color-text-dark)"
+                      style:--text-zzz="var(--color-text-light)"
+                      class="absolute inset-0 flex flex-col items-center justify-center md:justify-start md:items-start size-full gap-1 p-1 md:p-2"
                     >
                       <div
-                        style:--accentColor={isDateUnavailable(date)
-                          ? "var(" +
-                            gameColors[
-                              "bg_" + (event ? event.game.id : "default")
-                            ] +
+                        data-event={isDateUnavailable(date)}
+                        style={isDateUnavailable(date)
+                          ? "--accentColor: var(" +
+                            gameColors["bg_" + event[0].game.id] +
+                            "); --textColor: var(" +
+                            gameColors["text_" + event[0].game.id] +
                             ")"
-                          : "transparent"}
-                        style:--textColor={isDateUnavailable(date)
-                          ? "var(" +
-                            gameColors[
-                              "text_" + (event ? event.game.id : "default")
-                            ] +
-                            ")"
-                          : "transparent"}
-                        style:--bg-starrail="oklch(50.3% 0.1828 262.59)"
-                        style:--bg-genshin="oklch(79.08% 0.0829 0)"
-                        style:--bg-wuwa="oklch(19.14% 0.0247 266.53)"
-                        style:--bg-zzz="oklch(56% 0.1431 43.41)"
-                        style:--text-starrail="var(--color-text-dark)"
-                        style:--text-genshin="var(--color-text-light)"
-                        style:--text-wuwa="var(--color-text-dark)"
-                        style:--text-zzz="var(--color-text-light)"
-                        class="group-data-[event=true]:bg-(--accentColor) group-data-[event=true]:text-(--textColor) px-1 flex items-center justify-center rounded-xs"
-                      >
-                        <p>{date.day}</p>
-                      </div>
-                      <p
-                        class="hidden md:block ml-1 w-full font-subheading text-xs font-semibold"
-                      >
-                        {event ? event.game.name : ""}
-                      </p>
-                    </div>
-                    <div class="px-2 hidden lg:flex flex-col gap-1">
-                      <p class="w-full font-heading text-xs text-balance">
-                        {event
-                          ? "Version " + verFormat.format(event.version.semVer)
                           : ""}
-                      </p>
-                      <ul
-                        class="hidden xl:inline-block w-full font-subheading italic text-[.68rem] list-disc list-inside text-balance"
+                        class="aspect-square md:w-[17cqw] lg:w-[21cqw] lg:data-[event=true]:text-accent-gold-400 lg:data-[event=true]:font-bold lg:data-[event=true]:bg-inherit data-[event=true]:bg-(--accentColor) data-[event=true]:text-(--textColor) px-1 flex items-center justify-center rounded-xs"
                       >
-                        {#each event.featured_characters as character}
-                          <li>{character.name}</li>
+                        <p class="md:text-[10cqw] lg:text-[15cqw]">
+                          {date.day}
+                        </p>
+                      </div>
+
+                      {#if event}
+                        {#each event as even}
+                          <div
+                            style:--accentColor={"var(" +
+                              gameColors["bg_" + even.game.id] +
+                              ")"}
+                            class="hidden md:flex italic font-subheading text-[10cqw] font-semibold w-full lg:gap-1 sm:gap-2"
+                          >
+                            <div
+                              class=" rounded-full bg-(--accentColor) w-[3cqw]"
+                            ></div>
+                            <p
+                              class="text-ellipsis text-nowrap w-full overflow-hidden"
+                            >
+                              <!-- {JSON.stringify(even.event_tags)} -->
+                              {even.event_tags &&
+                              even.event_tags[0] == "chronicled wish"
+                                ? "CW: " + even.event_tags[1]
+                                : verFormat.format(even.version.semVer) +
+                                  " - Phase " +
+                                  even.phase.phase}
+                            </p>
+                          </div>
                         {/each}
-                      </ul>
+                      {/if}
                     </div>
                   </Calendar.Day>
                 </Calendar.Cell>
