@@ -12,6 +12,7 @@ const isPreview = PUBLIC_DEPLOY_MODE == "server";
 const { gameId, versId } = Astro.params;
 
 if ((versId != undefined || gameId != undefined) && isPreview) {
+  console.log(versId);
   version = await directus.request(readItem("versions", versId!));
   game = await directus.request(readItem("games", gameId!));
 } else {

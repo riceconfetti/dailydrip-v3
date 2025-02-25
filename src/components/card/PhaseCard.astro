@@ -95,13 +95,16 @@ const { base, box, character, weapon } = phaseCard({ count: count, rarity: 5 });
   <PhaseHeader client:load {event} />
   <div class={base()}>
     {
-      fiveStars.map((c: any) => (
+      fiveStars.map((c: any, index: number) => (
         <div class={box({ rarity: 5 })}>
           <CharacterCard character={c} class={character()} />
-          {weaponsFiveStars.length > 0 &&
-            weaponsFiveStars.map((w: any) => (
-              <WeaponCard weapon={w} class={weapon({ rarity: 5 })} />
-            ))}
+          {weaponsFiveStars.length > 0 && (
+            <WeaponCard
+              weapon={weaponsFiveStars[index]}
+              class={weapon({ rarity: 5 })}
+            />
+          )}
+
           {weaponsFiveStars.length == 0 && (
             <WeaponCard weapon={c.signature} class={weapon({ rarity: 5 })} />
           )}

@@ -65,7 +65,9 @@ events = await Promise.all(
           events = await Promise.all(
             events.map(async (event: any) => {
               const eventsId = (
-                await directus.request(readItem("events_characters", event))
+                await directus.request(
+                  readItem("events_characters", event, { limit: -1 }),
+                )
               ).events_id;
               const eventObj = await directus.request(
                 readItem("events", eventsId),
@@ -77,7 +79,6 @@ events = await Promise.all(
             //@ts-ignore
             return new Date(a.startDate) - new Date(b.startDate);
           });
-
           if (e.id == events[0].id) {
             // console.log(e.id);
             // console.log(character.events[0].id);
