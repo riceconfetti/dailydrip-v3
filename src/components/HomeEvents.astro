@@ -52,8 +52,8 @@ events = await Promise.all(
 
 let currentEvents = events.filter(
   (event: any) =>
-    dayjs(event.startDate).isBefore(dayjs()) &&
-    dayjs(event.endDate).isAfter(dayjs()) &&
+    dayjs(event.startDate).isBefore(dayjs().add(1, "day")) &&
+    dayjs(event.endDate).isAfter(dayjs().subtract(1, "day")) &&
     event.rarity == 5 &&
     event.status == "published",
 );
@@ -76,7 +76,7 @@ let upcomingEvents = events.filter(
     <h2 class="font-subheading font-semibold text-dark">Current Events</h2>
     {
       currentEvents.map((bannerEvent: any) => {
-        return <BannerCard {bannerEvent} />;
+        return <BannerCard {bannerEvent} status="current" />;
       })
     }
   </div>
@@ -84,7 +84,7 @@ let upcomingEvents = events.filter(
     <h2 class="font-subheading font-semibold text-dark">Upcoming Events</h2>
     {
       upcomingEvents.map((bannerEvent: any) => {
-        return <BannerCard {bannerEvent} />;
+        return <BannerCard {bannerEvent} status="upcoming" />;
       })
     }
   </div>

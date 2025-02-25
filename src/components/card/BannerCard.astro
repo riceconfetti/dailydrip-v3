@@ -1,15 +1,14 @@
 ---
-const { bannerEvent, class: className } = Astro.props;
+const { bannerEvent, class: className, status } = Astro.props;
 
 import { tv } from "tailwind-variants";
-import directus from "$services/directus";
-import { readItem } from "@directus/sdk";
 
 import { setValRecursive } from "src/scripts/setValRecursive";
 import ProxyService from "$services/imgproxy";
 
 import Border from "./deco-border/Border.astro";
 import BannerTime from "./BannerTime.svelte";
+import BannerCheck from "./BannerCheck.svelte";
 
 const colorIndex = 0;
 
@@ -110,14 +109,13 @@ const { base, charBg, outline, name, banner, frost, holo } = card({
 ---
 
 <!-- CARD -->
-<div
-  class:list={[
-    "@container-[size] w-full aspect-10/3 relative min-h-16 min-w-16",
-    className,
-  ]}
-  style={vars}
+<BannerCheck
+  class={"@container-[size] w-full aspect-10/3 relative min-h-16 min-w-16 " +
+    className}
+  client:load
+  {bannerEvent}
 >
-  <div class={base()}>
+  <div class={base()} style={vars}>
     <div class={charBg()}></div>
 
     <!-- Text & Outline -->
@@ -141,4 +139,4 @@ const { base, charBg, outline, name, banner, frost, holo } = card({
     </div>
     <div class={frost()}></div>
   </div>
-</div>
+</BannerCheck>
