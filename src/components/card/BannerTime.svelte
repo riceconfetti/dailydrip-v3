@@ -14,7 +14,7 @@
   const server = $derived(getServer(game));
   let currzone = dayjs.tz.guess();
   const tz = $derived(
-    bannerEvent.phase == "1" ? "+08:00" : server?.value?.timezone,
+    bannerEvent.phase.phase == "1" ? "+08:00" : server?.value?.timezone,
   );
 
   let startDate = $derived(
@@ -40,4 +40,6 @@
   });
 </script>
 
-<p>{bannerTime}</p>
+<p>
+  {bannerTime}
+</p>

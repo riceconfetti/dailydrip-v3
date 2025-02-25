@@ -60,8 +60,8 @@ events.sort(
   <section
     class="absolute inset-0 p-2 size-full lg:min-h-0 lg:p-4 flex flex-col gap-4 box-border lg:h-full overflow-auto xl:overflow-hidden"
   >
-    <div class="p-4 w-full bg-dark/20 rounded-md md:col-span-2 h-min">
-      <p class="font-subheading text-sm">
+    <div class="p-2 w-full bg-dark/20 rounded-md md:col-span-2 h-min">
+      <p class="font-subheading text-xs">
         Welcome to <span class="font-bold text-center">The Daily Drip</span>,
         your place for gacha game leaks and speculations! These are my personal
         predictions for upcoming gacha banners, and you use this data at your
@@ -69,7 +69,13 @@ events.sort(
       </p>
     </div>
     <div
-      class="flex flex-col lg:flex-row gap-8 h-full min-h-0 w-full xl:overflow-hidden"
+      style={{
+        "--bg-starrail": "oklch(50.3% 0.1828 262.59)",
+        "--bg-genshin": "oklch(79.08% 0.0829 0)",
+        "--bg-wuwa": "oklch(19.14% 0.0247 266.53)",
+        "--bg-zzz": "oklch(56% 0.1431 43.41)",
+      }}
+      class="flex flex-col lg:flex-row gap-4 h-full min-h-0 w-full xl:overflow-hidden"
     >
       <Calendar client:load {events} />
       <HomeEvents />

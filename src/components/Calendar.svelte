@@ -120,15 +120,11 @@
                   <Calendar.Day class="absolute inset-0 @container-[size]">
                     <!-- EVENT DAY COLOR BADGE -->
                     <div
-                      style:--bg-starrail="oklch(50.3% 0.1828 262.59)"
-                      style:--bg-genshin="oklch(79.08% 0.0829 0)"
-                      style:--bg-wuwa="oklch(19.14% 0.0247 266.53)"
-                      style:--bg-zzz="oklch(56% 0.1431 43.41)"
                       style:--text-starrail="var(--color-text-dark)"
                       style:--text-genshin="var(--color-text-light)"
                       style:--text-wuwa="var(--color-text-dark)"
                       style:--text-zzz="var(--color-text-light)"
-                      class="absolute inset-0 flex flex-col items-center justify-center md:justify-start md:items-start size-full gap-1 p-1 md:p-2"
+                      class="absolute inset-0 flex flex-col items-center justify-center md:justify-start md:items-start size-full gap-2 lg:gap-1 p-1 md:p-2 lg:p-1"
                     >
                       <div
                         data-event={isDateUnavailable(date)}
@@ -139,38 +135,56 @@
                             gameColors["text_" + event[0].game.id] +
                             ")"
                           : ""}
-                        class="aspect-square md:w-[17cqw] lg:w-[21cqw] lg:data-[event=true]:text-accent-gold-400 lg:data-[event=true]:font-bold lg:data-[event=true]:bg-inherit data-[event=true]:bg-(--accentColor) data-[event=true]:text-(--textColor) px-1 flex items-center justify-center rounded-xs"
+                        class="aspect-square md:w-[14cqw] lg:data-[event=true]:text-accent-gold-400 lg:data-[event=true]:font-bold lg:data-[event=true]:bg-inherit data-[event=true]:bg-(--accentColor) data-[event=true]:text-(--textColor) px-1 flex items-center justify-center rounded-xs"
                       >
-                        <p class="md:text-[10cqw] lg:text-[15cqw]">
+                        <p class="md:text-[10cqw] lg:text-[14cqw] leading-none">
                           {date.day}
                         </p>
                       </div>
 
-                      {#if event}
-                        {#each event as even}
-                          <div
-                            style:--accentColor={"var(" +
-                              gameColors["bg_" + even.game.id] +
-                              ")"}
-                            class="hidden md:flex italic font-subheading text-[10cqw] font-semibold w-full lg:gap-1 sm:gap-2"
-                          >
-                            <div
-                              class=" rounded-full bg-(--accentColor) w-[3cqw]"
-                            ></div>
-                            <p
-                              class="text-ellipsis text-nowrap w-full overflow-hidden"
-                            >
-                              <!-- {JSON.stringify(even.event_tags)} -->
-                              {even.event_tags &&
-                              even.event_tags[0] == "chronicled wish"
-                                ? "CW: " + even.event_tags[1]
-                                : verFormat.format(even.version.semVer) +
-                                  " - Phase " +
-                                  even.phase.phase}
-                            </p>
-                          </div>
-                        {/each}
-                      {/if}
+                      <div
+                        class="absolute inset-0 p-2 pl-[18cqw] flex flex-col gap-1 truncate"
+                      >
+                        {#if event}
+                          {#each event as even}
+                            {#if even.event_tags && even.event_tags[0] == "chronicled wish"}
+                              <div
+                                style:--accentColor={"var(" +
+                                  gameColors["bg_" + even.game.id] +
+                                  ")"}
+                                class="hidden md:flex italic font-subheading text-[8cqw] font-semibold w-full lg:gap-1 sm:gap-2"
+                              >
+                                <p
+                                  class="text-ellipsis w-full overflow-hidden leading-snug text-balance text-right"
+                                >
+                                  {even.event_tags[1]}
+                                </p>
+                                <div
+                                  class=" rounded-full bg-(--accentColor) w-[3cqw]"
+                                ></div>
+                              </div>
+                            {:else}
+                              {#each even.featured_characters as char}
+                                <div
+                                  style:--accentColor={"var(" +
+                                    gameColors["bg_" + even.game.id] +
+                                    ")"}
+                                  class="hidden md:flex italic font-subheading text-[8cqw] font-semibold w-full lg:gap-1 sm:gap-2"
+                                >
+                                  <p
+                                    class="text-ellipsis w-full overflow-hidden leading-snug text-balance text-right"
+                                  >
+                                    {char.name}
+                                  </p>
+                                  <div
+                                    class=" rounded-full bg-(--accentColor) w-[3cqw]"
+                                  ></div>
+                                </div>
+                              {/each}
+                            {/if}
+                          {/each}
+                        {/if}
+                      </div>
                     </div>
                   </Calendar.Day>
                 </Calendar.Cell>
@@ -180,5 +194,25 @@
         </Calendar.GridBody>
       </Calendar.Grid>
     {/each}
+    <ul
+      class="flex font-body w-full text-[.6rem] items-center justify-around mt-2"
+    >
+      <li class="flex gap-2 grow-0 items-center justify-items-center">
+        <div class="rounded-full bg-(--bg-genshin) w-2 aspect-square"></div>
+        <p class="text-ellipsis text-nowrap w-full">Genshin Impact</p>
+      </li>
+      <li class="flex gap-2 grow-0 items-center justify-items-center">
+        <div class="rounded-full bg-(--bg-starrail) w-2 aspect-square"></div>
+        <p class="text-ellipsis text-nowrap w-full">Honkai: Star Rail</p>
+      </li>
+      <li class="flex gap-2 grow-0 items-center justify-items-center">
+        <div class="rounded-full bg-(--bg-wuwa) w-2 aspect-square"></div>
+        <p class="text-ellipsis text-nowrap w-full">Wuthering Waves</p>
+      </li>
+      <li class="flex gap-2 grow-0 items-center justify-items-center">
+        <div class="rounded-full bg-(--bg-zzz) w-2 aspect-square"></div>
+        <p class="text-ellipsis text-nowrap w-full">Zenless Zone Zero</p>
+      </li>
+    </ul>
   {/snippet}
 </Calendar.Root>
