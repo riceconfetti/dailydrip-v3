@@ -1,5 +1,5 @@
 ---
-const { bannerEvent, class: className, status } = Astro.props;
+const { bannerEvent, status } = Astro.props;
 
 import { tv } from "tailwind-variants";
 
@@ -111,9 +111,9 @@ const { base, charBg, outline, name, banner, frost, holo } = card({
 <!-- CARD -->
 <BannerCheck
   client:load
-  class={"@container-[size] w-full aspect-10/3 relative min-h-16 min-w-16 " +
-    className}
+  class="@container-[size] w-full aspect-10/3 relative min-h-16 min-w-16"
   {bannerEvent}
+  {status}
 >
   <div class={base()} style={vars}>
     <div class={charBg()}></div>

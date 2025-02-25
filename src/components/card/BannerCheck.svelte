@@ -7,7 +7,7 @@
   dayjs.extend(timezone);
   dayjs.extend(relativeTime);
 
-  let { bannerEvent, children, class: className } = $props();
+  let { bannerEvent, children, class: className, status } = $props();
   let game = bannerEvent.game;
 
   import { getServer } from "$store/settings.svelte";
@@ -31,10 +31,17 @@
     ).tz(currzone),
   );
 
-  const display = $derived(
+  const currentDisplay = $derived(
     dayjs(startDate).isBefore(dayjs()) && dayjs(endDate).isAfter(dayjs())
       ? ""
       : "hidden",
+  );
+
+  const upcomingDisplay = $derived(
+    dayjs(startDate).isAfter(dayjs()) ? "" : "hidden",
+  );
+  const display = $derived(
+    status == "current" ? currentDisplay : upcomingDisplay,
   );
 </script>
 
