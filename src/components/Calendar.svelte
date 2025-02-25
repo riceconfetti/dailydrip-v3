@@ -125,16 +125,20 @@
                       data-event={isDateUnavailable(date)}
                     >
                       <div
-                        style:--accentColor={"var(" +
-                          gameColors[
-                            "bg_" + (event ? event.game.id : "default")
-                          ] +
-                          ")"}
-                        style:--textColor={"var(" +
-                          gameColors[
-                            "text_" + (event ? event.game.id : "default")
-                          ] +
-                          ")"}
+                        style:--accentColor={isDateUnavailable(date)
+                          ? "var(" +
+                            gameColors[
+                              "bg_" + (event ? event.game.id : "default")
+                            ] +
+                            ")"
+                          : "transparent"}
+                        style:--textColor={isDateUnavailable(date)
+                          ? "var(" +
+                            gameColors[
+                              "text_" + (event ? event.game.id : "default")
+                            ] +
+                            ")"
+                          : "transparent"}
                         style:--bg-starrail="oklch(50.3% 0.1828 262.59)"
                         style:--bg-genshin="oklch(79.08% 0.0829 0)"
                         style:--bg-wuwa="oklch(19.14% 0.0247 266.53)"
