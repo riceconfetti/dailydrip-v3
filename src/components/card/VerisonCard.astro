@@ -4,6 +4,7 @@ import PhaseCard from "./PhaseCard.astro";
 
 import directus from "$services/directus";
 import { readItem } from "@directus/sdk";
+import ChronicleCard from "./ChronicleCard.astro";
 
 let { version } = Astro.props;
 
@@ -26,7 +27,27 @@ events = await Promise.all(
   }),
 );
 
-events.sort((a, b) => Number(a.phase.phase) - Number(b.phase.phase));
+events.sort((a, b) => {
+  const aChronicle = a.event_tags
+    ? a.event_tags[0] == "chronicled wish"
+    : false;
+  const bChronicle = b.event_tags
+    ? b.event_tags[0] == "chronicled wish"
+    : false;
+
+  const compA = aChronicle
+    ? Number(a.phase.phase) == 1
+      ? 0
+      : 3
+    : Number(a.phase.phase);
+  const compB = bChronicle
+    ? Number(b.phase.phase) == 1
+      ? 0
+      : 3
+    : Number(b.phase.phase);
+
+  return compA - compB;
+});
 
 events = await Promise.all(
   events.map(async (e: any) => {
@@ -92,6 +113,14 @@ version.events = events;
   <div
     class="h-full grow flex flex-col gap-3 lg:grid lg:grid-cols-2 lg:gap-5 w-full"
   >
-    {events.map((event: any) => <PhaseCard {event} />)}
+    {
+      events.map((event: any) => {
+        if (event.event_tags == null) {
+          return <PhaseCard {event} />;
+        } else if (event.event_tags.includes("chronicled wish")) {
+          return <ChronicleCard {event} class="col-span-full" />;
+        }
+      })
+    }
   </div>
 </section>

@@ -73,6 +73,7 @@ export type GachaEvent = {
   featured_characters: Character[];
   featured_weapons: Weapon[];
   status: "published" | "draft" | "archived";
+  event_tags: string[];
 };
 
 export type Weapon = {
