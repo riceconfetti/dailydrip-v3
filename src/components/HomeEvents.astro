@@ -77,7 +77,7 @@ let upcomingEvents = events.filter(
     <h2 class="font-subheading font-semibold text-dark">Current Events</h2>
     {
       currentEvents.map((bannerEvent: any) => {
-        return <BannerCard {bannerEvent} status="current" />;
+        return <BannerCard {bannerEvent} status="current" server:defer />;
       })
     }
   </div>
@@ -85,7 +85,7 @@ let upcomingEvents = events.filter(
     <h2 class="font-subheading font-semibold text-dark">Upcoming Events</h2>
     {
       upcomingEvents.map((bannerEvent: any) => {
-        return <BannerCard {bannerEvent} status="upcoming" />;
+        return <BannerCard {bannerEvent} status="upcoming" server:defer />;
       })
     }
   </div>

@@ -6,6 +6,9 @@ import HomeEvents from "$components/HomeEvents.astro";
 import directus from "$services/directus";
 import { readItems, readItem } from "@directus/sdk";
 
+import { PUBLIC_DEPLOY_MODE } from "astro:env/client";
+const isPreview = PUBLIC_DEPLOY_MODE == "server";
+
 let events = await directus.request(
   readItems("events", {
     fields: [
@@ -22,6 +25,7 @@ let events = await directus.request(
         _eq: "published",
       },
     },
+    limit: -1,
   }),
 );
 let phases = await directus.request(readItems("phases", { fields: ["*"] }));
@@ -78,7 +82,25 @@ events.sort(
       class="flex flex-col lg:flex-row gap-4 h-full min-h-0 w-full xl:overflow-hidden"
     >
       <Calendar client:only="svelte" {events} />
-      <HomeEvents />
+      <HomeEvents server:defer={isPreview}>
+        {
+          isPreview && (
+            <div
+              slot="fallback"
+              class="flex w-full flex-col items-center justify-center bg-stone-400/10"
+            >
+              <l-square
+                size="35"
+                stroke="5"
+                stroke-length="0.25"
+                bg-opacity="0.1"
+                speed="1.2"
+                color="rgb(193 156 100)"
+              />
+            </div>
+          )
+        }
+      </HomeEvents>
     </div>
   </section>
 </Layout>

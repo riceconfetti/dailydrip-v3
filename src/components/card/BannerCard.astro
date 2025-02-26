@@ -73,7 +73,7 @@ const card = tv({
       "absolute inset-0 bg-[image:var(--char)] bg-contain bg-right bg-no-repeat mask-to-l",
     outline:
       "absolute inset-[0.15rem] z-10 flex items-center rounded-sm border-1 border-(--cardAccent) p-2 text-center text-(--cardAccent) inset-shadow-card @5xs:inset-1 @5xs:border-2 @3xs:@min-h-5xs:p-4 @xl:@min-h-lg:p-8",
-    name: "font-heading text-xs font-bold text-balance shadow-black drop-shadow-md @6xs:text-sm @5xs:@min-h-5xs:text-xl @sm:@min-h-xs:text-xl @xl:@min-h-lg:text-3xl",
+    name: "font-heading text-xs font-bold text-balance shadow-black drop-shadow-md @4xs:text-sm @sm:text-lg @xl:text-3xl",
     banner:
       "font-subheading text-[0.5rem] text-balance italic shadow-black drop-shadow-md @3xs:text-xs @5xs:@min-h-5xs:text-sm @xs:@min-h-2xs:text-base @sm:@min-h-xs:text-base @xl:@min-h-lg:text-xl",
     frost:
@@ -111,7 +111,7 @@ const { base, charBg, outline, name, banner, frost, holo } = card({
 <!-- CARD -->
 <BannerCheck
   client:load
-  class="@container-[size] w-full aspect-10/3 relative min-h-16 min-w-16"
+  class="@container-[size] w-full aspect-10/3 relative min-h-16 min-w-16 transition"
   {bannerEvent}
   {status}
 >
@@ -120,7 +120,7 @@ const { base, charBg, outline, name, banner, frost, holo } = card({
 
     <!-- Text & Outline -->
     <div class={outline()}>
-      <div class="flex flex-col gap-1 items-start w-1/2 text-left">
+      <div class="flex flex-col gap-1 items-start w-2/3 text-left">
         <h2 class={name()}>
           {bannerEvent.bannerName}
         </h2>

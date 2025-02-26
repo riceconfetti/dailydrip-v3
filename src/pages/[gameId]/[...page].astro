@@ -60,7 +60,7 @@ if (!isPreview) {
     offset: page! > 1 ? (page! - 1) * limit : 0,
   });
 }
-console.log(JSON.stringify(query));
+// console.log(JSON.stringify(query));
 //@ts-ignore
 let versions: Version[] = await directus.request(readItems("versions", query));
 // console.log(versions);
