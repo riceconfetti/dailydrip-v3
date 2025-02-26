@@ -162,7 +162,7 @@
                                   {even.event_tags[1]}
                                 </p>
                                 <div
-                                  class=" rounded-full bg-(--accentColor) w-[3cqw]"
+                                  class=" rounded-full bg-(--accentColor) w-1"
                                 ></div>
                               </div>
                             {:else}
@@ -179,7 +179,7 @@
                                     {char.name}
                                   </p>
                                   <div
-                                    class=" rounded-full bg-(--accentColor) w-[3cqw]"
+                                    class=" rounded-full bg-(--accentColor) w-1"
                                   ></div>
                                 </div>
                               {/each}

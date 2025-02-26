@@ -1,6 +1,9 @@
 ---
 import directus from "$services/directus";
 import { readItems } from "@directus/sdk";
+import { PUBLIC_DEPLOY_MODE } from "astro:env/client";
+
+const isPreview = PUBLIC_DEPLOY_MODE == "server";
 const games = await directus.request(readItems("games", { fields: ["*"] }));
 const { baseURL } = Astro.props;
 ---
@@ -25,7 +28,11 @@ const { baseURL } = Astro.props;
   <div
     class="hidden lg:flex list-none text-light gap-6 text-sm items-center font-heading font-bold"
   >
-    {games.map((g) => <a href={`${baseURL}${g.id}`}>{g.name}</a>)}
+    {
+      games.map((g) => (
+        <a href={`${baseURL}${g.id}${isPreview ? "/1" : ""}`}>{g.name}</a>
+      ))
+    }
 
     <!-- <a href={baseURL+'/calendar'} >Calendar</a> -->
     <!-- <li>Archive</li> -->
@@ -39,7 +46,7 @@ const { baseURL } = Astro.props;
 >
   {
     games.map((g) => (
-      <a class="p-3" href={`${baseURL}${g.id}`}>
+      <a class="p-3" href={`${baseURL}${g.id}${isPreview ? "/1" : ""}`}>
         {g.name}
       </a>
     ))
