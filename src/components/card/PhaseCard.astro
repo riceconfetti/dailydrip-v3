@@ -102,13 +102,18 @@ const { base, box, character, weapon } = phaseCard({ count: count, rarity: 5 });
       fiveStars.map((c: any, index: number) => (
         <div class={box({ rarity: 5 })}>
           <CharacterCard character={c} class={character()} />
-          {weaponsFiveStars.length > 0 && (
-            <WeaponCard
-              weapon={weaponsFiveStars[index]}
-              class={weapon({ rarity: 5 })}
-            />
-          )}
-
+          {weaponsFiveStars.length > 0 &&
+            weaponsFiveStars.length == fiveStars.length && (
+              <WeaponCard
+                weapon={weaponsFiveStars[index]}
+                class={weapon({ rarity: 5 })}
+              />
+            )}
+          {weaponsFiveStars.length > 0 &&
+            weaponsFiveStars.length > fiveStars.length &&
+            weaponsFiveStars.map((w: any) => (
+              <WeaponCard weapon={w} class={weapon({ rarity: 5 })} />
+            ))}
           {weaponsFiveStars.length == 0 && (
             <WeaponCard weapon={c.signature} class={weapon({ rarity: 5 })} />
           )}
