@@ -14,35 +14,29 @@
   const server = $derived(getServer(game));
   let currzone = dayjs.tz.guess();
   const tz = $derived(
-    bannerEvent.phase == "1" ? "+08:00" : server?.value?.timezone,
+    bannerEvent.phase.phase == "1" ? "+08:00" : server?.value?.timezone,
   );
 
-  let startDate = $derived(
-    dayjs(bannerEvent.startDate + "T" + bannerEvent.phase.start + tz).tz(
-      currzone,
-    ),
+  let startString = $derived(
+    bannerEvent.startDate + "T" + bannerEvent.phase.start + tz,
   );
-  let endDate = $derived(
-    dayjs(
-      bannerEvent.endDate +
-        "T" +
-        bannerEvent.phase.end +
-        server?.value?.timezone,
-    ).tz(currzone),
+  let startDate = $derived(dayjs(startString).tz(currzone));
+
+  let endString = $derived(
+    bannerEvent.endDate + "T" + bannerEvent.phase.end + server?.value?.timezone,
   );
+  let endDate = $derived(dayjs(endString).tz(currzone));
 
   const currentDisplay = $derived(
-    dayjs(startDate).isBefore(dayjs()) && dayjs(endDate).isAfter(dayjs())
-      ? ""
-      : "hidden",
+    startDate.isBefore(dayjs()) && endDate.isAfter(dayjs()) ? "" : "hidden",
   );
 
-  const upcomingDisplay = $derived(
-    dayjs(startDate).isAfter(dayjs()) ? "" : "hidden",
-  );
+  const upcomingDisplay = $derived(startDate.isAfter(dayjs()) ? "" : "hidden");
+
   const display = $derived(
     status == "current" ? currentDisplay : upcomingDisplay,
   );
+  // console.log(bannerEvent.id, startString, endString);
 </script>
 
 <div class={[className, display]}>{@render children()}</div>

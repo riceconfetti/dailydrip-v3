@@ -59,7 +59,7 @@ let currentEvents = events.filter(
 );
 let upcomingEvents = events.filter(
   (event: any) =>
-    dayjs(event.startDate).isAfter(dayjs()) &&
+    dayjs(event.startDate).isAfter(dayjs().subtract(1, "day")) &&
     event.rarity == 5 &&
     event.status == "published",
 );
@@ -67,6 +67,7 @@ let upcomingEvents = events.filter(
 // events.forEach((e: any) => {
 //   console.log(e.name);
 // });
+// console.log(events[0]);
 ---
 
 <section
