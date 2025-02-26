@@ -6,6 +6,7 @@ import CharacterCard from "./CharacterCard.astro";
 import WeaponCard from "./WeaponCard.astro";
 import PhaseHeader from "./PhaseHeader.svelte";
 import { tv } from "tailwind-variants";
+import type { Attribute } from "$types/db";
 
 let characters = event.featured_characters;
 
@@ -22,6 +23,10 @@ while (weaponsFourStars.length < game.numOfRateUpWeapons) {
     name: "??????",
     rarity: 4,
   });
+}
+while (fourStars.length < game.numOfRateUpCharacters) {
+  let placeholder = await directus.request(readItem("characters", game.id));
+  fourStars.push(placeholder);
 }
 
 const count: 1 | 2 | 3 =

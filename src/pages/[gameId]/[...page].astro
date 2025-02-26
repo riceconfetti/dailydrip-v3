@@ -1,0 +1,96 @@
+---
+import directus from "$services/directus";
+import { readItems, readItem, aggregate } from "@directus/sdk";
+import { PUBLIC_DEPLOY_MODE } from "astro:env/client";
+import GenericVersionCard from "$components/fallbacks/GenericVersionCard.astro";
+import Pagination from "$components/Pagination.svelte";
+import Layout from "$layouts/Layout.astro";
+import VerisonCard from "$components/card/VerisonCard.astro";
+import type { Version } from "$types/db";
+
+const isPreview = PUBLIC_DEPLOY_MODE == "server";
+const limit = 5;
+
+export async function getStaticPaths() {
+  const games = await directus.request(readItems("games", { fields: ["id"] }));
+
+  return games.map((game) => {
+    return { params: { gameId: game.id, page: undefined } };
+  });
+}
+
+const { gameId, page } = Astro.params;
+let game = await directus.request(readItem("games", gameId));
+let totalVersions = (
+  await directus.request(
+    aggregate("versions", {
+      aggregate: { count: "*" },
+      groupBy: ["game"],
+    }),
+  )
+).filter((x: any) => x.game == gameId);
+
+const query = {
+  fields: ["*"],
+  filter: {
+    game: {
+      id: {
+        _eq: gameId,
+      },
+    },
+  },
+};
+
+if (!isPreview) {
+  Object.assign(query.filter, {
+    status: {
+      _eq: "published",
+    },
+  });
+  Object.assign(query.filter, {
+    events: {
+      endDate: {
+        _lte: "$NOW()",
+      },
+    },
+  });
+  Object.assign(query, {
+    limit: limit,
+    offset: page! > 1 ? (page! - 1) / limit : 0,
+  });
+}
+//@ts-ignore
+let versions: Version[] = await directus.request(readItems("versions", query));
+// console.log(versions);
+
+versions.sort((a, b) => a.semVer - b.semVer);
+const title = "The Daily Drip | " + game.name;
+---
+
+<Layout {title}>
+  <div
+    class="p-0 sm:p-4 md:p-6 xl:p-8 flex flex-col gap-2 items-center justify-around w-full overflow-auto"
+  >
+    {
+      versions.map((version) =>
+        isPreview ? (
+          <VerisonCard {version} server:defer={isPreview}>
+            <GenericVersionCard slot="fallback" />
+          </VerisonCard>
+        ) : (
+          <VerisonCard {version} />
+        ),
+      )
+    }
+    {
+      isPreview && (
+        <Pagination
+          client:load
+          count={totalVersions[0].count}
+          perPage={limit}
+          currPage={page}
+        />
+      )
+    }
+  </div>
+</Layout>

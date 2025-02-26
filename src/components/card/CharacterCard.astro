@@ -3,7 +3,7 @@ const { character, class: className } = Astro.props;
 
 import { tv } from "tailwind-variants";
 import directus from "$services/directus";
-import { readItem, withOptions } from "@directus/sdk";
+import { readItem } from "@directus/sdk";
 
 import { setValRecursive } from "src/scripts/setValRecursive";
 import ProxyService from "$services/imgproxy";
@@ -148,7 +148,7 @@ const characterTransforms: Variants = {
     },
     {
       key: "crop",
-      params: [400 * character.crop.x, 400 * character.crop.y],
+      params: [550 * character.crop.x, 550 * character.crop.y],
     },
     { key: "resize", params: ["fill", 740, 740] },
   ],

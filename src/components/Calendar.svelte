@@ -109,7 +109,7 @@
                 <Calendar.Cell
                   {date}
                   month={month.value}
-                  class="relative min-h-0 aspect-square h-full w-full border-dark/20 data-[disabled]:text-dark/40"
+                  class="relative min-h-0 aspect-square h-full w-full border-dark/20 data-[disabled]:text-current/40 "
                 >
                   {@const event = isDateUnavailable(date)
                     ? events.filter((e) => {
@@ -139,13 +139,13 @@
                           : ""}
                         class="aspect-square md:w-[14cqw] lg:data-[event=true]:text-accent-gold-400 lg:data-[event=true]:font-bold lg:data-[event=true]:bg-inherit data-[event=true]:bg-(--accentColor) data-[event=true]:text-(--textColor) px-1 flex items-center justify-center rounded-xs"
                       >
-                        <p class="text-[clamp(0.5rem,12cqw,1rem)] leading-none">
+                        <p class="text-[clamp(0.7rem,12cqw,1rem)] leading-none">
                           {date.day}
                         </p>
                       </div>
 
                       <div
-                        class="absolute inset-0 p-2 pl-[18cqw] flex flex-col gap-1 truncate"
+                        class="absolute inset-0 p-1 flex flex-col gap-1 truncate"
                       >
                         {#if event}
                           {#each event as even}
@@ -154,7 +154,7 @@
                                 style:--accentColor={"var(" +
                                   gameColors["bg_" + even.game.id] +
                                   ")"}
-                                class="hidden md:flex italic font-subheading text-[clamp(0.5rem,8cqw,0.625rem)] font-semibold w-full lg:gap-1 sm:gap-2"
+                                class="first:pl-[25cqw] hidden md:flex italic font-subheading text-[clamp(0.6rem,8cqw,0.725rem)] font-semibold w-full lg:gap-1 sm:gap-2"
                               >
                                 <p
                                   class="text-ellipsis w-full overflow-hidden leading-snug text-balance text-right"
@@ -171,7 +171,7 @@
                                   style:--accentColor={"var(" +
                                     gameColors["bg_" + even.game.id] +
                                     ")"}
-                                  class="hidden md:flex italic font-subheading text-[clamp(0.5rem,8cqw,0.725rem)] font-semibold w-full lg:gap-1 sm:gap-2"
+                                  class="first:pl-[25cqw] hidden md:flex italic font-subheading text-[clamp(0.6rem,8cqw,0.725rem)] font-semibold w-full lg:gap-1 sm:gap-2"
                                 >
                                   <p
                                     class="text-ellipsis w-full overflow-hidden leading-snug text-balance text-right"
