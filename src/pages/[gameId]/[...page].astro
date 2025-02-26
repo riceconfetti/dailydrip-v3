@@ -50,10 +50,11 @@ if (!isPreview) {
   Object.assign(query.filter, {
     events: {
       endDate: {
-        _lte: "$NOW()",
+        _gte: "$NOW",
       },
     },
   });
+} else {
   Object.assign(query, {
     limit: limit,
     offset: page! > 1 ? (page! - 1) / limit : 0,
