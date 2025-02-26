@@ -7,6 +7,7 @@ dayjs.extend(timezone);
 import directus from "$services/directus";
 import { readItems, readItem } from "@directus/sdk";
 import BannerCard from "$components/card/BannerCard.astro";
+import GenericCharacterCard from "./fallbacks/GenericCharacterCard.astro";
 
 let events: any = await directus.request(
   readItems("events_characters", {
@@ -77,7 +78,7 @@ let upcomingEvents = events.filter(
     <h2 class="font-subheading font-semibold text-dark">Current Events</h2>
     {
       currentEvents.map((bannerEvent: any) => {
-        return <BannerCard {bannerEvent} status="current" server:defer />;
+        return <BannerCard {bannerEvent} status="current" />;
       })
     }
   </div>
@@ -85,7 +86,7 @@ let upcomingEvents = events.filter(
     <h2 class="font-subheading font-semibold text-dark">Upcoming Events</h2>
     {
       upcomingEvents.map((bannerEvent: any) => {
-        return <BannerCard {bannerEvent} status="upcoming" server:defer />;
+        return <BannerCard {bannerEvent} status="upcoming" />;
       })
     }
   </div>
