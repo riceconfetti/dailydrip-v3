@@ -1,48 +1,58 @@
-# Astro Starter Kit: Basics
+<a id="readme-top"></a>
 
-```sh
-npm create astro@latest -- --template basics
-```
+![Static Badge](https://img.shields.io/badge/progress-WIP-red?style=for-the-badge)
 
-[![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/withastro/astro/tree/latest/examples/basics)
-[![Open with CodeSandbox](https://assets.codesandbox.io/github/button-edit-lime.svg)](https://codesandbox.io/p/sandbox/github/withastro/astro/tree/latest/examples/basics)
-[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/withastro/astro?devcontainer_path=.devcontainer/basics/devcontainer.json)
+<br />
+<div align="center">
+  <a href="https://github.com/riceconfetti/dailydrip-v3">
+<!--     <img src="https://github.com/rinn-ux/.github/blob/main/profile/header-tp.png?raw=true)" alt="Logo" > -->
+  </a>
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+  <h3 align="center">The Daily Drip - V3</h3>
 
-![just-the-basics](https://github.com/withastro/astro/assets/2244813/a0a5533c-a856-4198-8470-2d67b1d7c554)
+  <p align="center">
+    Gacha banners speculations and predictions blog/news site.
+  </p>
+</div>
 
-## 🚀 Project Structure
+## About The Project
 
-Inside of your Astro project, you'll see the following folders and files:
+A redesign of [dailydrip](https://github.com/riceconfetti/daily-drip), a simple news themed site to publish my personal speculations and predictions for future events in Genshin Impact, Honkai: Star Rail, Wuthering Waves, and Zenless Zone Zero.
 
-```text
-/
-├── public/
-│   └── favicon.svg
-├── src/
-│   ├── layouts/
-│   │   └── Layout.astro
-│   └── pages/
-│       └── index.astro
-└── package.json
-```
+<!--Here's a blank template to get started: To avoid retyping too much info. Do a search and replace with your text editor for the following: `github_username`, `repo_name`, `twitter_handle`, `linkedin_username`, `email_client`, `email`, `project_title`, `project_description`-->
 
-To learn more about the folder structure of an Astro project, refer to [our guide on project structure](https://docs.astro.build/en/basics/project-structure/).
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
 
-## 🧞 Commands
+### Built With
 
-All commands are run from the root of the project, from a terminal:
+-  Astro
+-  Tailwind
+-  Svelte
+-  Directus
 
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `npm install`             | Installs dependencies                            |
-| `npm run dev`             | Starts local dev server at `localhost:4321`      |
-| `npm run build`           | Build your production site to `./dist/`          |
-| `npm run preview`         | Preview your build locally, before deploying     |
-| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `npm run astro -- --help` | Get help using the Astro CLI                     |
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
 
-## 👀 Want to learn more?
 
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+<!-- ## License
+
+Distributed under the MIT License. See `LICENSE.txt` for more information.
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+<!-- CONTACT -->
+
+## Contact
+
+Rhylen - me@rhylennguyen.com
+
+Project Link: [https://github.com/riceconfetti/dailydrip-v3](https://github.com/riceconfetti/dailydrip-v3)
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+<!-- ACKNOWLEDGMENTS -->
+
+## Acknowledgments
+
+-   [Best-README-Template](https://github.com/othneildrew/Best-README-Template)
+  
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
