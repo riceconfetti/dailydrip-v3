@@ -3,6 +3,7 @@ import directus from "$services/directus";
 import { readItem } from "@directus/sdk";
 import { PUBLIC_DEPLOY_MODE } from "astro:env/client";
 import ProxyService from "$services/imgproxy";
+import dayjs from "dayjs";
 
 import Layout from "$layouts/Layout.astro";
 import CharacterCard from "$components/card/CharacterCard.astro";
@@ -68,8 +69,8 @@ const iconPath = ProxyService.getImage(imgPath, transforms);
 
 const { events, ...rest } = character;
 let event: any = {
-  startDate: "2020-01-01",
-  endDate: "2020-02-01",
+  startDate: dayjs().subtract(7, "days").format("YYYY-MM-dd"),
+  endDate: dayjs().add(7, "days").format("YYYY-MM-dd"),
   phase: 1,
 };
 let phase = await directus.request(readItem("phases", event.phase));
@@ -111,7 +112,7 @@ Object.assign(bannerEvent, character, rest);
           }
         </div>
       </div>
-      <BannerCard {bannerEvent} server:defer />
+      <BannerCard {bannerEvent} server:defer status="current" />
     </div>
     <Editor client:load {width} {height}>
       <CharacterCard {character} slot="base" />
