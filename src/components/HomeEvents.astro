@@ -45,7 +45,6 @@ events = await Promise.all(
 
     let bannerEvent = { phase };
     Object.assign(bannerEvent, character, rest);
-    // console.log(bannerEvent);
     return bannerEvent;
   }),
 );
@@ -63,11 +62,6 @@ let upcomingEvents = events.filter(
     event.rarity == 5 &&
     event.status == "published",
 );
-
-// events.forEach((e: any) => {
-//   console.log(e.name);
-// });
-// console.log(events[0]);
 ---
 
 <section

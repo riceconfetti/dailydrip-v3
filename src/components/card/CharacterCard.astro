@@ -33,9 +33,11 @@ const vars = {
 };
 
 const game = await directus.request(readItem("games", character.game));
+
 const primary = await directus.request(
   readItem("attributes", character.primary_attribute),
 );
+
 const secondary = await directus.request(
   readItem("attributes", character.secondary_attribute),
 );
@@ -246,7 +248,6 @@ const { base, charBg, overlay, outline, name, banner, frost, holo } = card({
   speculation: character.spec,
   debut: character.debut,
 });
-// console.log(character.spec);
 ---
 
 <!-- CARD -->

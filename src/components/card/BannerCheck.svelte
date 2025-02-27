@@ -36,7 +36,6 @@
   const display = $derived(
     status == "current" ? currentDisplay : upcomingDisplay,
   );
-  // console.log(bannerEvent.id, startString, endString);
 </script>
 
 <div class={[className, display]}>{@render children()}</div>

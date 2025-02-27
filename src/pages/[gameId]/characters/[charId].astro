@@ -75,7 +75,6 @@ let event: any = {
 let phase = await directus.request(readItem("phases", 1));
 let bannerEvent = { phase };
 Object.assign(bannerEvent, event, character, rest);
-console.log(bannerEvent);
 ---
 
 <Layout {title}>

@@ -33,6 +33,7 @@ let totalVersions = (
 const query = {
   fields: ["*"],
   sort: ["semVer"],
+  limit: -1,
   filter: {
     game: {
       id: {
@@ -66,10 +67,9 @@ if (!isPreview) {
     },
   });
 }
-// console.log(JSON.stringify(query));
+
 //@ts-ignore
 let versions: Version[] = await directus.request(readItems("versions", query));
-// console.log(versions);
 
 versions.sort((a, b) => a.semVer - b.semVer);
 const title = "The Daily Drip | " + game.name;

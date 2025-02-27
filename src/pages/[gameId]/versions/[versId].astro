@@ -1,6 +1,6 @@
 ---
 import directus from "$services/directus";
-import { readItem, readItems } from "@directus/sdk";
+import { readItem } from "@directus/sdk";
 import Layout from "$layouts/Layout.astro";
 import VerisonCard from "$components/card/VerisonCard.astro";
 import { PUBLIC_DEPLOY_MODE } from "astro:env/client";
@@ -12,7 +12,6 @@ const isPreview = PUBLIC_DEPLOY_MODE == "server";
 const { gameId, versId } = Astro.params;
 
 if ((versId != undefined || gameId != undefined) && isPreview) {
-  console.log(versId);
   version = await directus.request(readItem("versions", versId!));
   game = await directus.request(readItem("games", gameId!));
 } else {

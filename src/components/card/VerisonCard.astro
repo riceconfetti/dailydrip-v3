@@ -8,11 +8,13 @@ import ChronicleCard from "./ChronicleCard.astro";
 
 let { version } = Astro.props;
 
-const getEvents = async (id: any) =>
-  await directus.request(readItem("events", id));
+const getEvents = async (id: any) => {
+  return await directus.request(readItem("events", id));
+};
 
-const getPhase = async (id: any) =>
-  await directus.request(readItem("phases", id));
+const getPhase = async (id: any) => {
+  return await directus.request(readItem("phases", id));
+};
 
 let events = await Promise.all(
   version.events.map(async (e: any) => await getEvents(e)),
@@ -80,14 +82,11 @@ events = await Promise.all(
             return new Date(a.startDate) - new Date(b.startDate);
           });
           if (e.id == events[0].id) {
-            // console.log(e.id);
-            // console.log(character.events[0].id);
             Object.assign(character, { debut: true });
           }
         }
 
         Object.assign(character, { spec: characterEvent.spec });
-        // console.log(character);
 
         return character;
       }),
