@@ -62,9 +62,11 @@ events.sort(
 
 <Layout title="The Daily Drip">
   <section
-    class="absolute inset-0 p-2 size-full lg:min-h-0 lg:p-4 flex flex-col gap-4 box-border lg:h-full overflow-auto xl:overflow-hidden max-w-[120rem]"
+    class="absolute inset-0 p-2 size-full lg:min-h-0 lg:p-4 flex flex-col gap-4 box-border lg:h-full overflow-auto xl:overflow-hidden justify-items-center items-center"
   >
-    <div class="p-2 w-full bg-dark/20 rounded-md md:col-span-2 h-min">
+    <div
+      class="p-2 w-full bg-dark/20 rounded-md md:col-span-2 h-min max-w-[120rem]"
+    >
       <p class="font-subheading text-xs">
         Welcome to <span class="font-bold text-center">The Daily Drip</span>,
         your place for gacha game preditions and speculations! Speculations are
@@ -79,7 +81,7 @@ events.sort(
         "--bg-wuwa": "oklch(19.14% 0.0307 266.53)",
         "--bg-zzz": "oklch(66% 0.1431 43.41)",
       }}
-      class="flex flex-col lg:flex-row gap-4 h-full min-h-0 w-full xl:overflow-hidden"
+      class="flex flex-col lg:flex-row gap-4 h-full min-h-0 w-full xl:overflow-hidden max-w-[120rem]"
     >
       <Calendar client:only="svelte" {events} />
 
