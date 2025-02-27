@@ -7,7 +7,6 @@ dayjs.extend(timezone);
 import directus from "$services/directus";
 import { readItems, readItem } from "@directus/sdk";
 import BannerCard from "$components/card/BannerCard.astro";
-import GenericCharacterCard from "./fallbacks/GenericCharacterCard.astro";
 
 let events: any = await directus.request(
   readItems("events_characters", {

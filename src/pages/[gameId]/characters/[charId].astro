@@ -69,13 +69,13 @@ const iconPath = ProxyService.getImage(imgPath, transforms);
 
 const { events, ...rest } = character;
 let event: any = {
-  startDate: dayjs().subtract(7, "days").format("YYYY-MM-dd"),
-  endDate: dayjs().add(7, "days").format("YYYY-MM-dd"),
-  phase: 1,
+  startDate: dayjs().subtract(7, "days").format("YYYY-MM-DD"),
+  endDate: dayjs().add(7, "days").format("YYYY-MM-DD"),
 };
-let phase = await directus.request(readItem("phases", event.phase));
+let phase = await directus.request(readItem("phases", 1));
 let bannerEvent = { phase };
-Object.assign(bannerEvent, character, rest);
+Object.assign(bannerEvent, event, character, rest);
+console.log(bannerEvent);
 ---
 
 <Layout {title}>
