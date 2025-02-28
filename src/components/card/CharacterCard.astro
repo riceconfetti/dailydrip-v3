@@ -17,6 +17,13 @@ interface Variants {
   [key: string]: any;
 }
 
+if (character.id.includes("placeholder")) {
+  character.debut = false;
+  if (character.id == character.game + "_placeholder") {
+    character.spec = false;
+  }
+}
+
 const vars = {
   "--primaryColor":
     character.colors != null

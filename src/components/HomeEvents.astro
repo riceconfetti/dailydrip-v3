@@ -13,10 +13,9 @@ let events: any = await directus.request(
     fields: ["*"],
     limit: -1,
     filter: {
-      _or: [
-        { spec: { _eq: false } },
-        { spec: { _null: true } },
-        { characters_id: { _neq: "placeholder0" } },
+      _and: [
+        { characters_id: { _ncontains: "placeholder" } },
+        { _or: [{ spec: { _eq: false } }, { spec: { _null: true } }] },
       ],
     },
   }),
@@ -84,6 +83,7 @@ let upcomingEvents = events.filter(
     {
       upcomingEvents.map((bannerEvent: any) => {
         return <BannerCard {bannerEvent} status="upcoming" />;
+        // return <p>{bannerEvent.name}</p>;
       })
     }
   </div>

@@ -38,6 +38,14 @@ fiveStars = await Promise.all(
   }),
 );
 
+while (fiveStars.length < 1) {
+  let placeholder = await directus.request(
+    readItem("characters", game.id + "_placeholder"),
+  );
+  Object.assign(placeholder, { spec: false, debut: false });
+  fiveStars.push(placeholder);
+}
+
 const phaseCard = tv({
   slots: {
     base: "grid-rows-auto grid size-full grid-cols-2 grid-rows-[repeat(3,min-content)] gap-2",
