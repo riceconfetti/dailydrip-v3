@@ -1,5 +1,7 @@
 document.querySelector(".hamburger").addEventListener("click", () => {
-  document.querySelector(".nav-links").classList.toggle("translate-x-full");
+  document
+    .querySelector(".nav-links")
+    .classList.toggle("[transform:translate(100%,0)]");
 });
 
 document.querySelector(".settings").addEventListener("click", () => {

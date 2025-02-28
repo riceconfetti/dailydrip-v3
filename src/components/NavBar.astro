@@ -36,13 +36,13 @@ const { baseURL } = Astro.props;
 
     <!-- <a href={baseURL+'/calendar'} >Calendar</a> -->
     <!-- <li>Archive</li> -->
-    <button class="settings_gear pointer-cursor z-20"
-      ><i class="ri-settings-4-line"></i></button
-    >
+    <button class="settings_gear pointer-cursor z-20">
+      <i class="ri-settings-4-line"></i>
+    </button>
   </div>
 </div>
 <div
-  class="nav-links z-20 fixed top-0 flex w-full bg-dark h-0 min-h-full translate-x-full transition-all flex-col p-16 py-24 list-none text-light gap-4 text-lg items-center font-heading font-bold lg:hidden"
+  class="nav-links z-20 fixed top-0 flex w-full bg-dark h-0 min-h-full [transform:translate(100%,0)] transition-all flex-col p-16 py-24 list-none text-light gap-4 text-lg items-center font-heading font-bold lg:hidden"
 >
   {
     games.map((g) => (
@@ -51,7 +51,4 @@ const { baseURL } = Astro.props;
       </a>
     ))
   }
-
-  <!-- <a class="p-3" href="./calendar">Calendar</a> -->
-  <!-- <li>Archive</li> -->
 </div>
