@@ -13,7 +13,11 @@ let events: any = await directus.request(
     fields: ["*"],
     limit: -1,
     filter: {
-      _or: [{ spec: { _eq: false } }, { spec: { _null: true } }],
+      _or: [
+        { spec: { _eq: false } },
+        { spec: { _null: true } },
+        { characters_id: { _neq: "placeholder0" } },
+      ],
     },
   }),
 );
