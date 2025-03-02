@@ -28,12 +28,11 @@ while (fourStars.length < game.numOfRateUpCharacters) {
   fourStars.push(placeholder);
 }
 
-while (fiveStars.length < 1) {
+while (fiveStars.length < (game.id == "wuwa" ? 1 : 2)) {
   let placeholder = await directus.request(
     readItem("characters", game.id + "_placeholder"),
   );
   Object.assign(placeholder, { spec: false, debut: false });
-  fiveStars.push(placeholder);
   fiveStars.push(placeholder);
 }
 
