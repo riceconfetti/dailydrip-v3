@@ -1,0 +1,69 @@
+---
+import { Image } from "astro:assets";
+import hertaBoth from "$assets/herta-both.png";
+import hertaDefault from "$assets/herta-default.png";
+import hertaSpec from "$assets/herta-spec.png";
+import hertaSuperSpec from "$assets/herta-super-spec.png";
+import hertaDebut from "$assets/herta-debut.png";
+---
+
+<div
+  id="questions"
+  class="absolute h-dvh w-dvw bg-dark/20 z-50 backdrop-blur-sm items-center hidden justify-center p-4"
+>
+  <div
+    class="bg-light flex flex-col font-subheading font-semibold gap-4 w-full sm:w-4/5 max-h-2/3"
+  >
+    <div
+      class="tracking-wide h-min font-bold font-subheading flex w-full border border-black/10 p-3 px-4 text-base sm:text-xl bg-dark text-text-dark order-0 items-center gap-2"
+    >
+      <i class="ri-question-line text-accent-gold leading-none"></i>
+      <h1 class="leading-none">Frequently Asked Questions</h1>
+    </div>
+
+    <!-- FAQ HERE -->
+    <div
+      class="p-4 flex flex-col gap-2 font-body font-light overflow-auto h-full"
+    >
+      <h2 class="font-subheading text-xl font-semibold">
+        What do the different effects on the prediction cards mean?
+      </h2>
+      <p>
+        The different effects determine the state of the character or validity
+        of the prediction.
+      </p>
+      <div
+        class="grid grid-cols-3 md:grid-cols-5 w-full gap-2 text-center text-xs italic"
+      >
+        <div class="flex flex-col gap-2 w-full items-center">
+          <Image src={hertaDefault} alt="default" />
+          <p class="w-full">Default State; Confirmed Rerun</p>
+        </div>
+        <div class="flex flex-col gap-2 w-full items-center">
+          <Image src={hertaSpec} alt="spec" />
+          <p class="w-full">Speculation State; Unconfirmed Rerun</p>
+        </div>
+        <div class="flex flex-col gap-2 w-full items-center">
+          <Image src={hertaDebut} alt="debut" />
+          <p class="w-full">Debut State; Confirmed Debut</p>
+        </div>
+        <div class="flex flex-col gap-2 w-full items-center">
+          <Image src={hertaBoth} alt="both" />
+          <p class="w-full">Both State; Uncomfirmed Debut</p>
+        </div>
+        <div class="flex flex-col gap-2 w-full items-center">
+          <Image src={hertaSuperSpec} alt="superspec" />
+          <p class="w-full">
+            Personal Rerun Prediction; Super unconfirmed rerun
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="flex gap-2 justify-end items-center p-4 pt-0">
+      <button class="questions_close rounded bg-dark/90 text-light p-1 px-2"
+        >Close</button
+      >
+    </div>
+  </div>
+</div>

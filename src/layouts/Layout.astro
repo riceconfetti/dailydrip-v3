@@ -28,6 +28,7 @@ import "../app.css";
 
 import NavBar from "$components/NavBar.astro";
 import SettingsModal from "$components/SettingsModal.svelte";
+import Faq from "$components/Faq.astro";
 import { PUBLIC_DEPLOY_MODE } from "astro:env/client";
 
 interface Props {
@@ -53,7 +54,9 @@ const { title, baseURL = "/" } = Astro.props;
     <script is:inline>
       let myVar;
       function myFunction() {
+        console.log("loading...");
         myVar = setTimeout(showPage, 700);
+        console.log("done!");
       }
       function showPage() {
         document.getElementById("loader").classList.toggle("opacity-0");
@@ -65,6 +68,7 @@ const { title, baseURL = "/" } = Astro.props;
   </head>
   <body class="relative h-dvh w-dvw bg-light" onload="myFunction()">
     <SettingsModal client:load />
+    <Faq />
     <main
       id="content"
       class="relative flex flex-col overflow-x-hidden size-full items-center pb-2"

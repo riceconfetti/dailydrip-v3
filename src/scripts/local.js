@@ -18,3 +18,18 @@ document.querySelector(".settings_gear").addEventListener("click", () => {
   document.querySelector("#settings").classList.toggle("flex");
   document.querySelector("#settings").classList.toggle("hidden");
 });
+
+document.querySelector(".questions").addEventListener("click", () => {
+  document.querySelector("#questions").classList.toggle("hidden");
+  document.querySelector("#questions").classList.toggle("flex");
+});
+
+document.querySelector(".questions_close").addEventListener("click", () => {
+  document.querySelector("#questions").classList.toggle("flex");
+  document.querySelector("#questions").classList.toggle("hidden");
+});
+
+document.querySelector(".questions_gear").addEventListener("click", () => {
+  document.querySelector("#questions").classList.toggle("flex");
+  document.querySelector("#questions").classList.toggle("hidden");
+});

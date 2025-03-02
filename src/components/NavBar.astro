@@ -17,6 +17,9 @@ const { baseURL } = Astro.props;
     >
   </a>
   <div class="flex gap-4">
+    <button class="questions lg:hidden">
+      <i class="ri-question-line"></i>
+    </button>
     <button class="settings lg:hidden">
       <i class="ri-settings-4-line"></i>
     </button>
@@ -36,6 +39,9 @@ const { baseURL } = Astro.props;
 
     <!-- <a href={baseURL+'/calendar'} >Calendar</a> -->
     <!-- <li>Archive</li> -->
+    <button class="questions_gear pointer-cursor z-20">
+      <i class="ri-question-line"></i>
+    </button>
     <button class="settings_gear pointer-cursor z-20">
       <i class="ri-settings-4-line"></i>
     </button>
