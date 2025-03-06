@@ -1,10 +1,24 @@
 ---
 import { tv } from "tailwind-variants";
 import ProxyService from "$services/imgproxy";
+import directus from "$services/directus";
+import { readItem } from "@directus/sdk";
 
 const { weapon, class: className } = Astro.props;
-const iconPath = `/weapons/${weapon.game}/${weapon.id}-icon.webp`;
-const fullPath = `/weapons/${weapon.game}/${weapon.id}-full.webp`;
+
+let placeholder: any = await directus.request(
+  readItem(
+    "weapons",
+    weapon.game,
+    //@ts-ignore
+    { fields: ["*", "icon.filename_disk", "full.filename_disk"] }
+  )
+);
+console.log(placeholder);
+const iconPath = weapon.icon
+  ? `/${weapon.icon.filename_disk}`
+  : `/${placeholder.icon.filename_disk}`;
+const fullPath = weapon.full ? `/${weapon.full.filename_disk}` : `/`;
 
 const icon = ProxyService.getImage(iconPath, [], "webp");
 const full = ProxyService.getImage(
@@ -15,7 +29,7 @@ const full = ProxyService.getImage(
       params: [0.9, 0.9],
     },
   ],
-  "webp",
+  "webp"
 );
 
 const weaponCard = tv({

@@ -16,13 +16,18 @@ let weaponsFourStars = event.featured_weapons.filter((w: any) => w.rarity == 4);
 
 let game = await directus.request(readItem("games", event.game));
 while (weaponsFourStars.length < game.numOfRateUpWeapons) {
-  weaponsFourStars.push({
-    id: game.id,
-    game: game.id,
-    name: "??????",
-    rarity: 4,
-  });
+  let placeholder = await directus.request(
+    readItem(
+      "weapons",
+      game.id,
+      //@ts-ignore
+      { fields: ["*", "icon.filename_disk", "full.filename_disk"] }
+    )
+  );
+  placeholder.rarity = 4;
+  weaponsFourStars.push(placeholder);
 }
+
 while (fourStars.length < game.numOfRateUpCharacters) {
   let placeholder = await directus.request(readItem("characters", game.id));
   fourStars.push(placeholder);
@@ -30,7 +35,7 @@ while (fourStars.length < game.numOfRateUpCharacters) {
 
 while (fiveStars.length < (game.id == "wuwa" ? 1 : 2)) {
   let placeholder = await directus.request(
-    readItem("characters", game.id + "_placeholder"),
+    readItem("characters", game.id + "_placeholder")
   );
   Object.assign(placeholder, { spec: false, debut: false });
   fiveStars.push(placeholder);
@@ -41,9 +46,16 @@ const count: 1 | 2 | 3 =
 
 fiveStars = await Promise.all(
   fiveStars.map(async (c: any) => {
-    c.signature = await directus.request(readItem("weapons", c.signature));
+    c.signature = await directus.request(
+      readItem(
+        "weapons",
+        c.signature,
+        //@ts-ignore
+        { fields: ["*", "icon.filename_disk", "full.filename_disk"] }
+      )
+    );
     return c;
-  }),
+  })
 );
 
 const phaseCard = tv({

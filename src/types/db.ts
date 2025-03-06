@@ -18,10 +18,16 @@ export type Attribute = {
   game: Game;
   name: string;
   primary: boolean;
+  icon: {
+    filename_disk: string;
+  };
 };
 
 export type Character = {
   id: string;
+  splash_art: {
+    filename_disk: string;
+  };
   name: string;
   game: Game;
   rarity: 5 | 4;

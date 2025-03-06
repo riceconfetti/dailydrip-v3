@@ -16,7 +16,7 @@ const vars = {
   "--primaryColor":
     bannerEvent.colors != null
       ? [...bannerEvent.colors].sort(
-          (a: { l: number }, b: { l: number }) => a.l - b.l,
+          (a: { l: number }, b: { l: number }) => a.l - b.l
         )[colorIndex].css
       : "oklch(20% 0 0)",
   "--secondaryColor":
@@ -29,7 +29,9 @@ const vars = {
       : "var(--color-accent-purple-200)",
 };
 
-const imgPath = `/characters/${bannerEvent.game}/${bannerEvent.id}.webp`;
+const imgPath = bannerEvent.splash_art
+  ? `/${bannerEvent.splash_art.filename_disk}`
+  : "/";
 
 let options: any = {
   bannerCrop: { x: 1600, y: 800 },
@@ -38,7 +40,7 @@ let options: any = {
 
 if (bannerEvent.card_edits != null) {
   const bannerEdits = bannerEvent.card_edits.find(
-    (e: any) => e.variant == "banner",
+    (e: any) => e.variant == "banner"
   );
   if (bannerEdits != undefined) {
     options = setValRecursive(options, bannerEdits.style);
@@ -113,8 +115,7 @@ const { base, charBg, outline, name, banner, frost, holo } = card({
   client:load
   class="@container-[size] w-full aspect-10/3 relative min-h-16 min-w-16 transition"
   {bannerEvent}
-  {status}
->
+  {status}>
   <div class={base()} style={vars}>
     <div class={charBg()}></div>
 

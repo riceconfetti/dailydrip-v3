@@ -13,7 +13,13 @@ import Editor from "$components/Editor.svelte";
 export const prerender = false;
 const { gameId, charId } = Astro.params;
 
-let character = await directus.request(readItem("characters", charId!));
+let character = await directus.request(
+  readItem("characters", charId!, {
+    //@ts-ignore
+    fields: ["*", "splash_art.filename_disk"],
+  })
+);
+
 let game = await directus.request(readItem("games", gameId!));
 
 let debut = structuredClone(character);
@@ -28,7 +34,6 @@ if (PUBLIC_DEPLOY_MODE == "static") return Astro.rewrite("/404");
 
 const title = "The Daily Drip | " + game.name + " | " + character.name;
 
-let imgPath = `/characters/${character.game}/${character.id}.webp`;
 const transforms = [
   // { key: "trim", params: [1, "FF00FF"] },
   {
@@ -65,7 +70,13 @@ const sizes = [
 const width = Astro.url.searchParams.get("width") || "sm";
 const height = Astro.url.searchParams.get("height") || "2xl";
 
-const iconPath = ProxyService.getImage(imgPath, transforms);
+const iconPath =
+  character.splash_art != null
+    ? ProxyService.getImage(
+        `/${character.splash_art.filename_disk}`,
+        transforms
+      )
+    : ProxyService.getImage(`/`, []);
 
 const { events, ...rest } = character;
 let event: any = {
@@ -85,8 +96,7 @@ Object.assign(bannerEvent, event, character, rest);
       </h1>
       <div class="flex gap-3 w-full justify-start">
         <div
-          class="relative size-25 aspect-square rounded-full overflow-clip border-2 border-accent-gold-500"
-        >
+          class="relative size-25 aspect-square rounded-full overflow-clip border-2 border-accent-gold-500">
           <div class="w-full absolute h-1/2 border-b border-black"></div>
           <div class="h-full absolute w-1/2 border-r border-black"></div>
           <img src={iconPath} class="size-full" />
@@ -100,8 +110,7 @@ Object.assign(bannerEvent, event, character, rest);
                   style={{
                     "--currColor": c.css,
                     "--textColor": c.l > 0.5 ? "#000" : "#fff",
-                  }}
-                >
+                  }}>
                   <p>L: {c.l}</p>
                   <p>C: {c.c}</p>
                   <p>H: {c.h}</p>

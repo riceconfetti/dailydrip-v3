@@ -10,6 +10,7 @@ import ProxyService from "$services/imgproxy";
 
 import Border from "./deco-border/Border.astro";
 import Placeholder from "./Placeholder.svelte";
+import { boolean } from "astro:schema";
 
 const colorIndex = 0;
 const variants = ["portrait", "landscape", "icon"];
@@ -42,23 +43,27 @@ const vars = {
 const game = await directus.request(readItem("games", character.game));
 
 const primary = await directus.request(
-  readItem("attributes", character.primary_attribute),
+  readItem("attributes", character.primary_attribute, {
+    //@ts-ignore
+    fields: ["*", "icon.filename_disk"],
+  })
 );
 
 const secondary = await directus.request(
-  readItem("attributes", character.secondary_attribute),
+  readItem("attributes", character.secondary_attribute)
 );
 
 const backgroundPath = game?.elementMain
   ? `/backgrounds/${game?.id}/${primary?.name}.webp`
   : `/backgrounds/${game?.id}/${secondary?.name}.webp`;
 
-const imgPath = `/characters/${character.game}/${character.id}.webp`;
-const fullSplash = ProxyService.getImage(imgPath, [], "webp");
-const placeholder = `/placeholders/${game?.id}/${primary?.name}.webp`;
+const imgPath = character.splash_art
+  ? `/${character.splash_art.filename_disk}`
+  : false;
+const placeholderPath = `/${primary.icon.filename_disk}`;
 
 Object.assign(vars, {
-  "--placeholder": `url("${ProxyService.getImage(placeholder, [], "webp")}")`,
+  "--placeholder": `url("${ProxyService.getImage(placeholderPath, [], "webp")}")`,
 });
 
 Object.assign(vars, {
@@ -67,7 +72,7 @@ Object.assign(vars, {
     ProxyService.getImage(
       backgroundPath,
       [{ key: "crop", params: [0, 0] }],
-      "webp",
+      "webp"
     ) +
     '")',
 });
@@ -99,7 +104,7 @@ if (character.card_edits != null) {
     if (Object.keys(options).includes(v)) {
       options[v] = setValRecursive(
         options[v],
-        edits.find((e: any) => e.variant == v).style,
+        edits.find((e: any) => e.variant == v).style
       );
     }
   });
@@ -171,7 +176,7 @@ const splash: Variants = variants.reduce((prev, curr) => {
             ProxyService.getImage(imgPath, characterTransforms[curr], "webp"),
             [{ key: "resize", params: ["fill", 400, 1100, 0, 1, "so"] }],
             "webp",
-            false,
+            false
           )
         : ProxyService.getImage(imgPath, characterTransforms[curr], "webp"),
   });
@@ -183,7 +188,7 @@ const Holo: Variants = variants.reduce((prev, curr) => {
     [curr]: ProxyService.getImage(
       "/overlays/Holo_" + curr.at(0)?.toUpperCase() + curr.slice(1) + ".png",
       [],
-      "webp",
+      "webp"
     ),
   });
   return prev;
@@ -195,7 +200,7 @@ const Frost: Variants = variants.reduce((prev, curr) => {
       "/overlays/Frost_" + curr.at(0)?.toUpperCase() + curr.slice(1) + ".png",
       //@ts-ignore
       [],
-      "webp",
+      "webp"
     ),
   });
   return prev;
@@ -206,7 +211,7 @@ variants.forEach((v) => {
     vars,
     { [`--char-${v}`]: `url("${splash[v]}")` },
     { [`--holo-${v}`]: `url("${Holo[v]}")` },
-    { [`--frost-${v}`]: `url("${Frost[v]}")` },
+    { [`--frost-${v}`]: `url("${Frost[v]}")` }
   );
 });
 
@@ -220,6 +225,8 @@ const card = tv({
       "absolute inset-0 bg-linear-0 from-(--primaryColor) via-(--secondaryColor)",
     outline:
       "absolute inset-[0.15rem] z-10 flex flex-col justify-end rounded-sm border-1 border-(--cardAccent) p-1 text-center text-(--cardAccent) inset-shadow-card @5xs:inset-1 @5xs:border-2 @3xs:@min-h-5xs:p-4 @xl:@min-h-lg:p-8",
+    placeholder:
+      "absolute inset-0 hidden bg-[image:var(--placeholder)] bg-[50%_45%] bg-no-repeat @icon:bg-[size:35cqw_35cqw] @landscape:bg-[size:35cqh_35cqh] @portrait:bg-[size:45cqw_45cqw]",
     name: "font-heading text-xs font-bold text-balance shadow-black drop-shadow-md @6xs:text-sm @5xs:@min-h-5xs:text-xl @sm:@min-h-xs:text-2xl @xl:@min-h-lg:text-3xl",
     banner:
       "font-subheading text-[0.5rem] text-balance italic shadow-black drop-shadow-md @3xs:text-xs @5xs:@min-h-5xs:text-sm @xs:@min-h-2xs:text-base @sm:@min-h-xs:text-lg @xl:@min-h-lg:text-xl",
@@ -239,6 +246,11 @@ const card = tv({
         frost: "block",
       },
     },
+    placeholder: {
+      true: {
+        placeholder: "block",
+      },
+    },
     rarity: {
       5: {
         banner: "@max-6xs:hidden @icon:hidden @max-h-6xs:hidden",
@@ -248,12 +260,24 @@ const card = tv({
       },
     },
   },
+  compoundVariants: [{ rarity: 4 }],
 });
 
-const { base, charBg, overlay, outline, name, banner, frost, holo } = card({
+const {
+  base,
+  charBg,
+  overlay,
+  outline,
+  placeholder,
+  name,
+  banner,
+  frost,
+  holo,
+} = card({
   rarity: character.rarity,
   speculation: character.spec,
   debut: character.debut,
+  placeholder: imgPath == false,
 });
 ---
 
@@ -263,12 +287,11 @@ const { base, charBg, overlay, outline, name, banner, frost, holo } = card({
     "@container-[size] size-full relative min-h-16 min-w-16",
     className,
   ]}
-  style={vars}
->
+  style={vars}>
   <div class={base()}>
     <div class={charBg()}></div>
     <div class={overlay()}></div>
-    <Placeholder url={fullSplash} client:load />
+    <div class={placeholder()}></div>
     <!-- Text & Outline -->
     <div class={outline()}>
       <h2 class={name()}>
