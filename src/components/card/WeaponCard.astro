@@ -14,7 +14,7 @@ let placeholder: any = await directus.request(
     { fields: ["*", "icon.filename_disk", "full.filename_disk"] }
   )
 );
-console.log(placeholder);
+
 const iconPath = weapon.icon
   ? `/${weapon.icon.filename_disk}`
   : `/${placeholder.icon.filename_disk}`;
