@@ -25,7 +25,7 @@ type Schema = {
   events_characters: EventCharacter[];
   events_weapons: EventWeapon[];
 };
-const directus = createDirectus<Schema>("https://cms.dailydrip.news")
+const directus = createDirectus<Schema>("https://directus.dailydrip.news")
   .with(staticToken(DIRECTUS_TOKEN))
   .with(rest());
 
