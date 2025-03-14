@@ -50,6 +50,12 @@ const { title, baseURL = "/" } = Astro.props;
     />
     <meta name="viewport" content="width=device-width" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/devicon.min.css"
+    />
+
     <meta name="generator" content={Astro.generator} />
     <script is:inline>
       let myVar;
@@ -71,15 +77,13 @@ const { title, baseURL = "/" } = Astro.props;
     <Faq />
     <main
       id="content"
-      class="relative flex flex-col overflow-x-hidden size-full items-center pb-2"
-    >
+      class="relative flex flex-col overflow-x-hidden size-full items-center pb-2">
       <div
         id="loader"
         class:list={[
           "fixed inset-0 text-accent-gold-500 z-50 bg-dark  flex-col items-center justify-center transition-opacity",
           PUBLIC_DEPLOY_MODE == "server" ? "hidden" : "flex",
-        ]}
-      >
+        ]}>
         <l-square
           size="35"
           stroke="5"
@@ -90,16 +94,21 @@ const { title, baseURL = "/" } = Astro.props;
       </div>
       <NavBar {baseURL} />
       <div
-        class="relative z-10 p-2 w-full flex flex-1 justify-center items-center flex-col"
-      >
+        class="relative z-10 p-2 w-full flex flex-1 justify-center items-center flex-col">
         <slot />
       </div>
-      <p
-        class="text-[.6rem] text-dark text-opacity-50 text-center text-balance pt-1 font-body"
-      >
-        The Daily Drip is an unaffiliated fansite. All game contents and
-        materials are trademarks and copyright of their respective companies.
-      </p>
+      <div class="w-full grid grid-cols-2 px-4">
+        <p
+          class="text-[.6rem] text-dark text-opacity-50 text-balance pt-1 font-body">
+          The Daily Drip is an unaffiliated fansite. All game contents and
+          materials are trademarks and copyright of their respective companies.
+        </p>
+        <div class="flex gap-1 justify-end text-dark/50">
+          <i class="devicon-astro-plain"></i>
+          <i class="devicon-tailwindcss-original"></i>
+          <i class="devicon-svelte-plain"></i>
+        </div>
+      </div>
     </main>
 
     <script>

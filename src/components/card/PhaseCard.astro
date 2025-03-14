@@ -29,13 +29,23 @@ while (weaponsFourStars.length < game.numOfRateUpWeapons) {
 }
 
 while (fourStars.length < game.numOfRateUpCharacters) {
-  let placeholder = await directus.request(readItem("characters", game.id));
+  let placeholder = await directus.request(
+    readItem(
+      "characters",
+      game.id, //@ts-ignore
+      { fields: ["*", "splash_art.filename_disk"] }
+    )
+  );
   fourStars.push(placeholder);
 }
 
 while (fiveStars.length < (game.id == "wuwa" ? 1 : 2)) {
   let placeholder = await directus.request(
-    readItem("characters", game.id + "_placeholder")
+    readItem(
+      "characters",
+      game.id + "_placeholder", //@ts-ignore
+      { fields: ["*"] }
+    )
   );
   Object.assign(placeholder, { spec: false, debut: false });
   fiveStars.push(placeholder);
