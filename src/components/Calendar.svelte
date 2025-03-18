@@ -109,7 +109,7 @@
                 <Calendar.Cell
                   {date}
                   month={month.value}
-                  class="relative min-h-0 aspect-square h-full w-full border-dark/20 data-[disabled]:text-current/40 "
+                  class="relative min-h-0 aspect-square h-full w-full border-dark/20  "
                 >
                   {@const event = isDateUnavailable(date)
                     ? events.filter((e) => {
@@ -118,7 +118,8 @@
                       })
                     : false}
                   <Calendar.Day
-                    class="absolute inset-0 @container-[size] line-clamp-4"
+                    data-event={isDateUnavailable(date) ? "" : null}
+                    class="absolute -inset-[1px] @container-[size] group line-clamp-4 data-outside-month:opacity-40 data-outside-month:bg-dark/10  data-today:border-accent-gold-300 data-today:border data-today:bg-accent-gold-300/10"
                   >
                     <!-- EVENT DAY COLOR BADGE -->
                     <div
@@ -129,7 +130,6 @@
                       class="absolute inset-0 flex flex-col items-center justify-center md:justify-start md:items-start size-full gap-2 lg:gap-1 p-1 md:p-[0.325rem]"
                     >
                       <div
-                        data-event={isDateUnavailable(date)}
                         style={isDateUnavailable(date)
                           ? "--accentColor: var(" +
                             gameColors["bg_" + event[0].game.id] +
@@ -137,7 +137,7 @@
                             gameColors["text_" + event[0].game.id] +
                             ")"
                           : ""}
-                        class="aspect-square md:w-[14cqw] lg:data-[event=true]:text-accent-gold-400 lg:data-[event=true]:font-bold lg:data-[event=true]:bg-inherit data-[event=true]:bg-(--accentColor) data-[event=true]:text-(--textColor) px-1 flex items-center justify-center rounded-xs"
+                        class="aspect-square md:w-[14cqw] lg:group-data-event:text-(--accentColor) lg:group-data-event:brightness-80 lg:group-data-event:font-bold lg:group-data-event:bg-inherit group-data-event:bg-(--accentColor) group-data-event:text-(--textColor) px-1 flex items-center justify-center rounded-xs"
                       >
                         <p class="text-[clamp(0.7rem,12cqw,1rem)] leading-none">
                           {date.day}
