@@ -17,6 +17,8 @@
   --color-text-dark: #d1d1d1;
   --color-text-light: #232323;
 
+  --color-white: oklch(92% 0.001 285);
+
   --color-accent-gold: oklch(71.41% 0.0856 77.07);
   --color-accent-gold-50: oklch(95% 0.0856 77.07);
   --color-accent-gold-100: oklch(90% 0.0856 77.07);

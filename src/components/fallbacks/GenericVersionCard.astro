@@ -167,14 +167,12 @@ let events = version.events;
 ---
 
 <section
-  class="@container font-redacted grayscale size-full grow bg-white bg-opacity-30 p-2 sm:p-4 shadow-md max-w-7xl"
->
+  class="@container font-redacted grayscale size-full grow bg-light bg-opacity-30 p-2 sm:p-4 shadow-md max-w-7xl">
   <div class="flex flex-col gap-3 size-full animate-pulse">
     <VersionHeader {version} />
 
     <div
-      class="h-full grow flex flex-col gap-3 lg:grid lg:grid-cols-2 lg:gap-5 w-full"
-    >
+      class="h-full grow flex flex-col gap-3 md:grid md:grid-cols-2 lg:gap-5 w-full">
       {events.map((gachaEvent: any) => <PhaseCard {gachaEvent} />)}
     </div>
   </div>
