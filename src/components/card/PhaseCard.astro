@@ -84,7 +84,7 @@ const phaseCard = tv({
       2: {},
       3: {
         //3 or more limited
-        base: "grid-cols-[5fr_3fr_1fr] grid-rows-[repeat(3,min-content)]",
+        base: `grid-cols-[5fr_3fr_1fr] grid-rows-(--gridRows)`,
       },
     },
     rarity: {
@@ -116,7 +116,7 @@ const phaseCard = tv({
       rarity: 5,
       count: 3,
       class: {
-        box: "col-span-2 col-start-2 grid grid-cols-subgrid first:col-span-1 first:col-start-1 first:row-span-3 first:grid-rows-[5fr_1fr]",
+        box: "col-span-2 col-start-2 grid grid-cols-subgrid first:col-span-1 first:col-start-1 first:row-span-full first:grid-rows-[5fr_1fr]",
       },
     },
   ],
@@ -125,7 +125,9 @@ const phaseCard = tv({
 const { base, box, character, weapon } = phaseCard({ count: count, rarity: 5 });
 ---
 
-<div class="flex flex-col gap-2 w-full h-full">
+<div
+  class="flex flex-col gap-2 w-full h-full"
+  style={`--gridRows: repeat(${fiveStars.length - 1},min-content)`}>
   <PhaseHeader client:load {event} />
   <div class={base()}>
     {
