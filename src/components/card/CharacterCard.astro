@@ -108,15 +108,16 @@ if (character.card_edits != null) {
   });
 }
 
+const fp = [
+  character.splash_art.focal_point_x / character.splash_art.width,
+  character.splash_art.focal_point_y / character.splash_art.height,
+];
+
 const characterTransforms: Variants = {
   portrait: [
     {
       key: "gravity",
-      params: [
-        "fp",
-        character.focalPoint.x + options.portrait.index.x,
-        character.focalPoint.y + options.portrait.index.y,
-      ],
+      params: ["fp", fp[0], fp[1]],
     },
     {
       key: "crop",
@@ -125,7 +126,7 @@ const characterTransforms: Variants = {
         options.portrait.bannerCrop.y * character.crop.y,
       ],
     },
-    { key: "resize", params: ["fill", 800, 1600, 1, 1, "so"] },
+    { key: "resize", params: ["fill", 800, 1600, 1, 1] },
     {
       key: "dpr",
       params: [options.portrait.dpr],
@@ -134,11 +135,7 @@ const characterTransforms: Variants = {
   landscape: [
     {
       key: "gravity",
-      params: [
-        "fp",
-        character.focalPoint.x + options.landscape.index.x,
-        character.focalPoint.y + options.landscape.index.y,
-      ],
+      params: ["fp", fp[0], fp[1]],
     },
     {
       key: "crop",
@@ -147,7 +144,7 @@ const characterTransforms: Variants = {
         options.landscape.bannerCrop.y * character.crop.y,
       ],
     },
-    { key: "resize", params: ["fill", 1600, 800, 1, 1] },
+    { key: "resize", params: ["fit", 1600, 800, 1, 1] },
   ],
   icon: [
     {
@@ -280,7 +277,10 @@ const {
 ---
 
 <!-- CARD -->
-<div
+<img src={splash.landscape} alt="" />
+<img src={splash.portrait} alt="" />
+
+<!-- <div
   class:list={[
     "@container-[size] size-full relative min-h-16 min-w-16",
     className,
@@ -290,7 +290,7 @@ const {
     <div class={charBg()}></div>
     <div class={overlay()}></div>
     <div class={placeholder()}></div>
-    <!-- Text & Outline -->
+    Text & Outline
     <div class={outline()}>
       <h2 class={name()}>
         {character.name}
@@ -302,11 +302,11 @@ const {
     </div>
   </div>
 
-  <!-- OVERLAYS -->
+  OVERLAYS
   <div class="absolute inset-0">
     <div class={holo()}>
       <Border />
     </div>
     <div class={frost()}></div>
   </div>
-</div>
+</div> -->

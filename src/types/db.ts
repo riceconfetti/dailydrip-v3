@@ -26,7 +26,7 @@ export type Attribute = {
 export type Character = {
   id: string;
   splash_art: {
-    filename_disk: string;
+    [x: string]: any;
   };
   name: string;
   game: Game;
