@@ -44,45 +44,84 @@ const primary = await directus.request(
   readItem("attributes", character.primary_attribute, {
     //@ts-ignore
     fields: ["*", "icon.filename_disk"],
-  })
+  }),
 );
 
 const secondary = await directus.request(
-  readItem("attributes", character.secondary_attribute)
+  readItem("attributes", character.secondary_attribute),
 );
 
 const backgroundPath = game?.elementMain
   ? `/backgrounds/${game?.id}/${primary?.name}.webp`
   : `/backgrounds/${game?.id}/${secondary?.name}.webp`;
 
-const imgPath = character.splash_art
-  ? `/${character.splash_art.filename_disk}`
-  : false;
 const placeholderPath = `/${primary.icon.filename_disk}`;
+
+const fp = {
+  x: character.splash_art.focal_point_x,
+  y: character.splash_art.focal_point_y,
+};
+const size = { w: character.splash_art.width, h: character.splash_art.height };
+const padding = (() => {
+  let ret = {
+    t: 0,
+    r: 0,
+    b: 0,
+    l: 0,
+  };
+  if (fp.x < size.w / 2) {
+    const x = fp.x;
+    ret.l = size.w - 2 * x;
+  } else if (fp.x > size.w / 2) {
+    const x = size.w - fp.x;
+    ret.r = size.w - 2 * x;
+  }
+
+  if (fp.y < size.h / 2) {
+    const y = fp.y;
+    ret.t = size.h - 2 * y;
+  } else if (fp.y > size.h / 2) {
+    const y = size.h - fp.y;
+    ret.b = size.h - 2 * y;
+  }
+
+  return [ret.t, ret.r, ret.b, ret.l];
+})();
+
+const dpr = size.h / (size.h + padding[0] + padding[2]);
+
+const preCrop = [
+  { key: "padding", params: padding },
+  { key: "dpr", params: [dpr] },
+];
+
+const imgPath = character.splash_art
+  ? ProxyService.getImage(
+      `/${character.splash_art.filename_disk}`,
+      preCrop,
+      "webp",
+    )
+  : false;
 
 Object.assign(vars, {
   "--placeholder": `url("${ProxyService.getImage(placeholderPath, [], "webp")}")`,
-});
-
-Object.assign(vars, {
   "--attributeBg":
     'url("' +
     ProxyService.getImage(
       backgroundPath,
       [{ key: "crop", params: [0, 0] }],
-      "webp"
+      "webp",
     ) +
     '")',
 });
 
 let options: any = {
   portrait: {
-    bannerCrop: { x: 800, y: 0 },
-    index: { x: 0, y: 0.08 },
-    zoomOut: character.crop.x + character.crop.y > 2.5,
+    bannerCrop: { x: 0.6, y: 1400 },
+    index: { x: 0, y: 0.16 },
   },
   landscape: {
-    bannerCrop: { x: 0, y: 800 },
+    bannerCrop: { x: 0, y: 1000 },
     index: { x: 0, y: 0.04 },
   },
   icon: {
@@ -102,22 +141,21 @@ if (character.card_edits != null) {
     if (Object.keys(options).includes(v)) {
       options[v] = setValRecursive(
         options[v],
-        edits.find((e: any) => e.variant == v).style
+        edits.find((e: any) => e.variant == v).style,
       );
     }
   });
 }
 
-const fp = [
-  character.splash_art.focal_point_x / character.splash_art.width,
-  character.splash_art.focal_point_y / character.splash_art.height,
-];
-
 const characterTransforms: Variants = {
   portrait: [
     {
       key: "gravity",
-      params: ["fp", fp[0], fp[1]],
+      params: [
+        "fp",
+        0.5 + options.portrait.index.x,
+        0.5 + options.portrait.index.y,
+      ],
     },
     {
       key: "crop",
@@ -135,7 +173,11 @@ const characterTransforms: Variants = {
   landscape: [
     {
       key: "gravity",
-      params: ["fp", fp[0], fp[1]],
+      params: [
+        "fp",
+        0.5 + options.landscape.index.x,
+        0.5 + options.landscape.index.y,
+      ],
     },
     {
       key: "crop",
@@ -144,7 +186,7 @@ const characterTransforms: Variants = {
         options.landscape.bannerCrop.y * character.crop.y,
       ],
     },
-    { key: "resize", params: ["fit", 1600, 800, 1, 1] },
+    { key: "resize", params: ["fill", 1600, 800, 1, 1] },
   ],
   icon: [
     {
@@ -165,15 +207,12 @@ const characterTransforms: Variants = {
 
 const splash: Variants = variants.reduce((prev, curr) => {
   Object.assign(prev, {
-    [curr]:
-      options.zoomOut && curr == "portrait"
-        ? ProxyService.getImage(
-            ProxyService.getImage(imgPath, characterTransforms[curr], "webp"),
-            [{ key: "resize", params: ["fill", 400, 1100, 0, 1, "so"] }],
-            "webp",
-            false
-          )
-        : ProxyService.getImage(imgPath, characterTransforms[curr], "webp"),
+    [curr]: ProxyService.getImage(
+      imgPath,
+      characterTransforms[curr],
+      "webp",
+      false,
+    ),
   });
   return prev;
 }, {});
@@ -183,7 +222,7 @@ const Holo: Variants = variants.reduce((prev, curr) => {
     [curr]: ProxyService.getImage(
       "/overlays/Holo_" + curr.at(0)?.toUpperCase() + curr.slice(1) + ".png",
       [],
-      "webp"
+      "webp",
     ),
   });
   return prev;
@@ -195,7 +234,7 @@ const Frost: Variants = variants.reduce((prev, curr) => {
       "/overlays/Frost_" + curr.at(0)?.toUpperCase() + curr.slice(1) + ".png",
       //@ts-ignore
       [],
-      "webp"
+      "webp",
     ),
   });
   return prev;
@@ -206,7 +245,7 @@ variants.forEach((v) => {
     vars,
     { [`--char-${v}`]: `url("${splash[v]}")` },
     { [`--holo-${v}`]: `url("${Holo[v]}")` },
-    { [`--frost-${v}`]: `url("${Frost[v]}")` }
+    { [`--frost-${v}`]: `url("${Frost[v]}")` },
   );
 });
 
@@ -214,7 +253,7 @@ const card = tv({
   slots: {
     base: "size-full bg-linear-0 bg-(image:--attributeBg) from-(--primaryColor) via-(--secondaryColor) bg-cover bg-center bg-no-repeat",
     charBg:
-      "absolute inset-0 bg-cover bg-center bg-no-repeat @icon:bg-(image:--char-icon) @landscape:bg-(image:--char-landscape) @portrait:bg-(image:--char-portrait) @square:bg-(image:--char-landscape)",
+      "absolute inset-0 bg-cover bg-top bg-no-repeat @icon:bg-(image:--char-icon) @landscape:bg-(image:--char-landscape) @portrait:bg-(image:--char-portrait) @square:bg-(image:--char-landscape)",
 
     overlay:
       "absolute inset-0 bg-linear-0 from-(--primaryColor) via-(--secondaryColor)",
@@ -276,21 +315,18 @@ const {
 });
 ---
 
-<!-- CARD -->
-<img src={splash.landscape} alt="" />
-<img src={splash.portrait} alt="" />
-
-<!-- <div
+<div
   class:list={[
     "@container-[size] size-full relative min-h-16 min-w-16",
     className,
   ]}
-  style={vars}>
+  style={vars}
+>
   <div class={base()}>
     <div class={charBg()}></div>
     <div class={overlay()}></div>
     <div class={placeholder()}></div>
-    Text & Outline
+    <!-- Text & Outline -->
     <div class={outline()}>
       <h2 class={name()}>
         {character.name}
@@ -302,11 +338,11 @@ const {
     </div>
   </div>
 
-  OVERLAYS
+  <!-- OVERLAYS -->
   <div class="absolute inset-0">
     <div class={holo()}>
       <Border />
     </div>
     <div class={frost()}></div>
   </div>
-</div> -->
+</div>
