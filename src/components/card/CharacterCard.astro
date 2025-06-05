@@ -106,7 +106,7 @@ const imgPath = character.splash_art
       "webp",
     )
   : false;
-// console.log(imgPath);
+console.log(character.name, imgPath);
 Object.assign(vars, {
   "--placeholder": `url("${ProxyService.getImage(placeholderPath, [], "webp")}")`,
   "--attributeBg":
@@ -121,7 +121,7 @@ Object.assign(vars, {
 
 let options: any = {
   portrait: {
-    crop: { x: 1000, y: 1400 },
+    crop: { x: 0.6, y: 0.5 },
     index: { x: 0, y: 0.15 },
   },
   landscape: {
@@ -157,8 +157,8 @@ const characterTransforms: Variants = {
     {
       key: "crop",
       params: [
-        options.portrait.crop.x * character.crop.x,
-        options.portrait.crop.y * character.crop.y,
+        options.portrait.crop.x * character.crop_x,
+        options.portrait.crop.y * character.crop_y,
       ],
     },
     { key: "resize", params: ["fill", 800, 1600, 1, 1] },
@@ -175,8 +175,8 @@ const characterTransforms: Variants = {
     {
       key: "crop",
       params: [
-        options.landscape.crop.x * character.crop.x,
-        options.landscape.crop.y * character.crop.y,
+        options.landscape.crop.x * character.crop_x,
+        options.landscape.crop.y * character.crop_y,
       ],
     },
     { key: "resize", params: ["fill", 1600, 800, 1, 1] },
@@ -188,7 +188,7 @@ const characterTransforms: Variants = {
     },
     {
       key: "crop",
-      params: [550 * character.crop.x, 550 * character.crop.y],
+      params: [550 * character.crop_x, 550 * character.crop_y],
     },
     { key: "resize", params: ["fill", 740, 740] },
   ],

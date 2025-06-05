@@ -39,10 +39,8 @@ export type Character = {
     x: number;
     y: number;
   };
-  crop: {
-    x: number;
-    y: number;
-  };
+  crop_x: number;
+  crop_y: number;
   colors: {
     hex: string;
     red: number;
