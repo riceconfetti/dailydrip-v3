@@ -17,7 +17,7 @@ const getPhase = async (id: any) => {
 };
 
 let events = await Promise.all(
-  version.events.map(async (e: any) => await getEvents(e))
+  version.events.map(async (e: any) => await getEvents(e)),
 );
 
 let game = version.game;
@@ -26,7 +26,7 @@ events = await Promise.all(
   events.map(async (e: any) => {
     e.phase = await getPhase(e.phase);
     return e;
-  })
+  }),
 );
 
 events.sort((a, b) => {
@@ -56,14 +56,14 @@ events = await Promise.all(
     e.featured_characters = await Promise.all(
       e.featured_characters.map(async (id: any) => {
         let characterEvent = await directus.request(
-          readItem("events_characters", id)
+          readItem("events_characters", id),
         );
         const charId = characterEvent.characters_id;
         let character = await directus.request(
           readItem("characters", charId, {
             //@ts-ignore
-            fields: ["*", "splash_art.filename_disk"],
-          })
+            fields: ["*", "splash_art.*"],
+          }),
         );
         Object.assign(character, { debut: false });
         let events = character.events;
@@ -73,14 +73,14 @@ events = await Promise.all(
             events.map(async (event: any) => {
               const eventsId = (
                 await directus.request(
-                  readItem("events_characters", event, { limit: -1 })
+                  readItem("events_characters", event, { limit: -1 }),
                 )
               ).events_id;
               const eventObj = await directus.request(
-                readItem("events", eventsId)
+                readItem("events", eventsId),
               );
               return eventObj;
-            })
+            }),
           );
           events.sort((a: any, b: any) => {
             //@ts-ignore
@@ -94,7 +94,7 @@ events = await Promise.all(
         Object.assign(character, { spec: characterEvent.spec });
 
         return character;
-      })
+      }),
     );
     e.featured_weapons = await Promise.all(
       e.featured_weapons.map(async (id: any) => {
@@ -105,24 +105,26 @@ events = await Promise.all(
             "weapons",
             weapId,
             //@ts-ignore
-            { fields: ["*", "icon.filename_disk", "full.filename_disk"] }
-          )
+            { fields: ["*", "icon.filename_disk", "full.filename_disk"] },
+          ),
         );
-      })
+      }),
     );
     return e;
-  })
+  }),
 );
 
 version.events = events;
 ---
 
 <section
-  class="@container size-full grow flex flex-col gap-3 bg-white p-2 sm:p-4 shadow-md max-w-7xl">
+  class="@container size-full grow flex flex-col gap-3 bg-white p-2 sm:p-4 shadow-md max-w-7xl"
+>
   <VersionHeader {version} />
 
   <div
-    class="h-full grow flex flex-col gap-3 md:grid md:grid-cols-2 lg:gap-5 w-full">
+    class="h-full grow flex flex-col gap-3 md:grid md:grid-cols-2 lg:gap-5 w-full"
+  >
     {
       events.map((event: any) => {
         if (event.event_tags == null) {

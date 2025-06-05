@@ -18,7 +18,7 @@ let events: any = await directus.request(
         { _or: [{ spec: { _eq: false } }, { spec: { _null: true } }] },
       ],
     },
-  })
+  }),
 );
 
 events = await Promise.all(
@@ -31,19 +31,18 @@ events = await Promise.all(
           "game",
           "bannerName",
           "name",
-          "focalPoint",
           "crop",
           "colors",
           "card_edits",
           //@ts-ignore
-          "splash_art.filename_disk",
+          "splash_art.*",
         ],
-      })
+      }),
     );
     let event: any = await directus.request(
       readItem("events", evenChar.events_id, {
         fields: ["startDate", "endDate", "phase", "status"],
-      })
+      }),
     );
     let { phase, ...rest } = event;
     phase = await directus.request(readItem("phases", event.phase));
@@ -51,7 +50,7 @@ events = await Promise.all(
     let bannerEvent = { phase };
     Object.assign(bannerEvent, character, rest);
     return bannerEvent;
-  })
+  }),
 );
 
 let currentEvents = events.filter(
@@ -59,18 +58,19 @@ let currentEvents = events.filter(
     dayjs(event.startDate).isBefore(dayjs().add(1, "day")) &&
     dayjs(event.endDate).isAfter(dayjs().subtract(1, "day")) &&
     event.rarity == 5 &&
-    event.status == "published"
+    event.status == "published",
 );
 let upcomingEvents = events.filter(
   (event: any) =>
     dayjs(event.startDate).isAfter(dayjs().subtract(1, "day")) &&
     event.rarity == 5 &&
-    event.status == "published"
+    event.status == "published",
 );
 ---
 
 <section
-  class="flex w-full lg:w-4/5 flex-col gap-2 transition md:grid md:grid-cols-2 lg:grid-cols-1 2xl:grid-cols-2 xl:min-h-0 lg:overflow-auto xl:p-4">
+  class="flex w-full lg:w-4/5 flex-col gap-2 transition md:grid md:grid-cols-2 lg:grid-cols-1 2xl:grid-cols-2 xl:min-h-0 lg:overflow-auto xl:p-4"
+>
   <div class="flex w-full flex-col gap-2">
     <h2 class="font-subheading font-semibold text-dark">Current Events</h2>
     {

@@ -4,10 +4,7 @@ const { character, class: className } = Astro.props;
 import { tv } from "tailwind-variants";
 import directus from "$services/directus";
 import { readItem } from "@directus/sdk";
-
-import { setValRecursive } from "src/scripts/setValRecursive";
 import ProxyService from "$services/imgproxy";
-
 import Border from "./deco-border/Border.astro";
 
 const colorIndex = 0;
@@ -58,10 +55,17 @@ const backgroundPath = game?.elementMain
 const placeholderPath = `/${primary.icon.filename_disk}`;
 
 const fp = {
-  x: character.splash_art.focal_point_x,
-  y: character.splash_art.focal_point_y,
+  x: character.splash_art?.focal_point_x
+    ? character.splash_art?.focal_point_x
+    : 0.5,
+  y: character.splash_art?.focal_point_y
+    ? character.splash_art?.focal_point_y
+    : 0.5,
 };
-const size = { w: character.splash_art.width, h: character.splash_art.height };
+const size = {
+  w: character.splash_art?.width,
+  h: character.splash_art?.height,
+};
 const padding = (() => {
   let ret = {
     t: 0,
@@ -102,7 +106,7 @@ const imgPath = character.splash_art
       "webp",
     )
   : false;
-
+// console.log(imgPath);
 Object.assign(vars, {
   "--placeholder": `url("${ProxyService.getImage(placeholderPath, [], "webp")}")`,
   "--attributeBg":
@@ -117,11 +121,11 @@ Object.assign(vars, {
 
 let options: any = {
   portrait: {
-    bannerCrop: { x: 0.6, y: 1400 },
-    index: { x: 0, y: 0.16 },
+    crop: { x: 0.6, y: 1400 },
+    index: { x: 0, y: 0.15 },
   },
   landscape: {
-    bannerCrop: { x: 0, y: 1000 },
+    crop: { x: 0, y: 1000 },
     index: { x: 0, y: 0.04 },
   },
   icon: {
@@ -129,20 +133,13 @@ let options: any = {
   },
 };
 
-options.portrait.dpr = options.zoomOut
-  ? 1 / ((character.crop.x + character.crop.y) / 2)
-  : 1;
-
 if (character.card_edits != null) {
   const edits = character.card_edits;
   const variants = edits.map((e: any) => e.variant);
 
   variants.forEach((v: any) => {
     if (Object.keys(options).includes(v)) {
-      options[v] = setValRecursive(
-        options[v],
-        edits.find((e: any) => e.variant == v).style,
-      );
+      Object.assign(options[v], edits.find((e: any) => e.variant == v).style);
     }
   });
 }
@@ -160,15 +157,11 @@ const characterTransforms: Variants = {
     {
       key: "crop",
       params: [
-        options.portrait.bannerCrop.x * character.crop.x,
-        options.portrait.bannerCrop.y * character.crop.y,
+        options.portrait.crop.x * character.crop.x,
+        options.portrait.crop.y * character.crop.y,
       ],
     },
     { key: "resize", params: ["fill", 800, 1600, 1, 1] },
-    {
-      key: "dpr",
-      params: [options.portrait.dpr],
-    },
   ],
   landscape: [
     {
@@ -182,8 +175,8 @@ const characterTransforms: Variants = {
     {
       key: "crop",
       params: [
-        options.landscape.bannerCrop.x * character.crop.x,
-        options.landscape.bannerCrop.y * character.crop.y,
+        options.landscape.crop.x * character.crop.x,
+        options.landscape.crop.y * character.crop.y,
       ],
     },
     { key: "resize", params: ["fill", 1600, 800, 1, 1] },
@@ -191,11 +184,7 @@ const characterTransforms: Variants = {
   icon: [
     {
       key: "gravity",
-      params: [
-        "fp",
-        character.focalPoint.x + options.icon.index.x,
-        character.focalPoint.y + options.icon.index.y,
-      ],
+      params: ["fp", 0.5 + options.icon.index.x, 0.5 + options.icon.index.y],
     },
     {
       key: "crop",

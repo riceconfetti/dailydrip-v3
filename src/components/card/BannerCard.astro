@@ -2,8 +2,6 @@
 const { bannerEvent, status } = Astro.props;
 
 import { tv } from "tailwind-variants";
-
-import { setValRecursive } from "src/scripts/setValRecursive";
 import ProxyService from "$services/imgproxy";
 
 import Border from "./deco-border/Border.astro";
@@ -16,7 +14,7 @@ const vars = {
   "--primaryColor":
     bannerEvent.colors != null
       ? [...bannerEvent.colors].sort(
-          (a: { l: number }, b: { l: number }) => a.l - b.l
+          (a: { l: number }, b: { l: number }) => a.l - b.l,
         )[colorIndex].css
       : "oklch(20% 0 0)",
   "--secondaryColor":
@@ -34,35 +32,49 @@ const imgPath = bannerEvent.splash_art
   : "/";
 
 let options: any = {
-  bannerCrop: { x: 1600, y: 800 },
+  crop: { x: 1600, y: 800 },
   height: 400,
 };
 
 if (bannerEvent.card_edits != null) {
   const bannerEdits = bannerEvent.card_edits.find(
-    (e: any) => e.variant == "banner"
+    (e: any) => e.variant == "banner",
   );
   if (bannerEdits != undefined) {
-    options = setValRecursive(options, bannerEdits.style);
+    Object.assign(options, bannerEdits.style);
   }
 }
+
+const fp = {
+  x: bannerEvent.splash_art?.focal_point_x
+    ? bannerEvent.splash_art?.focal_point_x
+    : 0.5,
+  y: bannerEvent.splash_art?.focal_point_y
+    ? bannerEvent.splash_art?.focal_point_y
+    : 0.5,
+};
+const size = {
+  w: bannerEvent.splash_art?.width,
+  h: bannerEvent.splash_art?.height,
+};
 
 const characterTransforms = [
   {
     key: "gravity",
-    params: ["fp", 0, bannerEvent.focalPoint.y + 0.075],
+    params: ["fp", 0, fp.y / size.h + 0.075],
   },
   {
     key: "crop",
     params: [
-      options.bannerCrop.x * bannerEvent.crop.x,
-      options.bannerCrop.y * bannerEvent.crop.y,
+      options.crop.x * bannerEvent.crop.x,
+      options.crop.y * bannerEvent.crop.y,
     ],
   },
 ];
+// console.log(characterTransforms);
 
 const splash = ProxyService.getImage(imgPath, characterTransforms, "webp");
-
+// console.log(splash);
 const Holo = ProxyService.getImage("/overlays/Holo_Landscape.png", [], "webp");
 
 Object.assign(vars, { [`--char`]: `url("${splash}")` });
@@ -115,7 +127,8 @@ const { base, charBg, outline, name, banner, frost, holo } = card({
   client:load
   class="@container-[size] w-full aspect-10/3 relative min-h-16 min-w-16 transition"
   {bannerEvent}
-  {status}>
+  {status}
+>
   <div class={base()} style={vars}>
     <div class={charBg()}></div>
 
