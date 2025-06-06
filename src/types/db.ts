@@ -52,10 +52,9 @@ export type Character = {
     saturation: number;
     area: number;
   }[];
-  card_edits: {
-    variant: "portrait" | "landscape" | "icon" | "banner";
-    style: object;
-  }[];
+  options: {
+    [key: string]: object;
+  };
   events: GachaEvent[];
 };
 

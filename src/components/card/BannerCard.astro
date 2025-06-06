@@ -32,17 +32,13 @@ const imgPath = bannerEvent.splash_art
   : "/";
 
 let options: any = {
-  crop: { x: 1600, y: 800 },
+  index: { x: 0, y: 0.075 },
+  crop: { width: 1600, height: 800 },
   height: 400,
 };
 
-if (bannerEvent.card_edits != null) {
-  const bannerEdits = bannerEvent.card_edits.find(
-    (e: any) => e.variant == "banner",
-  );
-  if (bannerEdits != undefined) {
-    Object.assign(options, bannerEdits.style);
-  }
+if (bannerEvent.options != null) {
+  Object.assign(options, bannerEvent.options);
 }
 
 const fp = {
@@ -61,20 +57,15 @@ const size = {
 const characterTransforms = [
   {
     key: "gravity",
-    params: ["fp", 0, fp.y / size.h + 0.075],
+    params: ["fp", 0, fp.y / size.h + options.index.y],
   },
   {
     key: "crop",
-    params: [
-      options.crop.x * bannerEvent.crop_width,
-      options.crop.y * bannerEvent.crop_height,
-    ],
+    params: [options.crop.width, options.crop.height],
   },
 ];
-// console.log(characterTransforms);
 
 const splash = ProxyService.getImage(imgPath, characterTransforms, "webp");
-// console.log(splash);
 const Holo = ProxyService.getImage("/overlays/Holo_Landscape.png", [], "webp");
 
 Object.assign(vars, { [`--char`]: `url("${splash}")` });

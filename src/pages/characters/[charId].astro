@@ -1,6 +1,6 @@
 ---
 import directus from "$services/directus";
-import { readItem } from "@directus/sdk";
+import { readItem, updateItem } from "@directus/sdk";
 import { PUBLIC_DEPLOY_MODE } from "astro:env/client";
 import ProxyService from "$services/imgproxy";
 import dayjs from "dayjs";
@@ -9,6 +9,8 @@ import Layout from "$layouts/Layout.astro";
 import CharacterCard from "$components/card/CharacterCard.astro";
 import BannerCard from "$components/card/BannerCard.astro";
 import Editor from "$components/Editor.svelte";
+import OptionsForm from "$components/OptionsForm.svelte";
+import options from "$store/options.json";
 
 export const prerender = false;
 const { charId } = Astro.params;
@@ -19,6 +21,10 @@ let character = await directus.request(
     fields: ["*", "splash_art.*"],
   }),
 );
+
+if (character.options != null) {
+  Object.assign(options, character.options);
+}
 
 // console.log(character.splash_art);
 
@@ -45,7 +51,7 @@ const transforms = [
   },
   {
     key: "crop",
-    params: [150 * character.crop_width, 150 * character.crop_height],
+    params: [options.icon.crop.width - 250, options.icon.crop.height - 250],
   },
   { key: "resize", params: ["fill", 300, 300] },
 ];
@@ -89,49 +95,109 @@ let event: any = {
 let phase = await directus.request(readItem("phases", 1));
 let bannerEvent = { phase };
 Object.assign(bannerEvent, event, character, rest);
+
+if (Astro.request.method === "POST") {
+  try {
+    const data = await Astro.request.formData();
+    let newOptions = {
+      portrait: {
+        index: {
+          x: Number(data.get("portrait_index_x")),
+          y: Number(data.get("portrait_index_y")),
+        },
+        resize: {
+          width: Number(data.get("portrait_resize_width")),
+          height: Number(data.get("portrait_resize_height")),
+        },
+      },
+      landscape: {
+        index: {
+          x: Number(data.get("landscape_index_x")),
+          y: Number(data.get("landscape_index_y")),
+        },
+        resize: {
+          width: Number(data.get("landscape_resize_width")),
+          height: Number(data.get("landscape_resize_height")),
+        },
+      },
+      icon: {
+        index: {
+          x: Number(data.get("icon_index_x")),
+          y: Number(data.get("icon_index_y")),
+        },
+        crop: {
+          width: Number(data.get("icon_crop_width")),
+          height: Number(data.get("icon_crop_height")),
+        },
+      },
+      banner: {
+        height: Number(data.get("banner_height")),
+        crop: {
+          width: Number(data.get("banner_crop_width")),
+          height: Number(data.get("banner_crop_height")),
+        },
+      },
+    };
+
+    character.options = newOptions;
+
+    await directus.request(updateItem("characters", character.id, character));
+
+    // Do something with the data
+  } catch (error) {
+    if (error instanceof Error) {
+      console.error(error.message);
+    }
+  }
+}
 ---
 
 <Layout {title}>
-  <div class="w-full grid grid-rows-[1fr_auto] gap-2 justify-items-center p-6">
-    <div class="w-full max-w-4xl flex flex-col gap-3">
-      <h1 class="text-5xl font-heading font-bold w-full text-left">
-        {character.name}
-      </h1>
-      <div class="flex gap-3 w-full justify-start">
-        <div
-          class="relative size-25 aspect-square rounded-full overflow-clip border-2 border-accent-gold-500"
-        >
-          <div class="w-full absolute h-1/2 border-b border-black"></div>
-          <div class="h-full absolute w-1/2 border-r border-black"></div>
-          <img src={iconPath} class="size-full" />
+  <div class="flex gap-4 size-full">
+    <div
+      class="w-full grid grid-rows-[1fr_auto] gap-2 justify-items-center p-6"
+    >
+      <div class="w-full max-w-4xl flex flex-col gap-3">
+        <h1 class="text-5xl font-heading font-bold w-full text-left">
+          {character.name}
+        </h1>
+        <div class="flex gap-3 w-full justify-start">
+          <div
+            class="relative size-25 aspect-square rounded-full overflow-clip border-2 border-accent-gold-500"
+          >
+            <div class="w-full absolute h-1/2 border-b border-black"></div>
+            <div class="h-full absolute w-1/2 border-r border-black"></div>
+            <img src={iconPath} class="size-full" />
+          </div>
+          <div class="flex gap-2 flex-wrap w-full">
+            {
+              character.colors &&
+                character.colors.map((c: any) => (
+                  <div
+                    class="w-25 p-2 aspect-square bg-(--currColor) font-subheading text-xs font-bold text-(--textColor)"
+                    style={{
+                      "--currColor": c.css,
+                      "--textColor": c.l > 0.5 ? "#000" : "#fff",
+                    }}
+                  >
+                    <p>L: {c.l}</p>
+                    <p>C: {c.c}</p>
+                    <p>H: {c.h}</p>
+                    <p>A: {c.area}</p>
+                  </div>
+                ))
+            }
+          </div>
         </div>
-        <div class="flex gap-2 flex-wrap w-full">
-          {
-            character.colors &&
-              character.colors.map((c: any) => (
-                <div
-                  class="w-25 p-2 aspect-square bg-(--currColor) font-subheading text-xs font-bold text-(--textColor)"
-                  style={{
-                    "--currColor": c.css,
-                    "--textColor": c.l > 0.5 ? "#000" : "#fff",
-                  }}
-                >
-                  <p>L: {c.l}</p>
-                  <p>C: {c.c}</p>
-                  <p>H: {c.h}</p>
-                  <p>A: {c.area}</p>
-                </div>
-              ))
-          }
-        </div>
+        <BannerCard {bannerEvent} server:defer status="current" />
       </div>
-      <BannerCard {bannerEvent} server:defer status="current" />
+      <Editor client:load {width} {height}>
+        <CharacterCard {character} slot="base" />
+        <CharacterCard character={debut} slot="debut" />
+        <CharacterCard character={spec} slot="spec" />
+        <CharacterCard character={both} slot="both" />
+      </Editor>
     </div>
-    <Editor client:load {width} {height}>
-      <CharacterCard {character} slot="base" />
-      <CharacterCard character={debut} slot="debut" />
-      <CharacterCard character={spec} slot="spec" />
-      <CharacterCard character={both} slot="both" />
-    </Editor>
+    <OptionsForm client:load {options} />
   </div>
 </Layout>

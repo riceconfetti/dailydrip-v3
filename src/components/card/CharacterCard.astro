@@ -6,6 +6,7 @@ import directus from "$services/directus";
 import { readItem } from "@directus/sdk";
 import ProxyService from "$services/imgproxy";
 import Border from "./deco-border/Border.astro";
+import options from "$store/options.json";
 
 const colorIndex = 0;
 const variants = ["portrait", "landscape", "icon"];
@@ -119,29 +120,8 @@ Object.assign(vars, {
     '")',
 });
 
-let options: any = {
-  portrait: {
-    index: { x: 0, y: 0.15 },
-    resize: { x: 1, y: 1 },
-  },
-  landscape: {
-    index: { x: 0, y: 0.08 },
-    resize: { x: 1, y: 1 },
-  },
-  icon: {
-    index: { x: 0, y: 0.02 },
-  },
-};
-
 if (character.card_edits != null) {
-  const edits = character.card_edits;
-  const variants = edits.map((e: any) => e.variant);
-
-  variants.forEach((v: any) => {
-    if (Object.keys(options).includes(v)) {
-      Object.assign(options[v], edits.find((e: any) => e.variant == v).style);
-    }
-  });
+  Object.assign(options, character.options);
 }
 
 const characterTransforms: Variants = {
@@ -159,8 +139,8 @@ const characterTransforms: Variants = {
       key: "resize",
       params: [
         "fill",
-        1600 * options.portrait.resize.x,
-        1600 * options.portrait.resize.y,
+        options.portrait.resize.width,
+        options.portrait.resize.height,
         1,
         1,
       ],
@@ -180,8 +160,8 @@ const characterTransforms: Variants = {
       key: "resize",
       params: [
         "fill",
-        1600 * options.landscape.resize.x,
-        1200 * options.landscape.resize.y,
+        options.landscape.resize.width,
+        options.landscape.resize.height,
         1,
         1,
       ],
@@ -194,7 +174,7 @@ const characterTransforms: Variants = {
     },
     {
       key: "crop",
-      params: [550 * character.crop_width, 550 * character.crop_height],
+      params: [options.icon.crop.width, options.icon.crop.height],
     },
     { key: "resize", params: ["fill", 740, 740] },
   ],
