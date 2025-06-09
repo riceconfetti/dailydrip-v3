@@ -205,6 +205,6 @@ if (Astro.request.method === "POST") {
         <CharacterCard character={both} slot="both" />
       </Editor>
     </div>
-    <OptionsForm client:load {options} />
+    <OptionsForm client:only="svelte" {options} />
   </div>
 </Layout>
