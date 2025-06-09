@@ -7,6 +7,7 @@ import ProxyService from "$services/imgproxy";
 import Border from "./deco-border/Border.astro";
 import BannerTime from "./BannerTime.svelte";
 import BannerCheck from "./BannerCheck.svelte";
+import defOptions from "$store/options.json";
 
 const colorIndex = 0;
 
@@ -31,12 +32,14 @@ const imgPath = bannerEvent.splash_art
   ? `/${bannerEvent.splash_art.filename_disk}`
   : "/";
 
-let options: any = {
-  banner: { index: { x: 0, y: 0.075 }, crop: { width: 1600, height: 800 } },
-};
+let options: any = JSON.parse(JSON.stringify(defOptions));
 
 if (bannerEvent.options != null) {
   Object.assign(options, bannerEvent.options);
+}
+
+if (bannerEvent.options.banner?.index == undefined) {
+  options.banner.index = { x: 0, y: 0.075 };
 }
 
 const fp = {
