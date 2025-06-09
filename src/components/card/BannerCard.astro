@@ -32,8 +32,7 @@ const imgPath = bannerEvent.splash_art
   : "/";
 
 let options: any = {
-  index: { x: 0, y: 0.075 },
-  crop: { width: 1600, height: 800 },
+  banner: { index: { x: 0, y: 0.075 }, crop: { width: 1600, height: 800 } },
 };
 
 if (bannerEvent.options != null) {
@@ -56,11 +55,11 @@ const size = {
 const characterTransforms = [
   {
     key: "gravity",
-    params: ["fp", 0, fp.y / size.h + options.index.y],
+    params: ["fp", 0, fp.y / size.h + options.banner.index.y],
   },
   {
     key: "crop",
-    params: [options.crop.width, options.crop.height],
+    params: [options.banner.crop.width, options.banner.crop.height],
   },
 ];
 
