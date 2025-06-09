@@ -159,6 +159,14 @@ if (Astro.request.method === "POST") {
           fields: ["*", "splash_art.*"],
         }),
       );
+
+      debut = structuredClone(character);
+      spec = structuredClone(character);
+      both = structuredClone(character);
+
+      Object.assign(debut, { debut: true });
+      Object.assign(spec, { spec: true });
+      Object.assign(both, { debut: true, spec: true });
     }
 
     // Do something with the data
