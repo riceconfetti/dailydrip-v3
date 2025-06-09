@@ -93,12 +93,7 @@ const padding = (() => {
   return [ret.t, ret.r, ret.b, ret.l];
 })();
 
-const dpr = size.h / (size.h + padding[0] + padding[2]);
-
-const preCrop = [
-  { key: "padding", params: padding },
-  { key: "dpr", params: [dpr] },
-];
+const preCrop = [{ key: "padding", params: padding }];
 
 const imgPath = character.splash_art
   ? ProxyService.getImage(
