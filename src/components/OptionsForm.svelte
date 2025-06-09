@@ -1,5 +1,5 @@
 <script lang="ts">
-  export let options;
+  let { options } = $props();
 </script>
 
 <form class="flex flex-col gap-4 p-6 bg-white w-full" method="POST">

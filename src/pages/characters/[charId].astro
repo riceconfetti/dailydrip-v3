@@ -10,7 +10,10 @@ import CharacterCard from "$components/card/CharacterCard.astro";
 import BannerCard from "$components/card/BannerCard.astro";
 import Editor from "$components/Editor.svelte";
 import OptionsForm from "$components/OptionsForm.svelte";
-import options from "$store/options.json";
+import defaultOptions from "$store/options.json";
+
+const getOptions = () => JSON.parse(JSON.stringify(defaultOptions));
+let options = getOptions();
 
 export const prerender = false;
 const { charId } = Astro.params;
@@ -24,6 +27,7 @@ let character = await directus.request(
 
 if (character.options != null) {
   Object.assign(options, character.options);
+  // console.log(options);
 }
 
 // console.log(character.splash_art);
@@ -142,12 +146,19 @@ if (Astro.request.method === "POST") {
     };
 
     character.options = newOptions;
+    Object.assign(options, newOptions);
 
     if (
       token ==
       "aD2rjKJP5JEdzNucDJbMnHIqAzfuJflRui0BXPpCs4zvhjp7WMZLCPf0T1zCWtCc"
     ) {
       await directus.request(updateItem("characters", character.id, character));
+      character = await directus.request(
+        readItem("characters", charId!, {
+          //@ts-ignore
+          fields: ["*", "splash_art.*"],
+        }),
+      );
     }
 
     // Do something with the data
@@ -160,6 +171,7 @@ if (Astro.request.method === "POST") {
 ---
 
 <Layout {title}>
+  {JSON.stringify(options)}
   <div class="flex gap-4 size-full">
     <div
       class="w-full grid grid-rows-[1fr_auto] gap-2 justify-items-center p-6"
