@@ -124,8 +124,8 @@ const characterTransforms: Variants = {
       key: "gravity",
       params: [
         "fp",
-        0.5 + getOption("portrait").x,
-        0.5 + getOption("portrait").y,
+        0.5 + Number(getOption("portrait").x),
+        0.5 + Number(getOption("portrait").y),
       ],
     },
 
@@ -133,8 +133,8 @@ const characterTransforms: Variants = {
       key: "resize",
       params: [
         "fill",
-        getOption("portrait").width,
-        getOption("portrait").height,
+        Number(getOption("portrait").width),
+        Number(getOption("portrait").height),
         1,
         1,
       ],
@@ -145,8 +145,8 @@ const characterTransforms: Variants = {
       key: "gravity",
       params: [
         "fp",
-        0.5 + getOption("landscape").x,
-        0.5 + getOption("landscape").y,
+        0.5 + Number(getOption("landscape").x),
+        0.5 + Number(getOption("landscape").y),
       ],
     },
 
@@ -154,8 +154,8 @@ const characterTransforms: Variants = {
       key: "resize",
       params: [
         "fill",
-        getOption("landscape").width,
-        getOption("landscape").height,
+        Number(getOption("landscape").width),
+        Number(getOption("landscape").height),
         1,
         1,
       ],
@@ -164,11 +164,18 @@ const characterTransforms: Variants = {
   icon: [
     {
       key: "gravity",
-      params: ["fp", 0.5 + getOption("icon").x, 0.5 + getOption("icon").y],
+      params: [
+        "fp",
+        0.5 + Number(getOption("icon").x),
+        0.5 + Number(getOption("icon").y),
+      ],
     },
     {
       key: "crop",
-      params: [getOption("icon").width, getOption("icon").height],
+      params: [
+        Number(getOption("icon").width),
+        Number(getOption("icon").height),
+      ],
     },
     { key: "resize", params: ["fill", 740, 740] },
   ],

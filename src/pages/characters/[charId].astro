@@ -112,11 +112,18 @@ const title = "The Daily Drip | " + character.name;
 const transforms = [
   {
     key: "gravity",
-    params: ["fp", 0.5 + getOption("icon")?.x, 0.5 + getOption("icon")?.y],
+    params: [
+      "fp",
+      0.5 + Number(getOption("icon")?.x),
+      0.5 + Number(getOption("icon")?.y),
+    ],
   },
   {
     key: "crop",
-    params: [getOption("icon")?.width, getOption("icon")?.height],
+    params: [
+      Number(getOption("icon")?.width),
+      Number(getOption("icon")?.height),
+    ],
   },
   { key: "resize", params: ["fill", 740, 740] },
 ];

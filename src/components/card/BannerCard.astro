@@ -49,11 +49,11 @@ const options = bannerEvent.options.find((opt: any) => opt.key == "banner");
 const characterTransforms = [
   {
     key: "gravity",
-    params: ["fp", 0, fp.y / size.h + options.y],
+    params: ["fp", 0, fp.y / size.h + Number(options.y)],
   },
   {
     key: "crop",
-    params: [options.width, options.height],
+    params: [Number(options.width), Number(options.height)],
   },
 ];
 
