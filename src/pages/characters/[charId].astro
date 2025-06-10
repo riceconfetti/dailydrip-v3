@@ -10,6 +10,38 @@ import CharacterCard from "$components/card/CharacterCard.astro";
 import BannerCard from "$components/card/BannerCard.astro";
 import Editor from "$components/Editor.svelte";
 
+interface Option {
+  key: string;
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+}
+const defOptions: { [key: string]: Option } = {
+  portrait: {
+    key: "portrait",
+    x: 0,
+    y: 0.15,
+    width: 1600,
+    height: 1600,
+  },
+  landscape: {
+    key: "landscape",
+    x: 0,
+    y: 0.08,
+    width: 1600,
+    height: 1600,
+  },
+  icon: { key: "icon", x: 0, y: 0.02, width: 550, height: 550 },
+  banner: {
+    key: "banner",
+    x: 0,
+    y: 0.075,
+    width: 1600,
+    height: 800,
+  },
+};
+
 export const prerender = false;
 const { charId } = Astro.params;
 
@@ -20,16 +52,57 @@ let character = await directus.request(
   }),
 );
 
-interface Option {
-  key: string;
-  x: number;
-  y: number;
-  width: number;
-  height: number;
-}
+const fp = {
+  x: character.splash_art?.focal_point_x
+    ? character.splash_art?.focal_point_x
+    : 0.5,
+  y: character.splash_art?.focal_point_y
+    ? character.splash_art?.focal_point_y
+    : 0.5,
+};
+const size = {
+  w: character.splash_art?.width,
+  h: character.splash_art?.height,
+};
+const padding = (() => {
+  let ret = {
+    t: 0,
+    r: 0,
+    b: 0,
+    l: 0,
+  };
+  if (fp.x < size.w / 2) {
+    const x = fp.x;
+    ret.l = size.w - 2 * x;
+  } else if (fp.x > size.w / 2) {
+    const x = size.w - fp.x;
+    ret.r = size.w - 2 * x;
+  }
 
-const getOption = (key: string): Option | undefined => {
-  return character.options.find((opt: any) => opt.key == key);
+  if (fp.y < size.h / 2) {
+    const y = fp.y;
+    ret.t = size.h - 2 * y;
+  } else if (fp.y > size.h / 2) {
+    const y = size.h - fp.y;
+    ret.b = size.h - 2 * y;
+  }
+
+  return [ret.t, ret.r, ret.b, ret.l];
+})();
+
+const preCrop = [{ key: "padding", params: padding }];
+
+const imgPath = character.splash_art
+  ? ProxyService.getImage(
+      `/${character.splash_art.filename_disk}`,
+      preCrop,
+      "webp",
+    )
+  : false;
+
+const getOption = (key: string) => {
+  const option = character.options.find((opt: any) => opt.key == key);
+  return option ? option : defOptions[key];
 };
 
 if (PUBLIC_DEPLOY_MODE == "static") return Astro.rewrite("/404");
@@ -39,17 +112,13 @@ const title = "The Daily Drip | " + character.name;
 const transforms = [
   {
     key: "gravity",
-    params: [
-      "fp",
-      character.splash_art.focal_point_x / character.splash_art.width,
-      character.splash_art.focal_point_y / character.splash_art.height,
-    ],
+    params: ["fp", 0.5 + getOption("icon")?.x, 0.5 + getOption("icon")?.y],
   },
   {
     key: "crop",
     params: [getOption("icon")?.width, getOption("icon")?.height],
   },
-  { key: "resize", params: ["fill", 300, 300] },
+  { key: "resize", params: ["fill", 740, 740] },
 ];
 
 const sizes = [
@@ -77,10 +146,7 @@ const height = Astro.url.searchParams.get("height") || "2xl";
 
 const iconPath =
   character.splash_art != null
-    ? ProxyService.getImage(
-        `/${character.splash_art.filename_disk}`,
-        transforms,
-      )
+    ? ProxyService.getImage(imgPath, transforms, "webp", false)
     : ProxyService.getImage(`/`, []);
 
 const { events, ...rest } = character;
