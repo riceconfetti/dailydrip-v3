@@ -1,6 +1,6 @@
 ---
 import directus from "$services/directus";
-import { readItem, updateItem } from "@directus/sdk";
+import { readItem } from "@directus/sdk";
 import { PUBLIC_DEPLOY_MODE } from "astro:env/client";
 import ProxyService from "$services/imgproxy";
 import dayjs from "dayjs";
@@ -9,11 +9,6 @@ import Layout from "$layouts/Layout.astro";
 import CharacterCard from "$components/card/CharacterCard.astro";
 import BannerCard from "$components/card/BannerCard.astro";
 import Editor from "$components/Editor.svelte";
-import OptionsForm from "$components/OptionsForm.svelte";
-import defaultOptions from "$store/options.json";
-
-const getOptions = () => JSON.parse(JSON.stringify(defaultOptions));
-let options = getOptions();
 
 export const prerender = false;
 const { charId } = Astro.params;
@@ -25,12 +20,17 @@ let character = await directus.request(
   }),
 );
 
-if (character.options != null) {
-  Object.assign(options, character.options);
-  // console.log(options);
+interface Option {
+  key: string;
+  x: number;
+  y: number;
+  width: number;
+  height: number;
 }
 
-// console.log(character.splash_art);
+const getOption = (key: string): Option | undefined => {
+  return character.options.find((opt: any) => opt.key == key);
+};
 
 if (PUBLIC_DEPLOY_MODE == "static") return Astro.rewrite("/404");
 
@@ -47,7 +47,7 @@ const transforms = [
   },
   {
     key: "crop",
-    params: [options.icon.crop.width, options.icon.crop.height],
+    params: [getOption("icon")?.width, getOption("icon")?.height],
   },
   { key: "resize", params: ["fill", 300, 300] },
 ];
@@ -91,75 +91,6 @@ let event: any = {
 let phase = await directus.request(readItem("phases", 1));
 let bannerEvent = { phase };
 Object.assign(bannerEvent, event, character, rest);
-
-const token = Astro.url.searchParams.get("token");
-
-if (Astro.request.method === "POST") {
-  try {
-    const data = await Astro.request.formData();
-    let newOptions = {
-      portrait: {
-        index: {
-          x: Number(data.get("portrait_index_x")),
-          y: Number(data.get("portrait_index_y")),
-        },
-        resize: {
-          width: Number(data.get("portrait_resize_width")),
-          height: Number(data.get("portrait_resize_height")),
-        },
-      },
-      landscape: {
-        index: {
-          x: Number(data.get("landscape_index_x")),
-          y: Number(data.get("landscape_index_y")),
-        },
-        resize: {
-          width: Number(data.get("landscape_resize_width")),
-          height: Number(data.get("landscape_resize_height")),
-        },
-      },
-      icon: {
-        index: {
-          x: Number(data.get("icon_index_x")),
-          y: Number(data.get("icon_index_y")),
-        },
-        crop: {
-          width: Number(data.get("icon_crop_width")),
-          height: Number(data.get("icon_crop_height")),
-        },
-      },
-      banner: {
-        height: Number(data.get("banner_height")),
-        crop: {
-          width: Number(data.get("banner_crop_width")),
-          height: Number(data.get("banner_crop_height")),
-        },
-      },
-    };
-
-    character.options = newOptions;
-    Object.assign(options, newOptions);
-
-    if (
-      token ==
-      "aD2rjKJP5JEdzNucDJbMnHIqAzfuJflRui0BXPpCs4zvhjp7WMZLCPf0T1zCWtCc"
-    ) {
-      await directus.request(updateItem("characters", character.id, character));
-      character = await directus.request(
-        readItem("characters", charId!, {
-          //@ts-ignore
-          fields: ["*", "splash_art.*"],
-        }),
-      );
-    }
-
-    // Do something with the data
-  } catch (error) {
-    if (error instanceof Error) {
-      console.error(error.message);
-    }
-  }
-}
 ---
 
 <Layout {title}>
@@ -220,6 +151,5 @@ if (Astro.request.method === "POST") {
         />
       </Editor>
     </div>
-    <OptionsForm client:only="svelte" {options} />
   </div>
 </Layout>

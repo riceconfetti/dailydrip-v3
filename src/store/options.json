@@ -1,18 +1,6 @@
-{
-  "portrait": {
-    "index": { "x": 0, "y": 0.15 },
-    "resize": { "width": 1600, "height": 1600 }
-  },
-  "landscape": {
-    "index": { "x": 0, "y": 0.08 },
-    "resize": { "width": 1600, "height": 1600 }
-  },
-  "icon": {
-    "index": { "x": 0, "y": 0.02 },
-    "crop": { "width": 550, "height": 550 }
-  },
-  "banner": {
-    "index": { "x": 0, "y": 0.075 },
-    "crop": { "width": 1600, "height": 800 }
-  }
-}
+[
+  { "key": "portrait", "x": 0, "y": 0.15, "width": 1600, "height": 1600 },
+  { "key": "landscape", "x": 0, "y": 0.08, "width": 1600, "height": 1600 },
+  { "key": "icon", "x": 0, "y": 0.02, "width": 550, "height": 550 },
+  { "key": "banner", "x": 0, "y": 0.075, "width": 1600, "height": 800 }
+]

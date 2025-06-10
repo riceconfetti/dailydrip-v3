@@ -23,6 +23,14 @@ export type Attribute = {
   };
 };
 
+interface Option {
+  key: string;
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+}
+
 export type Character = {
   id: string;
   splash_art: {
@@ -35,12 +43,7 @@ export type Character = {
   primary_attribute: Attribute;
   secondary_attribute: Attribute;
   signature?: Weapon;
-  focalPoint: {
-    x: number;
-    y: number;
-  };
-  crop_width: number;
-  crop_height: number;
+  options: Option[];
   colors: {
     hex: string;
     red: number;
@@ -52,9 +55,6 @@ export type Character = {
     saturation: number;
     area: number;
   }[];
-  options: {
-    [key: string]: object;
-  };
   events: GachaEvent[];
 };
 

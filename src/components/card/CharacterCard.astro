@@ -6,9 +6,7 @@ import directus from "$services/directus";
 import { readItem } from "@directus/sdk";
 import ProxyService from "$services/imgproxy";
 import Border from "./deco-border/Border.astro";
-import defOptions from "$store/options.json";
 
-let options = JSON.parse(JSON.stringify(defOptions));
 const colorIndex = 0;
 const variants = ["portrait", "landscape", "icon"];
 interface Variants {
@@ -116,10 +114,9 @@ Object.assign(vars, {
     '")',
 });
 
-if (character.options != null) {
-  Object.assign(options, character.options);
-  console.log(options);
-}
+const getOption = (key: string) => {
+  return character.options.find((opt: any) => opt.key == key);
+};
 
 const characterTransforms: Variants = {
   portrait: [
@@ -127,8 +124,8 @@ const characterTransforms: Variants = {
       key: "gravity",
       params: [
         "fp",
-        0.5 + options.portrait.index.x,
-        0.5 + options.portrait.index.y,
+        0.5 + getOption("portrait").x,
+        0.5 + getOption("portrait").y,
       ],
     },
 
@@ -136,8 +133,8 @@ const characterTransforms: Variants = {
       key: "resize",
       params: [
         "fill",
-        options.portrait.resize.width,
-        options.portrait.resize.height,
+        getOption("portrait").width,
+        getOption("portrait").height,
         1,
         1,
       ],
@@ -148,8 +145,8 @@ const characterTransforms: Variants = {
       key: "gravity",
       params: [
         "fp",
-        0.5 + options.landscape.index.x,
-        0.5 + options.landscape.index.y,
+        0.5 + getOption("landscape").x,
+        0.5 + getOption("landscape").y,
       ],
     },
 
@@ -157,8 +154,8 @@ const characterTransforms: Variants = {
       key: "resize",
       params: [
         "fill",
-        options.landscape.resize.width,
-        options.landscape.resize.height,
+        getOption("landscape").width,
+        getOption("landscape").height,
         1,
         1,
       ],
@@ -167,11 +164,11 @@ const characterTransforms: Variants = {
   icon: [
     {
       key: "gravity",
-      params: ["fp", 0.5 + options.icon.index.x, 0.5 + options.icon.index.y],
+      params: ["fp", 0.5 + getOption("icon").x, 0.5 + getOption("icon").y],
     },
     {
       key: "crop",
-      params: [options.icon.crop.width, options.icon.crop.height],
+      params: [getOption("icon").width, getOption("icon").height],
     },
     { key: "resize", params: ["fill", 740, 740] },
   ],
