@@ -33,7 +33,7 @@ while (fourStars.length < game.numOfRateUpCharacters) {
     readItem(
       "characters",
       game.id, //@ts-ignore
-      { fields: ["*", "splash_art.filename_disk"] },
+      { fields: ["*", "options.*", "colors.*", "splash_art.*"] },
     ),
   );
   fourStars.push(placeholder);
@@ -44,7 +44,7 @@ while (fiveStars.length < (game.id == "wuwa" ? 1 : 2)) {
     readItem(
       "characters",
       game.id + "_placeholder", //@ts-ignore
-      { fields: ["*.**"] },
+      { fields: ["*", "options.*", "colors.*", "splash_art.*"] },
     ),
   );
   Object.assign(placeholder, { spec: false, debut: false });
