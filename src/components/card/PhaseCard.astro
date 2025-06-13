@@ -21,8 +21,8 @@ while (weaponsFourStars.length < game.numOfRateUpWeapons) {
       "weapons",
       game.id,
       //@ts-ignore
-      { fields: ["*", "icon.filename_disk", "full.filename_disk"] }
-    )
+      { fields: ["*", "icon.filename_disk", "full.filename_disk"] },
+    ),
   );
   placeholder.rarity = 4;
   weaponsFourStars.push(placeholder);
@@ -33,8 +33,8 @@ while (fourStars.length < game.numOfRateUpCharacters) {
     readItem(
       "characters",
       game.id, //@ts-ignore
-      { fields: ["*", "splash_art.filename_disk"] }
-    )
+      { fields: ["*", "splash_art.filename_disk"] },
+    ),
   );
   fourStars.push(placeholder);
 }
@@ -44,8 +44,8 @@ while (fiveStars.length < (game.id == "wuwa" ? 1 : 2)) {
     readItem(
       "characters",
       game.id + "_placeholder", //@ts-ignore
-      { fields: ["*"] }
-    )
+      { fields: ["*.**"] },
+    ),
   );
   Object.assign(placeholder, { spec: false, debut: false });
   fiveStars.push(placeholder);
@@ -61,11 +61,11 @@ fiveStars = await Promise.all(
         "weapons",
         c.signature,
         //@ts-ignore
-        { fields: ["*", "icon.filename_disk", "full.filename_disk"] }
-      )
+        { fields: ["*", "icon.filename_disk", "full.filename_disk"] },
+      ),
     );
     return c;
-  })
+  }),
 );
 
 const phaseCard = tv({
@@ -127,7 +127,8 @@ const { base, box, character, weapon } = phaseCard({ count: count, rarity: 5 });
 
 <div
   class="flex flex-col gap-2 w-full h-full"
-  style={`--gridRows: repeat(${fiveStars.length - 1},min-content)`}>
+  style={`--gridRows: repeat(${fiveStars.length - 1},min-content)`}
+>
   <PhaseHeader client:load {event} />
   <div class={base()}>
     {
