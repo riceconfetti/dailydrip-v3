@@ -115,14 +115,14 @@ const transforms = [
     params: [
       "fp",
       0.5 + Number(getOption("icon")?.x),
-      0.5 + Number(getOption("icon")?.y),
+      0.5 + Number(getOption("icon")?.y) - 0.02,
     ],
   },
   {
     key: "crop",
     params: [
-      Number(getOption("icon")?.width),
-      Number(getOption("icon")?.height),
+      Number(getOption("icon")?.width) * 0.4,
+      Number(getOption("icon")?.height) * 0.4,
     ],
   },
   { key: "resize", params: ["fill", 740, 740] },
