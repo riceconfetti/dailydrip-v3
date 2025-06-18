@@ -67,10 +67,11 @@
   export let width = "sm";
   export let height = "xl";
 
-  function swap() {
-    const temp = width;
-    width = height;
-    height = temp;
+  function landscape() {
+    height = "3x";
+  }
+  function portrait() {
+    height = "md";
   }
 </script>
 
@@ -88,7 +89,8 @@
         <option value={size}>{size}</option>
       {/each}
     </select>
-    <button onclick={swap}>Swap</button>
+    <button onclick={landscape}>Landscape</button>
+    <button onclick={portrait}>Portrait</button>
   </div>
   <div class="w-full flex flex-wrap justify-center gap-4">
     <div class={[preview({ width: width, height: height }), "relative"]}>
