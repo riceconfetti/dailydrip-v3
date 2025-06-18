@@ -66,6 +66,12 @@
 
   export let width = "sm";
   export let height = "xl";
+
+  function swap() {
+    const temp = width;
+    width = height;
+    height = temp;
+  }
 </script>
 
 <div class="size-full flex flex-col gap-6 justify-start items-center">
@@ -82,6 +88,7 @@
         <option value={size}>{size}</option>
       {/each}
     </select>
+    <button onclick={swap}>Swap</button>
   </div>
   <div class="w-full flex flex-wrap justify-center gap-4">
     <div class={[preview({ width: width, height: height }), "relative"]}>
