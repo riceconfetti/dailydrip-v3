@@ -85,14 +85,10 @@
   </div>
   <div class="w-full flex flex-wrap justify-center gap-4">
     <div class={[preview({ width: width, height: height }), "relative"]}>
+      <div class="w-full absolute h-1/4 border-b border-black z-20"></div>
+      <div class="h-full absolute w-1/2 border-r border-black z-20"></div>
       <div
-        class="w-full absolute h-1/4 border-b border-black z-20 @portrait-aspect:block hidden"
-      ></div>
-      <div
-        class="h-full absolute w-1/2 border-r border-black z-20 @portrait-aspect:block hidden"
-      ></div>
-      <div
-        class="absolute size-18 aspect-square rounded-full overflow-clip border z-20 left-1/2 -translate-x-1/2 top-1/4 -translate-y-1/2 @portrait-aspect:block hidden"
+        class="absolute size-18 aspect-square rounded-full overflow-clip border z-20 left-1/2 -translate-x-1/2 top-1/4 -translate-y-1/2"
       ></div>
       <slot name="base" />
     </div>
