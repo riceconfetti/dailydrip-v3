@@ -8,16 +8,28 @@ import { readItems, readItem } from "@directus/sdk";
 
 import { PUBLIC_DEPLOY_MODE } from "astro:env/client";
 const isPreview = PUBLIC_DEPLOY_MODE == "server";
-
+interface Event {
+  phase: {
+    phase: string;
+    start: number;
+  };
+  game: {
+    id: string;
+  };
+  startDate: any;
+  endDate: any;
+  iso: any;
+}
 let events = await directus.request(
   readItems("events", {
     fields: [
       "id",
-      "game",
-      "phase",
+      { game: ["id"] },
+      { phase: ["phase", "start"] },
       "startDate",
-      "version",
-      "featured_characters",
+      "endDate",
+      { version: ["semVer"] },
+      { featured_characters: ["id", { characters_id: ["name"] }, "spec"] },
       "event_tags",
     ],
     filter: {
@@ -26,29 +38,6 @@ let events = await directus.request(
       },
     },
     limit: -1,
-  }),
-);
-let phases = await directus.request(readItems("phases", { fields: ["*"] }));
-let games = await directus.request(readItems("games", { fields: ["*"] }));
-
-events = await Promise.all(
-  events.map(async (event: any) => {
-    event.phase = phases.find((phase) => event.phase == phase.id);
-    event.game = games.find((game) => event.game == game.id);
-    event.version = await directus.request(readItem("versions", event.version));
-    let characters = await Promise.all(
-      event.featured_characters.map(async (character: any) => {
-        let id = (
-          await directus.request(readItem("events_characters", character))
-        ).characters_id;
-        character = await directus.request(readItem("characters", id));
-        return character;
-      }),
-    );
-    event.featured_characters = characters.filter(
-      (character) => character.rarity == 5,
-    );
-    return event;
   }),
 );
 

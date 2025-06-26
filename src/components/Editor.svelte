@@ -68,7 +68,7 @@
   export let height = "xl";
 
   function landscape() {
-    height = "3x";
+    height = "3xs";
   }
   function portrait() {
     height = "md";

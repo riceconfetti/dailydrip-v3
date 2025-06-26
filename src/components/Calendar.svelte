@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
   const { events } = $props();
   import serverJSON from "$store/servers.json";
   import { Calendar } from "bits-ui";
@@ -8,38 +8,51 @@
     toCalendarDate,
   } from "@internationalized/date";
 
+  interface Event {
+    phase: {
+      phase: string;
+      start: number;
+    };
+    game: {
+      id: string;
+    };
+    startDate: any;
+    endDate: any;
+    iso: any;
+  }
+
   let timeZones = $derived(getTimezones(settings));
-  events.forEach((e) => {
+  events.forEach((e: Event) => {
     const tz =
       e.phase.phase == "1"
         ? "+08:00"
-        : timeZones.find(({ key }) => key == e.game.id).value;
+        : timeZones.find(({ key }) => key == e.game.id)?.value;
     const isoString = e.startDate + "T" + e.phase.start + tz;
     e.iso = isoString;
   });
 
-  let interEvents = events.map((e) => {
+  let interEvents = events.map((e: Event) => {
     let zoned = parseAbsoluteToLocal(e.iso);
     return toCalendarDate(zoned).toString();
   });
 
   $effect(() => {
-    events.forEach((e) => {
+    events.forEach((e: Event) => {
       const tz =
         e.phase.phase == "1"
           ? "+08:00"
-          : timeZones.find(({ key }) => key == e.game.id).value;
+          : timeZones.find(({ key }) => key == e.game.id)?.value;
       const isoString = e.startDate + "T" + e.phase.start + tz;
       e.iso = isoString;
     });
 
-    interEvents = events.map((e) => {
+    interEvents = events.map((e: Event) => {
       let zoned = parseAbsoluteToLocal(e.iso);
       return toCalendarDate(zoned).toString();
     });
   });
 
-  const isDateUnavailable = (date) => {
+  const isDateUnavailable = (date: any) => {
     return interEvents.includes(date.toString());
   };
 
@@ -47,7 +60,7 @@
     minimumFractionDigits: 1,
   });
 
-  const gameColors = {
+  const gameColors: { [key: string]: any } = {
     bg_starrail: "--bg-starrail",
     bg_genshin: "--bg-genshin",
     bg_wuwa: "--bg-wuwa",
@@ -112,7 +125,7 @@
                   class="relative min-h-0 aspect-square h-full w-full border-dark/20  "
                 >
                   {@const event = isDateUnavailable(date)
-                    ? events.filter((e) => {
+                    ? events.filter((e: Event) => {
                         let zoned = parseAbsoluteToLocal(e.iso);
                         return toCalendarDate(zoned).compare(date) === 0;
                       })
@@ -176,7 +189,7 @@
                                   <p
                                     class="text-ellipsis w-full overflow-hidden leading-snug text-balance text-right"
                                   >
-                                    {char.name}
+                                    {char.characters_id.name}
                                   </p>
                                   <div
                                     class=" rounded-full bg-(--accentColor) w-1"

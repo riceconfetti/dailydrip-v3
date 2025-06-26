@@ -9,42 +9,43 @@ import BannerTime from "./BannerTime.svelte";
 import BannerCheck from "./BannerCheck.svelte";
 
 const colorIndex = 0;
+const charData = bannerEvent.character;
 
 const vars = {
   "--primaryColor":
-    bannerEvent.colors != null
-      ? [...bannerEvent.colors].sort(
+    charData.colors != null
+      ? [...charData.colors].sort(
           (a: { l: number }, b: { l: number }) => a.l - b.l,
         )[colorIndex].css
       : "oklch(20% 0 0)",
   "--secondaryColor":
-    bannerEvent.colors != null
-      ? bannerEvent.colors[bannerEvent.colors.length - 1].css
+    charData.colors != null
+      ? charData.colors[charData.colors.length - 1].css
       : "oklch(60% 0 0)",
   "--cardAccent":
-    bannerEvent.rarity == 5
+    charData.rarity == 5
       ? "var(--color-accent-gold-150)"
       : "var(--color-accent-purple-200)",
 };
 
-const imgPath = bannerEvent.splash_art
-  ? `/${bannerEvent.splash_art.filename_disk}`
+const imgPath = charData.splash_art
+  ? `/${charData.splash_art.filename_disk}`
   : "/";
 
 const fp = {
-  x: bannerEvent.splash_art?.focal_point_x
-    ? bannerEvent.splash_art?.focal_point_x
+  x: charData.splash_art?.focal_point_x
+    ? charData.splash_art?.focal_point_x
     : 0.5,
-  y: bannerEvent.splash_art?.focal_point_y
-    ? bannerEvent.splash_art?.focal_point_y
+  y: charData.splash_art?.focal_point_y
+    ? charData.splash_art?.focal_point_y
     : 0.5,
 };
 const size = {
-  w: bannerEvent.splash_art?.width,
-  h: bannerEvent.splash_art?.height,
+  w: charData.splash_art?.width,
+  h: charData.splash_art?.height,
 };
 
-const options = bannerEvent.options.find((opt: any) => opt.key == "banner");
+const options = charData.options.find((opt: any) => opt.key == "banner");
 
 const characterTransforms = [
   {
@@ -101,7 +102,7 @@ const card = tv({
 });
 
 const { base, charBg, outline, name, banner, frost, holo } = card({
-  debut: bannerEvent.debut,
+  debut: charData.debut,
 });
 ---
 
@@ -119,7 +120,7 @@ const { base, charBg, outline, name, banner, frost, holo } = card({
     <div class={outline()}>
       <div class="flex flex-col gap-1 items-start w-2/3 text-left">
         <h2 class={name()}>
-          {bannerEvent.bannerName}
+          {charData.bannerName}
         </h2>
 
         <h3 class={banner()}>

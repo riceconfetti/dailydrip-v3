@@ -1,4 +1,4 @@
-export type Game = {
+export interface Game {
   id: string;
   name: string;
   elementMain: boolean;
@@ -11,9 +11,9 @@ export type Game = {
   }[];
   numOfRateUpCharacters: number;
   numOfRateUpWeapons: number;
-};
+}
 
-export type Attribute = {
+export interface Attribute {
   id: number;
   game: Game;
   name: string;
@@ -21,7 +21,7 @@ export type Attribute = {
   icon: {
     filename_disk: string;
   };
-};
+}
 
 interface Option {
   key: string;
@@ -31,11 +31,8 @@ interface Option {
   height: number;
 }
 
-export type Character = {
+export interface Character {
   id: string;
-  splash_art: {
-    [x: string]: any;
-  };
   name: string;
   game: Game;
   rarity: 5 | 4;
@@ -56,16 +53,23 @@ export type Character = {
     area: number;
   }[];
   events: GachaEvent[];
-};
+  splash_art: {
+    filename_disk: String;
+    focal_point_x: number;
+    focal_point_y: number;
+    width: number;
+    height: number;
+  };
+}
 
-export type Server = {
+export interface Server {
   id: string;
   game: Game;
   name: string;
   timezone: string;
-};
+}
 
-export type GachaEvent = {
+export interface GachaEvent {
   id: string;
   game: Game;
   version: Version;
@@ -73,46 +77,46 @@ export type GachaEvent = {
   full_version: boolean;
   startDate: string;
   endDate: string;
-  featured_characters: Character[];
-  featured_weapons: Weapon[];
+  featured_characters: EventCharacter[] | string[];
+  featured_weapons: EventWeapon[] | string[];
   status: "published" | "draft" | "archived";
   event_tags: string[];
-};
+}
 
-export type Weapon = {
+export interface Weapon {
   id: string;
   name: string;
   rarity: 5 | 4;
   game: Game;
   type: Attribute;
-};
+}
 
-export type Version = {
+export interface Version {
   id: string;
   game: Game[];
   semVer: number;
   name: string;
   events: GachaEvent[];
   status: "published" | "draft" | "archived";
-};
+}
 
-export type Phase = {
+export interface Phase {
   id: number;
   game: Game;
   phase: string;
   start: string;
   end: string;
-};
+}
 
-export type EventCharacter = {
+export interface EventCharacter {
   id: number;
-  characters_id: string;
-  events_id: string;
+  characters_id: Character;
+  events_id: GachaEvent;
   spec: boolean;
-};
+}
 
-export type EventWeapon = {
+export interface EventWeapon {
   id: number;
-  weapons_id: string;
-  events_id: string;
-};
+  weapons_id: Weapon;
+  events_id: Event;
+}
