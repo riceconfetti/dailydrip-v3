@@ -1,6 +1,7 @@
 ---
 import directus from "$services/directus";
-import { readItem } from "@directus/sdk";
+import type { Schema, Character } from "$types/collection";
+import { readItem, type DirectusFile, type Query } from "@directus/sdk";
 import { PUBLIC_DEPLOY_MODE } from "astro:env/client";
 import ProxyService from "$services/imgproxy";
 import dayjs from "dayjs";
@@ -45,24 +46,21 @@ const defOptions: { [key: string]: Option } = {
 export const prerender = false;
 const { charId } = Astro.params;
 
-let character = await directus.request(
+const character = await directus.request(
   readItem("characters", charId!, {
-    //@ts-ignore
-    fields: ["*", "splash_art.*"],
-  }),
+    fields: ["*", { splash_art: ["*"] }],
+  } as Query<Schema, Character>),
 );
 
+let splashArt = character.splash_art as DirectusFile;
+
 const fp = {
-  x: character.splash_art?.focal_point_x
-    ? character.splash_art?.focal_point_x
-    : 0.5,
-  y: character.splash_art?.focal_point_y
-    ? character.splash_art?.focal_point_y
-    : 0.5,
+  x: splashArt.focal_point_x ? splashArt.focal_point_x : 0.5,
+  y: splashArt.focal_point_y ? splashArt.focal_point_y : 0.5,
 };
 const size = {
-  w: character.splash_art?.width,
-  h: character.splash_art?.height,
+  w: splashArt.width ? splashArt.width : 1,
+  h: splashArt.height ? splashArt.height : 1,
 };
 const padding = (() => {
   let ret = {
@@ -92,13 +90,14 @@ const padding = (() => {
 
 const preCrop = [{ key: "padding", params: padding }];
 
-const imgPath = character.splash_art
-  ? ProxyService.getImage(
-      `/${character.splash_art.filename_disk}`,
-      preCrop,
-      "webp",
-    )
-  : false;
+const imgPath =
+  character.splash_art && typeof character.splash_art !== "string"
+    ? ProxyService.getImage(
+        `/${character.splash_art.filename_disk}`,
+        preCrop,
+        "webp",
+      )
+    : false;
 
 const getOption = (key: string) => {
   const option = character.options.find((opt: any) => opt.key == key);

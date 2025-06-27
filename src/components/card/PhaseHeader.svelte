@@ -5,11 +5,10 @@
   dayjs.extend(utc);
   dayjs.extend(timezone);
 
-  let { event } = $props();
-  let game = event.game;
+  let { event, game } = $props();
 
   import { getServer } from "$store/settings.svelte";
-  const server = $derived(getServer(game));
+  const server = $derived(getServer(game.id));
   let currzone = dayjs.tz.guess();
   const tz = $derived(
     event.phase.phase == "1" ? "+08:00" : server?.value?.timezone,

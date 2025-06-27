@@ -4,22 +4,11 @@ import Calendar from "$components/Calendar.svelte";
 import HomeEvents from "$components/HomeEvents.astro";
 
 import directus from "$services/directus";
-import { readItems, readItem } from "@directus/sdk";
+import { readItems } from "@directus/sdk";
 
 import { PUBLIC_DEPLOY_MODE } from "astro:env/client";
 const isPreview = PUBLIC_DEPLOY_MODE == "server";
-interface Event {
-  phase: {
-    phase: string;
-    start: number;
-  };
-  game: {
-    id: string;
-  };
-  startDate: any;
-  endDate: any;
-  iso: any;
-}
+
 let events = await directus.request(
   readItems("events", {
     fields: [
@@ -47,6 +36,17 @@ events.sort(
     Number(a.phase.phase) / 100 -
     (b.version.semVer + Number(b.phase.phase) / 100),
 );
+
+let games = await directus.request(
+  readItems("games", { fields: ["id", "color"] }),
+);
+
+let style: { [key: string]: string } = {};
+
+games.reduce((p: any, c: any) => {
+  p["--bg-" + c.id] = c.color;
+  return p;
+}, style);
 ---
 
 <Layout title="The Daily Drip">
@@ -64,12 +64,7 @@ events.sort(
       </p>
     </div>
     <div
-      style={{
-        "--bg-starrail": "oklch(50.3% 0.1828 262.59)",
-        "--bg-genshin": "oklch(79.08% 0.0829 0)",
-        "--bg-wuwa": "oklch(19.14% 0.0307 266.53)",
-        "--bg-zzz": "oklch(66% 0.1431 43.41)",
-      }}
+      {style}
       class="flex flex-col lg:flex-row gap-4 h-full min-h-0 w-full xl:overflow-hidden max-w-[120rem]"
     >
       <Calendar client:only="svelte" {events} />

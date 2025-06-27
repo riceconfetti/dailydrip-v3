@@ -1,12 +1,11 @@
 ---
-const { character, class: className } = Astro.props;
+const { character, class: className, game } = Astro.props;
 
 import { tv } from "tailwind-variants";
 import directus from "$services/directus";
-import { readItem } from "@directus/sdk";
+import { readItem, readFile } from "@directus/sdk";
 import ProxyService from "$services/imgproxy";
 import Border from "./deco-border/Border.astro";
-import { square } from "ldrs";
 
 const colorIndex = 0;
 const variants = ["portrait", "landscape", "icon"];
@@ -20,6 +19,11 @@ if (character.id.includes("placeholder")) {
     character.spec = false;
   }
 }
+
+const splash_art =
+  character.splash_art != null
+    ? await directus.request(readFile(character.splash_art, { fields: ["*"] }))
+    : false;
 
 const vars = {
   "--primaryColor":
@@ -36,12 +40,10 @@ const vars = {
       : "var(--color-accent-purple-200)",
 };
 
-const game = await directus.request(readItem("games", character.game));
-
 const primary = await directus.request(
   readItem("attributes", character.primary_attribute, {
     //@ts-ignore
-    fields: ["*", "icon.filename_disk"],
+    fields: ["*", { icon: ["filename_disk"] }],
   }),
 );
 
@@ -56,16 +58,12 @@ const backgroundPath = game?.elementMain
 const placeholderPath = `/${primary.icon.filename_disk}`;
 
 const fp = {
-  x: character.splash_art?.focal_point_x
-    ? character.splash_art?.focal_point_x
-    : 0.5,
-  y: character.splash_art?.focal_point_y
-    ? character.splash_art?.focal_point_y
-    : 0.5,
+  x: splash_art && splash_art.focal_point_x ? splash_art.focal_point_x : 0.5,
+  y: splash_art && splash_art.focal_point_y ? splash_art.focal_point_y : 0.5,
 };
 const size = {
-  w: character.splash_art?.width,
-  h: character.splash_art?.height,
+  w: splash_art && splash_art.width ? splash_art.width : 1,
+  h: splash_art && splash_art.height ? splash_art.height : 1,
 };
 const padding = (() => {
   let ret = {
@@ -100,13 +98,9 @@ const newSize = [
 
 const squared = newSize[0] > newSize[1] ? newSize[0] : newSize[1];
 const preCrop = [{ key: "padding", params: padding }];
-const imgPath = character.splash_art
+const imgPath = splash_art
   ? ProxyService.getImage(
-      ProxyService.getImage(
-        `/${character.splash_art.filename_disk}`,
-        preCrop,
-        "webp",
-      ),
+      ProxyService.getImage(`/${splash_art.filename_disk}`, preCrop, "webp"),
       [
         { key: "resize", params: ["fit", squared, squared, 1, 1] },
         { key: "extend_ar", params: [1] },
@@ -115,7 +109,7 @@ const imgPath = character.splash_art
       false,
     )
   : false;
-// console.log(character.name, imgPath);
+
 Object.assign(vars, {
   "--placeholder": `url("${ProxyService.getImage(placeholderPath, [], "webp")}")`,
   "--attributeBg":

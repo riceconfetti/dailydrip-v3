@@ -3,138 +3,79 @@ import VersionHeader from "./VersionHeader.astro";
 import PhaseCard from "./PhaseCard.astro";
 
 import directus from "$services/directus";
-import { readItem } from "@directus/sdk";
+import { readItem, type Query } from "@directus/sdk";
+import type { Schema, Version } from "$types/collection";
 import ChronicleCard from "./ChronicleCard.astro";
 
-let { version } = Astro.props;
-
-const getEvents = async (id: any) => {
-  return await directus.request(readItem("events", id));
-};
-
-const getPhase = async (id: any) => {
-  return await directus.request(readItem("phases", id));
-};
-
-let events = await Promise.all(
-  version.events.map(async (e: any) => await getEvents(e)),
+let { vId, game } = Astro.props;
+// console.log(vId);
+let version = await directus.request(
+  readItem("versions", vId, {
+    fields: [
+      "semVer",
+      "name",
+      "special_version",
+      "tags",
+      {
+        events: [
+          "*",
+          { phase: ["*"] },
+          {
+            featured_characters: [
+              {
+                characters_id: [
+                  "*",
+                  {
+                    signature: [
+                      "*",
+                      { icon: ["filename_disk"] },
+                      { full: ["filename_disk"] },
+                    ],
+                  },
+                ],
+              },
+            ],
+          },
+          {
+            featured_weapons: [
+              {
+                weapons_id: [
+                  "*",
+                  { icon: ["filename_disk"] },
+                  { full: ["filename_disk"] },
+                ],
+              },
+            ],
+          },
+        ],
+      },
+    ],
+  } as Query<Schema, Version>),
 );
-
-let game = version.game;
-
-events = await Promise.all(
-  events.map(async (e: any) => {
-    e.phase = await getPhase(e.phase);
-    return e;
-  }),
-);
-
-events.sort((a, b) => {
-  const aChronicle = a.event_tags
-    ? a.event_tags[0] == "chronicled wish"
-    : false;
-  const bChronicle = b.event_tags
-    ? b.event_tags[0] == "chronicled wish"
-    : false;
-
-  const compA = aChronicle
-    ? Number(a.phase.phase) == 1
-      ? 0
-      : 3
-    : Number(a.phase.phase);
-  const compB = bChronicle
-    ? Number(b.phase.phase) == 1
-      ? 0
-      : 3
-    : Number(b.phase.phase);
-
-  return compA - compB;
-});
-
-events = await Promise.all(
-  events.map(async (e: any) => {
-    e.featured_characters = await Promise.all(
-      e.featured_characters.map(async (id: any) => {
-        let characterEvent = await directus.request(
-          readItem("events_characters", id),
-        );
-        const charId = characterEvent.characters_id;
-        let character = await directus.request(
-          readItem("characters", charId, {
-            //@ts-ignore
-            fields: ["*", "splash_art.*"],
-          }),
-        );
-        Object.assign(character, { debut: false });
-        let events = character.events;
-
-        if (events != null) {
-          events = await Promise.all(
-            events.map(async (event: any) => {
-              const eventsId = (
-                await directus.request(
-                  readItem("events_characters", event, { limit: -1 }),
-                )
-              ).events_id;
-              const eventObj = await directus.request(
-                readItem("events", eventsId),
-              );
-              return eventObj;
-            }),
-          );
-          events.sort((a: any, b: any) => {
-            //@ts-ignore
-            return new Date(a.startDate) - new Date(b.startDate);
-          });
-          if (e.id == events[0].id) {
-            Object.assign(character, { debut: true });
-          }
-        }
-
-        Object.assign(character, { spec: characterEvent.spec });
-
-        return character;
-      }),
-    );
-    e.featured_weapons = await Promise.all(
-      e.featured_weapons.map(async (id: any) => {
-        const weapId = (await directus.request(readItem("events_weapons", id)))
-          .weapons_id;
-        return await directus.request(
-          readItem(
-            "weapons",
-            weapId,
-            //@ts-ignore
-            { fields: ["*", "icon.filename_disk", "full.filename_disk"] },
-          ),
-        );
-      }),
-    );
-    return e;
-  }),
-);
-
-version.events = events;
+// console.log(version);
 ---
 
 <section
   class="@container size-full grow flex flex-col gap-3 bg-white p-2 sm:p-4 shadow-md max-w-7xl"
 >
-  <VersionHeader {version} />
+  <VersionHeader {version} {game} />
 
   <div
     class="h-full grow flex flex-col gap-3 md:grid md:grid-cols-2 lg:gap-5 w-full"
   >
     {
-      events.map((event: any) => {
-        if (event.event_tags == null) {
-          return <PhaseCard {event} />;
-        } else if (event.event_tags.includes("fate collab")) {
-          return <PhaseCard {event} class="col-span-full" />;
-        } else if (event.event_tags.includes("chronicled wish")) {
-          return <ChronicleCard {event} class="col-span-full" />;
-        }
-      })
+      typeof version.events != "string" &&
+        version.events!.map((event: any) => {
+          if (event.event_tags == null) {
+            return <PhaseCard {event} {game} />;
+          } else if (version.special_version) {
+            if (version.tags?.includes("fate collab")) {
+              return <PhaseCard {event} {game} class="col-span-full" />;
+            }
+          } else if (event.event_tags.includes("chronicled wish")) {
+            return <ChronicleCard {event} class="col-span-full" {game} />;
+          }
+        })
     }
   </div>
 </section>

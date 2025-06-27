@@ -1,5 +1,5 @@
 ---
-const { gachaEvent } = Astro.props;
+const { event } = Astro.props;
 import CharacterCard from "./GenericCharacterCard.astro";
 import WeaponCard from "./GenericWeaponCard.astro";
 import { tv } from "tailwind-variants";
@@ -9,11 +9,11 @@ import timezone from "dayjs/plugin/timezone";
 dayjs.extend(utc);
 dayjs.extend(timezone);
 
-let characters = gachaEvent.featured_characters;
+let characters = event.featured_characters;
 
 let fiveStars = characters.filter((c: any) => c.rarity == 5);
 let fourStars = characters.filter((c: any) => c.rarity == 4);
-let weapons = gachaEvent.featured_weapons;
+let weapons = event.featured_weapons;
 
 const phaseCard = tv({
   slots: {
@@ -42,16 +42,12 @@ const { base, box, character, weapon } = phaseCard({ rarity: 5 });
   <div
     class="tracking-normal h-min flex w-full justify-between border border-slate-500/10 p-2 text-xs sm:text-sm bg-slate-300 text-slate-400"
   >
-    <h1>Phase {gachaEvent.phase.phase}</h1>
+    <h1>Phase {event.phase.phase}</h1>
     <p>
       {
-        dayjs(gachaEvent.startDate + "T" + gachaEvent.phase.start).format(
-          "MMM D",
-        ) +
+        dayjs(event.startDate + "T" + event.phase.start).format("MMM D") +
           " @" +
-          dayjs(gachaEvent.startDate + "T" + gachaEvent.phase.start).format(
-            "h a",
-          )
+          dayjs(event.startDate + "T" + event.phase.start).format("h a")
       }
     </p>
   </div>

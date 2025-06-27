@@ -1,12 +1,18 @@
 ---
 import directus from "$services/directus";
-import { readItems, readItem, aggregate } from "@directus/sdk";
+import {
+  readItems,
+  readItem,
+  aggregate,
+  type Query,
+  type QueryFilter,
+} from "@directus/sdk";
+import type { Schema, Version } from "$types/collection";
 import { PUBLIC_DEPLOY_MODE } from "astro:env/client";
 import GenericVersionCard from "$components/fallbacks/GenericVersionCard.astro";
 import Pagination from "$components/Pagination.svelte";
 import Layout from "$layouts/Layout.astro";
 import VerisonCard from "$components/card/VerisonCard.astro";
-import type { Version } from "$types/db";
 
 const isPreview = PUBLIC_DEPLOY_MODE == "server";
 const limit = 5;
@@ -30,26 +36,25 @@ let totalVersions = (
   )
 ).filter((x: any) => x.game == gameId && x.status != "archived");
 
-const query = {
-  fields: ["*"],
+const query: Query<Schema, Version> = {
+  fields: ["id"],
   sort: ["semVer"],
   limit: -1,
-  filter: {
-    game: {
-      id: {
-        _eq: gameId,
-      },
+};
+
+const filter: QueryFilter<Schema, Version> = {
+  game: {
+    id: {
+      _eq: gameId,
     },
   },
 };
 
 if (!isPreview) {
-  Object.assign(query.filter, {
-    status: {
-      _eq: "published",
-    },
-  });
-  Object.assign(query.filter, {
+  filter.status = {
+    _eq: "published",
+  };
+  Object.assign(filter, {
     events: {
       endDate: {
         _gte: "$NOW",
@@ -61,17 +66,21 @@ if (!isPreview) {
     limit: limit,
     offset: page! > 1 ? (page! - 1) * limit : 0,
   });
-  Object.assign(query.filter, {
+  Object.assign(filter, {
     status: {
       _neq: "archived",
     },
   });
 }
 
-//@ts-ignore
-let versions: Version[] = await directus.request(readItems("versions", query));
+query.filter = filter;
 
-versions.sort((a, b) => a.semVer - b.semVer);
+//@ts-ignore
+let versions: string[] = (
+  await directus.request(readItems("versions", query))
+).map((x) => x.id);
+
+// versions.sort((a, b) => a.semVer - b.semVer);
 const title = "The Daily Drip | " + game.name;
 ---
 
@@ -80,13 +89,13 @@ const title = "The Daily Drip | " + game.name;
     class="p-0 sm:p-4 md:p-6 xl:p-8 flex flex-col gap-2 items-center justify-around w-full overflow-auto"
   >
     {
-      versions.map((version) =>
+      versions.map((vId) =>
         isPreview ? (
-          <VerisonCard {version} server:defer={isPreview}>
+          <VerisonCard {vId} {game} server:defer={isPreview}>
             <GenericVersionCard slot="fallback" />
           </VerisonCard>
         ) : (
-          <VerisonCard {version} />
+          <VerisonCard {vId} {game} />
         ),
       )
     }

@@ -1,51 +1,64 @@
 ---
-const { event } = Astro.props;
+const { event, game, class: className } = Astro.props;
 import directus from "$services/directus";
-import { readItem } from "@directus/sdk";
+import type { Schema, Weapon, Character } from "$types/collection";
+import { type Query, readItem } from "@directus/sdk";
 import CharacterCard from "./CharacterCard.astro";
 import WeaponCard from "./WeaponCard.astro";
 import PhaseHeader from "./PhaseHeader.svelte";
 import { tv } from "tailwind-variants";
 
-let characters = event.featured_characters;
+let characters = event.featured_characters.map((c: any) => c.characters_id);
+let weapons = event.featured_weapons.map((w: any) => w.weapons_id);
 
 let fiveStars = characters.filter((c: any) => c.rarity == 5);
-let fourStars = characters.filter((c: any) => c.rarity == 4);
-let weaponsFiveStars = event.featured_weapons.filter((w: any) => w.rarity == 5);
-let weaponsFourStars = event.featured_weapons.filter((w: any) => w.rarity == 4);
 
-let game = await directus.request(readItem("games", event.game));
+let fourStars = characters.filter((c: any) => c.rarity == 4);
+let weaponsFiveStars = weapons.filter((w: any) => w.rarity == 5);
+let weaponsFourStars = weapons.filter((w: any) => w.rarity == 4);
+
+async function getPlaceholder(c: "weapons" | "characters", g: string) {
+  let query =
+    c == "weapons"
+      ? ({
+          fields: [
+            "*",
+            { icon: ["filename_disk"] },
+            { full: ["filename_disk"] },
+          ],
+        } as Query<Schema, Weapon>)
+      : ({ fields: ["*"] } as Query<Schema, Character>);
+
+  //@ts-ignore
+  return await directus.request(readItem(c, g, query));
+}
+
 while (weaponsFourStars.length < game.numOfRateUpWeapons) {
-  let placeholder = await directus.request(
-    readItem(
-      "weapons",
-      game.id,
-      //@ts-ignore
-      { fields: ["*", "icon.filename_disk", "full.filename_disk"] },
-    ),
-  );
+  let placeholder = await getPlaceholder("weapons", game.id);
   placeholder.rarity = 4;
   weaponsFourStars.push(placeholder);
 }
 
 while (fourStars.length < game.numOfRateUpCharacters) {
-  let placeholder = await directus.request(
-    readItem(
-      "characters",
-      game.id, //@ts-ignore
-      { fields: ["*", "options.*", "colors.*", "splash_art.*"] },
-    ),
-  );
+  let placeholder = await getPlaceholder("characters", game.id);
   fourStars.push(placeholder);
 }
 
 while (fiveStars.length < (game.id == "wuwa" ? 1 : 2)) {
   let placeholder = await directus.request(
-    readItem(
-      "characters",
-      game.id + "_placeholder", //@ts-ignore
-      { fields: ["*", "options.*", "colors.*", "splash_art.*"] },
-    ),
+    readItem("characters", game.id + "_placeholder", {
+      fields: [
+        "*",
+        { splash_art: ["*"] },
+        {
+          signature: [
+            "*",
+            { icon: ["filename_disk"] },
+            { full: ["filename_disk"] },
+          ],
+        },
+      ],
+    } as Query<Schema, Character>),
   );
   Object.assign(placeholder, { spec: false, debut: false });
   fiveStars.push(placeholder);
@@ -53,20 +66,6 @@ while (fiveStars.length < (game.id == "wuwa" ? 1 : 2)) {
 
 const count: 1 | 2 | 3 =
   fiveStars.length == 1 ? 1 : fiveStars.length == 2 ? 2 : 3;
-
-fiveStars = await Promise.all(
-  fiveStars.map(async (c: any) => {
-    c.signature = await directus.request(
-      readItem(
-        "weapons",
-        c.signature,
-        //@ts-ignore
-        { fields: ["*", "icon.filename_disk", "full.filename_disk"] },
-      ),
-    );
-    return c;
-  }),
-);
 
 const phaseCard = tv({
   slots: {
@@ -126,15 +125,15 @@ const { base, box, character, weapon } = phaseCard({ count: count, rarity: 5 });
 ---
 
 <div
-  class="flex flex-col gap-2 w-full h-full"
+  class:list={["flex flex-col gap-2 w-full h-full", className]}
   style={`--gridRows: repeat(${fiveStars.length - 1},min-content)`}
 >
-  <PhaseHeader client:load {event} />
+  <PhaseHeader client:load {event} {game} />
   <div class={base()}>
     {
       fiveStars.map((c: any, index: number) => (
         <div class={box({ rarity: 5 })}>
-          <CharacterCard character={c} class={character()} />
+          <CharacterCard character={c} class={character()} {game} />
           {weaponsFiveStars.length > 0 &&
             weaponsFiveStars.length == fiveStars.length && (
               <WeaponCard
@@ -159,6 +158,7 @@ const { base, box, character, weapon } = phaseCard({ count: count, rarity: 5 });
           <CharacterCard
             character={c}
             variant="portrait"
+            {game}
             class={character({ rarity: 4 })}
           />
         ))

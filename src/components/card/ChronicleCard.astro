@@ -11,13 +11,15 @@ let weapons = event.featured_weapons;
   class:list={[
     "@container w-full flex gap-2 flex-col border-2 border-accent-gold bg-accent-gold-200/20",
     className,
-  ]}>
+  ]}
+>
   <div
     class="relative flex justify-between font-heading font-bold p-2 w-full text-[0.5rem] bg-(--gold-saturated) text-white sm:text-sm md:text-base"
     style={{
       "--gold-saturated":
         "oklch(from var(--color-accent-gold-400) calc(l + 0.05) calc(c + 0.03) h)",
-    }}>
+    }}
+  >
     <p>Chronicled Wish</p>
     <h1 class="absolute text-center inset-0 flex items-center justify-center">
       {event.event_tags[1]}
@@ -26,7 +28,8 @@ let weapons = event.featured_weapons;
   </div>
 
   <div
-    class="grid grid-cols-[repeat(auto-fit,minmax(8rem,auto))] gap-2 p-2 p-y-0 content-center">
+    class="grid grid-cols-[repeat(auto-fit,minmax(8rem,auto))] gap-2 p-2 p-y-0 content-center"
+  >
     {
       characters.map((character: any) => (
         <CharacterCard {character} class="aspect-square" />
@@ -35,7 +38,8 @@ let weapons = event.featured_weapons;
   </div>
 
   <div
-    class="grid grid-cols-[repeat(auto-fit,minmax(8rem,auto))] gap-2 p-2 p-y-0 content-center">
+    class="grid grid-cols-[repeat(auto-fit,minmax(8rem,auto))] gap-2 p-2 p-y-0 content-center"
+  >
     {weapons.map((weapon: any) => <WeaponCard {weapon} />)}
   </div>
 </div>

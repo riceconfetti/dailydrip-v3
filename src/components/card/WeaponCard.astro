@@ -2,17 +2,15 @@
 import { tv } from "tailwind-variants";
 import ProxyService from "$services/imgproxy";
 import directus from "$services/directus";
-import { readItem } from "@directus/sdk";
+import { readItem, type Query } from "@directus/sdk";
+import type { Schema, Weapon } from "$types/collection";
 
 const { weapon, class: className } = Astro.props;
 
 let placeholder: any = await directus.request(
-  readItem(
-    "weapons",
-    weapon.game,
-    //@ts-ignore
-    { fields: ["*", "icon.filename_disk", "full.filename_disk"] }
-  )
+  readItem("weapons", weapon.game, {
+    fields: ["*", { icon: ["filename_disk"] }, { full: ["filename_disk"] }],
+  } as Query<Schema, Weapon>),
 );
 
 const iconPath = weapon.icon
@@ -29,7 +27,7 @@ const full = ProxyService.getImage(
       params: [0.9, 0.9],
     },
   ],
-  "webp"
+  "webp",
 );
 
 const weaponCard = tv({
