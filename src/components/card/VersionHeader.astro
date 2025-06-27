@@ -7,7 +7,7 @@ const isPreview = PUBLIC_DEPLOY_MODE == "server";
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
-let { version } = Astro.props;
+let { version, game } = Astro.props;
 const verFormat = new Intl.NumberFormat("en-US", {
   minimumFractionDigits: 1,
 });
@@ -31,9 +31,7 @@ const tz = "+08:00";
     <p>Version {verFormat.format(version.semVer)}</p>
     {
       isPreview && (
-        <a href={"/" + version.game + "/versions/" + version.id}>
-          {version.id}
-        </a>
+        <a href={"/" + game.id + "/versions/" + version.id}>{version.id}</a>
       )
     }
     <p>
