@@ -12,6 +12,7 @@ let { vId, game } = Astro.props;
 let version = await directus.request(
   readItem("versions", vId, {
     fields: [
+      "id",
       "semVer",
       "name",
       "special_version",
