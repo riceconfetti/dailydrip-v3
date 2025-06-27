@@ -31,7 +31,7 @@ const tz = "+08:00";
     <p>Version {verFormat.format(version.semVer)}</p>
     {
       isPreview && (
-        <a href={"/" + version.game.id + "/versions/" + version.id}>
+        <a href={"/" + version.game + "/versions/" + version.id}>
           {version.id}
         </a>
       )
