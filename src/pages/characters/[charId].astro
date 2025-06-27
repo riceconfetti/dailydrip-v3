@@ -1,7 +1,12 @@
 ---
 import directus from "$services/directus";
 import type { Schema, Character } from "$types/collection";
-import { readItem, type DirectusFile, type Query } from "@directus/sdk";
+import {
+  readItem,
+  type DirectusFile,
+  type Query,
+  readFile,
+} from "@directus/sdk";
 import { PUBLIC_DEPLOY_MODE } from "astro:env/client";
 import ProxyService from "$services/imgproxy";
 import dayjs from "dayjs";
@@ -48,11 +53,26 @@ const { charId } = Astro.params;
 
 const character = await directus.request(
   readItem("characters", charId!, {
-    fields: ["*", { splash_art: ["*"] }],
+    fields: [
+      "*",
+      {
+        signature: [
+          "*",
+          { icon: ["filename_disk"] },
+          { full: ["filename_disk"] },
+        ],
+      },
+    ],
   } as Query<Schema, Character>),
 );
 
-let splashArt = character.splash_art as DirectusFile;
+let game = await directus.request(
+  readItem("games", character.game as string, { fields: ["*"] }),
+);
+console.log(game);
+let splashArt = await directus.request(
+  readFile(character.splash_art as string, { fields: ["*"] }),
+);
 
 const fp = {
   x: splashArt.focal_point_x ? splashArt.focal_point_x : 0.5,
@@ -90,14 +110,9 @@ const padding = (() => {
 
 const preCrop = [{ key: "padding", params: padding }];
 
-const imgPath =
-  character.splash_art && typeof character.splash_art !== "string"
-    ? ProxyService.getImage(
-        `/${character.splash_art.filename_disk}`,
-        preCrop,
-        "webp",
-      )
-    : false;
+const imgPath = character.splash_art
+  ? ProxyService.getImage(`/${splashArt.filename_disk}`, preCrop, "webp")
+  : false;
 
 const getOption = (key: string) => {
   const option = character.options.find((opt: any) => opt.key == key);
@@ -162,7 +177,7 @@ let event: any = {
 };
 let phase = await directus.request(readItem("phases", 1));
 let bannerEvent = { phase };
-Object.assign(bannerEvent, event, character, rest);
+Object.assign(bannerEvent, event, { character: character });
 ---
 
 <Layout {title}>
@@ -205,16 +220,19 @@ Object.assign(bannerEvent, event, character, rest);
         <BannerCard {bannerEvent} server:defer status="current" />
       </div>
       <Editor client:load {width} {height}>
-        <CharacterCard {character} slot="base" />
+        <CharacterCard {game} {character} slot="base" />
         <CharacterCard
+          {game}
           character={Object.assign(structuredClone(character), { debut: true })}
           slot="debut"
         />
         <CharacterCard
+          {game}
           character={Object.assign(structuredClone(character), { spec: true })}
           slot="spec"
         />
         <CharacterCard
+          {game}
           character={Object.assign(structuredClone(character), {
             debut: true,
             spec: true,

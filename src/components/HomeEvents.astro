@@ -67,6 +67,8 @@ events = events.map((n: any) => {
   return event;
 });
 
+console.log(events[0]);
+
 let currentEvents = events.filter(
   (event: any) =>
     dayjs(event.startDate).isBefore(dayjs().add(1, "day")) &&
