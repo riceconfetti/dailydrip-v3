@@ -65,6 +65,7 @@ const size = {
   w: splash_art && splash_art.width ? splash_art.width : 1,
   h: splash_art && splash_art.height ? splash_art.height : 1,
 };
+
 const padding = (() => {
   let ret = {
     t: 0,
@@ -98,17 +99,26 @@ const newSize = [
 
 const squared = newSize[0] > newSize[1] ? newSize[0] : newSize[1];
 const preCrop = [{ key: "padding", params: padding }];
-const imgPath = splash_art
-  ? ProxyService.getImage(
-      ProxyService.getImage(`/${splash_art.filename_disk}`, preCrop, "webp"),
-      [
-        { key: "resize", params: ["fit", squared, squared, 1, 1] },
-        { key: "extend_ar", params: [1] },
-      ],
-      "webp",
-      false,
-    )
-  : false;
+
+//@ts-ignore
+const preImg = ProxyService.getImage(`/${splash_art.filename_disk}`, preCrop, "webp")
+
+let imgPath:string|boolean = false;
+
+let res = await fetch(preImg)
+
+if (res.status == 200) {
+  imgPath =  ProxyService.getImage(
+    preImg,
+    [
+      { key: "resize", params: ["fit", squared, squared, 1, 1] },
+      { key: "extend_ar", params: [1] },
+    ],
+    "webp",
+    false,
+  )
+}
+
 
 Object.assign(vars, {
   "--placeholder": `url("${ProxyService.getImage(placeholderPath, [], "webp")}")`,

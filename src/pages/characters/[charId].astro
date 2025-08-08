@@ -1,12 +1,7 @@
 ---
 import directus from "$services/directus";
 import type { Schema, Character } from "$types/collection";
-import {
-  readItem,
-  type DirectusFile,
-  type Query,
-  readFile,
-} from "@directus/sdk";
+import { readItem, type Query, readFile } from "@directus/sdk";
 import { PUBLIC_DEPLOY_MODE } from "astro:env/client";
 import ProxyService from "$services/imgproxy";
 import dayjs from "dayjs";
@@ -69,7 +64,6 @@ const character = await directus.request(
 let game = await directus.request(
   readItem("games", character.game as string, { fields: ["*"] }),
 );
-console.log(game);
 let splashArt = await directus.request(
   readFile(character.splash_art as string, { fields: ["*"] }),
 );
@@ -175,9 +169,15 @@ let event: any = {
   startDate: dayjs().subtract(7, "days").format("YYYY-MM-DD"),
   endDate: dayjs().add(7, "days").format("YYYY-MM-DD"),
 };
+console.log(event);
 let phase = await directus.request(readItem("phases", 1));
 let bannerEvent = { phase };
-Object.assign(bannerEvent, event, { character: character });
+Object.assign(bannerEvent, event, {
+  character: character,
+  game: character.game,
+  debut: true,
+});
+// console.log("Character", bannerEvent);
 ---
 
 <Layout {title}>

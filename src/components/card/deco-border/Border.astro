@@ -1,18 +1,41 @@
 ---
 import Corner from "./Corner.astro";
+import { tv } from "tailwind-variants";
+const { class: className } = Astro.props;
+
+const border = tv({
+  slots: {
+    yline: "absolute z-11 border-y-1 border-(--cardAccent)",
+    hline: "absolute z-11 border-x-1 border-(--cardAccent)",
+    star: "text-[0.5rem]",
+    curve: "border-2",
+    corner: "",
+    nw: "top-[0.6rem] left-[0.6rem]",
+    ne: "top-[0.6rem] right-[0.6rem] scale-x-[-1]",
+    se: "right-[0.6rem] bottom-[0.6rem] scale-x-[-1] scale-y-[-1]",
+    sw: "bottom-[0.6rem] left-[0.6rem] scale-y-[-1]",
+  },
+  variants: {
+    size: {
+      sm: {
+        corner: "w-8",
+        yline: "inset-[0.6rem] inset-x-6 border-y-2",
+        hline: "inset-[0.6rem] inset-y-6 border-x-2",
+      },
+    },
+  },
+});
+
+const { yline, hline, star, curve, corner, nw, ne, se, sw } = border({
+  size: "sm",
+});
 ---
 
-<div class="@container absolute inset-0">
-  <Corner position="nw" />
-  <Corner position="ne" />
-  <Corner position="se" />
-  <Corner position="sw" />
-  <div
-    class="border-y-1 border-(--cardAccent) absolute inset-corner-sm inset-x-[1rem] @5xs:inset-x-[1.33rem] @5xs:border-y-2 @5xs:inset-corner-md @3xs:inset-x-[1.3rem] @xs:inset-corner-lg @xs:inset-x-[2rem] z-11"
-  >
-  </div>
-  <div
-    class="border-x-1 border-(--cardAccent) absolute inset-corner-sm inset-y-[1rem] @5xs:inset-y-[1.33rem] @5xs:border-x-2 @5xs:inset-corner-md @3xs:inset-y-[1.3rem] @xs:inset-corner-lg @xs:inset-y-[2rem] z-11"
-  >
-  </div>
+<div class:list={["@container absolute inset-0", className]}>
+  <Corner class:list={[nw(), corner()]} star={star()} curve={curve()} />
+  <Corner class:list={[ne(), corner()]} star={star()} curve={curve()} />
+  <Corner class:list={[se(), corner()]} star={star()} curve={curve()} />
+  <Corner class:list={[sw(), corner()]} star={star()} curve={curve()} />
+  <div class={yline()}></div>
+  <div class={hline()}></div>
 </div>

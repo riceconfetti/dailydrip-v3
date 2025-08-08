@@ -1,29 +1,21 @@
 ---
-const { position = "nw" } = Astro.props;
-import { tv } from "tailwind-variants";
-
-const corner = tv({
-  base: "absolute z-11 flex aspect-square w-5 overflow-hidden @5xs:w-7 @xs:w-11",
-  variants: {
-    position: {
-      nw: "top-corner-sm left-corner-sm @5xs:top-corner-md @5xs:left-corner-md @xs:top-corner-lg @xs:left-corner-lg",
-      ne: "top-corner-sm right-corner-sm scale-x-[-1] @5xs:top-corner-md @5xs:right-corner-md @xs:top-corner-lg @xs:right-corner-lg",
-      se: "right-corner-sm bottom-corner-sm scale-x-[-1] scale-y-[-1] @5xs:right-corner-md @5xs:bottom-corner-md @xs:right-corner-lg @xs:bottom-corner-lg",
-      sw: "bottom-corner-sm left-corner-sm scale-y-[-1] @5xs:bottom-corner-md @5xs:left-corner-md @xs:bottom-corner-lg @xs:left-corner-lg",
-    },
-  },
-  defaultVariants: {
-    position: "nw",
-  },
-});
+const { star, curve, class: className } = Astro.props;
+import { twMerge } from "tailwind-merge";
 ---
 
-<div class={corner({ position: position })}>
+<div
+  class={twMerge("absolute z-11 flex aspect-square overflow-hidden", className)}
+>
   <i
-    class="ri-gemini-fill top-0 left-0 text-[.25rem] @5xs:text-[.4rem] @xs:text-xs absolute text-(--cardAccent)"
-  ></i>
+    class={twMerge(
+      "ri-gemini-fill -top-[0.05rem] left-0 absolute text-(--cardAccent)",
+      star,
+    )}></i>
   <div
-    class="absolute w-full aspect-square rounded-full text-(--cardAccent) border-1 -top-1/2 -left-1/2 @5xs:border-2"
+    class={twMerge(
+      "absolute w-full aspect-square rounded-full text-(--cardAccent) border-1 -top-1/2 -left-1/2",
+      curve,
+    )}
   >
   </div>
 </div>

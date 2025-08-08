@@ -24,8 +24,10 @@ export default class ProxyService {
     if (format != undefined) {
       target += "." + format;
     }
+
     return `${ProxyService.proxyUrl}${sign(target)}`;
   }
+
 }
 
 const hexDecode = (hex) => Buffer.from(hex, "hex");

@@ -3,6 +3,8 @@ const { bannerEvent, status } = Astro.props;
 
 import { tv } from "tailwind-variants";
 import ProxyService from "$services/imgproxy";
+import directus from "$services/directus";
+import { readFile } from "@directus/sdk";
 
 import Border from "./deco-border/Border.astro";
 import BannerTime from "./BannerTime.svelte";
@@ -27,6 +29,11 @@ const vars = {
       ? "var(--color-accent-gold-150)"
       : "var(--color-accent-purple-200)",
 };
+
+charData.splash_art =
+  charData.splash_art != null
+    ? await directus.request(readFile(charData.splash_art, { fields: ["*"] }))
+    : false;
 
 const imgPath = charData.splash_art
   ? `/${charData.splash_art.filename_disk}`
@@ -75,14 +82,16 @@ const card = tv({
     banner:
       "font-subheading text-[0.5rem] text-balance italic shadow-black drop-shadow-md @3xs:text-xs @5xs:@min-h-5xs:text-sm @xs:@min-h-2xs:text-base @sm:@min-h-xs:text-base @xl:@min-h-lg:text-xl",
     frost:
-      "z-10 hidden size-full bg-cover mix-blend-screen @icon:bg-[image:var(-frost-icon)] @landscape:bg-[image:var(--frost-landscape)] @portrait:bg-[image:var(--frost-portrait)] @square:bg-[image:var(--frost-icon)]",
-    holo: "absolute inset-0 z-10 hidden size-full bg-cover mix-blend-screen @icon:bg-[image:var(--holo-icon)] @landscape:bg-[image:var(--holo-landscape)] @portrait:bg-[image:var(--holo-portrait)] @square:bg-[image:var(--holo-icon)]",
+      "z-10 hidden size-full bg-[image:var(--frost)] bg-cover mix-blend-screen",
+    holo: "absolute inset-0 z-10 hidden size-full bg-[image:var(--holo)] bg-cover opacity-75 mix-blend-screen",
+    ornament: "absolute inset-0 z-11 hidden",
   },
   variants: {
     debut: {
       true: {
         holo: "block",
-        outline: "p-2 @3xs:@min-h-5xs:p-4 @xl:@min-h-lg:p-6",
+        ornament: "block",
+        outline: "p-4 @3xs:@min-h-5xs:p-4 @xl:@min-h-lg:p-6",
       },
     },
     speculation: {
@@ -101,8 +110,8 @@ const card = tv({
   },
 });
 
-const { base, charBg, outline, name, banner, frost, holo } = card({
-  debut: charData.debut,
+const { base, charBg, outline, name, banner, frost, holo, ornament } = card({
+  debut: bannerEvent.debut,
 });
 ---
 
@@ -118,7 +127,7 @@ const { base, charBg, outline, name, banner, frost, holo } = card({
 
     <!-- Text & Outline -->
     <div class={outline()}>
-      <div class="flex flex-col gap-1 items-start w-2/3 text-left">
+      <div class="flex flex-col gap-1 items-start w-3/5 text-left">
         <h2 class={name()}>
           {charData.bannerName}
         </h2>
@@ -131,10 +140,9 @@ const { base, charBg, outline, name, banner, frost, holo } = card({
   </div>
 
   <!-- OVERLAYS -->
-  <div class="absolute inset-0">
-    <div class={holo()}>
-      <Border />
-    </div>
+  <div class="absolute inset-0" style={vars}>
+    <Border class={ornament()} />
+    <div class={holo()}></div>
     <div class={frost()}></div>
   </div>
 </BannerCheck>
