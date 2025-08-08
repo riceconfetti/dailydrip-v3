@@ -23,9 +23,14 @@ let version = await directus.request(
           { phase: ["*"] },
           {
             featured_characters: [
+              'spec',
               {
                 characters_id: [
                   "*",
+                  { events: [
+                    { events_id: ['id', 'startDate']}
+                    ],
+                  },
                   {
                     signature: [
                       "*",
@@ -53,7 +58,6 @@ let version = await directus.request(
     ],
   } as Query<Schema, Version>),
 );
-// console.log(version);
 ---
 
 <section
@@ -71,7 +75,7 @@ let version = await directus.request(
             return <PhaseCard {event} {game} />;
           } else if (version.special_version) {
             if (version.tags?.includes("fate collab")) {
-              return <PhaseCard {event} {game} class="col-span-full" />;
+              return <PhaseCard {event} {game} class="col-span-full" four="false" />;
             }
           } else if (event.event_tags.includes("chronicled wish")) {
             return <ChronicleCard {event} class="col-span-full" {game} />;

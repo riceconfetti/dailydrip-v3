@@ -67,8 +67,8 @@ interface DripEvent {
   full_version: boolean;
   startDate: string;
   endDate: string;
-  featured_characters: EventCharacter[] | string[];
-  featured_weapons: EventWeapon[] | string[];
+  featured_characters: EventCharacter[] | any[];
+  featured_weapons: EventWeapon[] | any[];
   status: "published" | "draft" | "archived";
   event_tags: string[];
 }
