@@ -32,11 +32,11 @@ const vars = {
 
 charData.splash_art =
   charData.splash_art != null
-    ? await directus.request(readFile(charData.splash_art, { fields: ["*"] }))
+    ? await directus.request(readFile(charData.splash_pad, { fields: ["*"] }))
     : false;
 
-const imgPath = charData.splash_art
-  ? `/${charData.splash_art.filename_disk}`
+const imgPath = charData.splash_pad
+  ? `https://directus.dailydrip.news/assets/${charData.splash_pad}`
   : "/";
 
 const fp = {
@@ -52,23 +52,17 @@ const size = {
   h: charData.splash_art?.height,
 };
 
-const options = charData.options.find((opt: any) => opt.key == "banner");
+const transforms = {
+  left: 0,
+  top: Math.round((size.h - charData.focus_height * 2) / 2),
+  width: Math.round(size.w - (size.w - charData.focus_width * 5) / 2),
+  height: charData.focus_height * 4,
+};
 
-const characterTransforms = [
-  {
-    key: "gravity",
-    params: ["fp", 0, fp.y / size.h + Number(options.y)],
-  },
-  {
-    key: "crop",
-    params: [Number(options.width), Number(options.height)],
-  },
-];
-
-const splash = ProxyService.getImage(imgPath, characterTransforms, "webp");
+const splash = `${imgPath}/?transforms=[["extract"\,${JSON.stringify(transforms)}],["resize"\,${JSON.stringify({ width: 1600 })}]]`;
 const Holo = ProxyService.getImage("/overlays/Holo_Landscape.png", [], "webp");
 
-Object.assign(vars, { [`--char`]: `url("${splash}")` });
+Object.assign(vars, { [`--char`]: `url('${splash}')` });
 Object.assign(vars, { [`--holo`]: `url("${Holo}")` });
 
 const card = tv({

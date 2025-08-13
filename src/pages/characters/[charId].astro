@@ -1,7 +1,7 @@
 ---
 import directus from "$services/directus";
 import type { Schema, Character } from "$types/collection";
-import { readItem, type Query, readFile } from "@directus/sdk";
+import { readItem, type Query, readFile, readAssetRaw, readAssetBlob } from "@directus/sdk";
 import { PUBLIC_DEPLOY_MODE } from "astro:env/client";
 import ProxyService from "$services/imgproxy";
 import dayjs from "dayjs";
@@ -18,6 +18,7 @@ interface Option {
   width: number;
   height: number;
 }
+
 const defOptions: { [key: string]: Option } = {
   portrait: {
     key: "portrait",
@@ -64,49 +65,11 @@ const character = await directus.request(
 let game = await directus.request(
   readItem("games", character.game as string, { fields: ["*"] }),
 );
-let splashArt = await directus.request(
-  readFile(character.splash_art as string, { fields: ["*"] }),
+let splashPad = await directus.request(
+  readFile(character.splash_pad as string, { fields: ["*"] }),
 );
 
-const fp = {
-  x: splashArt.focal_point_x ? splashArt.focal_point_x : 0.5,
-  y: splashArt.focal_point_y ? splashArt.focal_point_y : 0.5,
-};
-const size = {
-  w: splashArt.width ? splashArt.width : 1,
-  h: splashArt.height ? splashArt.height : 1,
-};
-const padding = (() => {
-  let ret = {
-    t: 0,
-    r: 0,
-    b: 0,
-    l: 0,
-  };
-  if (fp.x < size.w / 2) {
-    const x = fp.x;
-    ret.l = size.w - 2 * x;
-  } else if (fp.x > size.w / 2) {
-    const x = size.w - fp.x;
-    ret.r = size.w - 2 * x;
-  }
-
-  if (fp.y < size.h / 2) {
-    const y = fp.y;
-    ret.t = size.h - 2 * y;
-  } else if (fp.y > size.h / 2) {
-    const y = size.h - fp.y;
-    ret.b = size.h - 2 * y;
-  }
-
-  return [ret.t, ret.r, ret.b, ret.l];
-})();
-
-const preCrop = [{ key: "padding", params: padding }];
-
-const imgPath = character.splash_art
-  ? ProxyService.getImage(`/${splashArt.filename_disk}`, preCrop, "webp")
-  : false;
+const imgPath = character.splash_pad ? `https://directus.dailydrip.news/assets/${splashPad.id}` : false;
 
 const getOption = (key: string) => {
   const option = character.options.find((opt: any) => opt.key == key);
@@ -116,25 +79,6 @@ const getOption = (key: string) => {
 if (PUBLIC_DEPLOY_MODE == "static") return Astro.rewrite("/404");
 
 const title = "The Daily Drip | " + character.name;
-
-const transforms = [
-  {
-    key: "gravity",
-    params: [
-      "fp",
-      0.5 + Number(getOption("icon")?.x),
-      0.5 + Number(getOption("icon")?.y) - 0.02,
-    ],
-  },
-  {
-    key: "crop",
-    params: [
-      Number(getOption("icon")?.width) * 0.4,
-      Number(getOption("icon")?.height) * 0.4,
-    ],
-  },
-  { key: "resize", params: ["fill", 740, 740] },
-];
 
 const sizes = [
   "9xs",
@@ -156,20 +100,15 @@ const sizes = [
   "5xl",
 ];
 
-const width = Astro.url.searchParams.get("width") || "sm";
-const height = Astro.url.searchParams.get("height") || "2xl";
-
-const iconPath =
-  character.splash_art != null
-    ? ProxyService.getImage(imgPath, transforms, "webp", false)
-    : ProxyService.getImage(`/`, []);
+const width = Astro.url.searchParams.get("width") || "3xs";
+const height = Astro.url.searchParams.get("height") || "md";
 
 const { events, ...rest } = character;
 let event: any = {
   startDate: dayjs().subtract(7, "days").format("YYYY-MM-DD"),
   endDate: dayjs().add(7, "days").format("YYYY-MM-DD"),
 };
-console.log(event);
+// console.log(event);
 let phase = await directus.request(readItem("phases", 1));
 let bannerEvent = { phase };
 Object.assign(bannerEvent, event, {
@@ -186,7 +125,7 @@ Object.assign(bannerEvent, event, {
       class="w-full grid grid-rows-[1fr_auto] gap-2 justify-items-center p-6"
     >
       <div class="w-full max-w-4xl flex flex-col gap-3">
-        <h1 class="text-5xl font-heading font-bold w-full text-left">
+        <h1 class="text-5xl font-heading font-bold w-full text-left pb-2">
           {character.name}
         </h1>
         <div class="flex gap-3 w-full justify-start">
@@ -195,7 +134,7 @@ Object.assign(bannerEvent, event, {
           >
             <div class="w-full absolute h-1/2 border-b border-black"></div>
             <div class="h-full absolute w-1/2 border-r border-black"></div>
-            <img src={iconPath} class="size-full" />
+            <img src={`https://directus.dailydrip.news/assets/${character.splash_pad}?transforms=[["extract",${JSON.stringify({left:Math.round((splashPad.width! - character.focus_width)/2),top: Math.round((splashPad.height! - character.focus_height)/2),width: character.focus_width, height: character.focus_height})}]]`} class="size-full" />
           </div>
           <div class="flex gap-2 flex-wrap w-full">
             {

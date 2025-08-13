@@ -27,6 +27,7 @@ interface Attribute {
 interface Character {
   id: string;
   splash_art: DirectusFile | string;
+  splash_pad: DirectusFile | string;
   name: string;
   game: Game | string;
   rarity: 5 | 4;
@@ -34,6 +35,8 @@ interface Character {
   primary_attribute: Attribute | number;
   secondary_attribute: Attribute | number;
   signature?: Weapon | string;
+  focus_width: number;
+  focus_height: number;
   options: {
     key: string;
     x: number;
