@@ -1,9 +1,8 @@
 ---
 import directus from "$services/directus";
 import type { Schema, Character } from "$types/collection";
-import { readItem, type Query, readFile, readAssetRaw, readAssetBlob } from "@directus/sdk";
+import { readItem, type Query, readFile } from "@directus/sdk";
 import { PUBLIC_DEPLOY_MODE } from "astro:env/client";
-import ProxyService from "$services/imgproxy";
 import dayjs from "dayjs";
 
 import Layout from "$layouts/Layout.astro";
@@ -29,12 +28,14 @@ const character = await directus.request(
   } as Query<Schema, Character>),
 );
 
+console.log(character)
+
 let game = await directus.request(
   readItem("games", character.game as string, { fields: ["*"] }),
 );
-let splashPad = await directus.request(
+let splashPad = character.splash_pad ? await directus.request(
   readFile(character.splash_pad as string, { fields: ["*"] }),
-);
+) : '';
 
 const imgPath = character.splash_pad ? `https://directus.dailydrip.news/assets/${character.splash_pad}?transforms=[["extract",${JSON.stringify({left:Math.round((splashPad.width! - character.focus_width)/2),top: Math.round((splashPad.height! - character.focus_height)/2),width: character.focus_width, height: character.focus_height})}]]` : '/';
 

@@ -1,7 +1,6 @@
 import type { APIRoute } from "astro";
 import { PNG } from "pngjs";
 import { extractColors } from "extract-colors";
-import axios from "axios";
 import { formatCSS, hex2oklch } from "colorizr";
 
 function isGraytone(r: number, g: number, b: number) {
