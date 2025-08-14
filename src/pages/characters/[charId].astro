@@ -28,8 +28,6 @@ const character = await directus.request(
   } as Query<Schema, Character>),
 );
 
-console.log(character)
-
 let game = await directus.request(
   readItem("games", character.game as string, { fields: ["*"] }),
 );

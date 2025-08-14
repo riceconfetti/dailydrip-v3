@@ -78,6 +78,8 @@
     width = height;
     height = temp;
   }
+
+  let show = false;
 </script>
 
 <div class="size-full flex flex-col gap-6 justify-start items-center">
@@ -97,14 +99,17 @@
     <!-- <button onclick={landscape}>Landscape</button>
     <button onclick={portrait}>Portrait</button> -->
     <button onclick={swap}>Swap</button>
+    <button onclick={()=> show = !show}>Grid</button>
   </div>
   <div class="w-full flex flex-wrap justify-center gap-4">
     <div class={[preview({ width: width, height: height }), "relative"]}>
-      <div class="w-full absolute h-1/4 border-b border-black z-20"></div>
-      <div class="h-full absolute w-1/2 border-r border-black z-20"></div>
+      {#if show}
+      <div class="w-full absolute h-1/4 border-b border-black/50 z-20"></div>
+      <div class="h-full absolute w-1/2 border-r border-black/50  z-20"></div>
       <div
-        class="absolute size-18 aspect-square rounded-full overflow-clip border z-20 left-1/2 -translate-x-1/2 top-1/4 -translate-y-1/2"
+        class="absolute size-18 aspect-square rounded-full overflow-clip border border-black/50 z-20 left-1/2 -translate-x-1/2 top-1/4 -translate-y-1/2"
       ></div>
+      {/if}
       <slot name="base" />
     </div>
     <div class={preview({ width: width, height: height })}>

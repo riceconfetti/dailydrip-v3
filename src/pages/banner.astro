@@ -1,0 +1,41 @@
+---
+import Layout from "$layouts/Layout.astro";
+import BannerCard from "$components/card/BannerCard.astro";
+import directus from "$services/directus";
+import { readItem } from "@directus/sdk";
+import dayjs from "dayjs";
+
+let characters = JSON.parse(Astro.url.searchParams.get("characters")!);
+characters = await Promise.all(
+  characters.map(
+    async (c: string) => await directus.request(readItem("characters", c)),
+  ),
+);
+
+let event: any = {
+  startDate: dayjs().subtract(7, "days").format("YYYY-MM-DD"),
+  endDate: dayjs().add(7, "days").format("YYYY-MM-DD"),
+};
+
+let phase = await directus.request(readItem("phases", 1));
+let bannerEvent = { phase };
+
+Object.assign(bannerEvent, event);
+---
+
+<Layout title="Banner Check">
+  <div class="flex flex-col w-2xl gap-2">{
+    characters.map((c: any) => {
+      return (
+        <BannerCard
+        server:defer status="current"
+          bannerEvent={Object.assign(structuredClone(bannerEvent), {
+            character: c,
+            game: c.game,
+            debut: false,
+          })}
+        />
+      );
+    })
+  }</div>
+</Layout>
