@@ -24,10 +24,12 @@ let events: any = await directus.request(
           "bannerName",
           "name",
           "colors",
-          "options",
+          "focus_width",
+          "focus_height",
           //@ts-ignore
           { events: ["*.*"] },
-          "splash_art",
+          "splash_pad",
+          "splash_art"
         ],
       },
     ],

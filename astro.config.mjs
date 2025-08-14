@@ -8,7 +8,7 @@ import node from "@astrojs/node";
 // https://astro.build/config
 export default defineConfig({
   integrations: [svelte()],
-
+ 
   env: {
     schema: {
       IMGPROXY_KEY: envField.string({ context: "server", access: "public" }),

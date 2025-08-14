@@ -37,13 +37,6 @@ interface Character {
   signature?: Weapon | string;
   focus_width: number;
   focus_height: number;
-  options: {
-    key: string;
-    x: number;
-    y: number;
-    width: number;
-    height: number;
-  }[];
   colors: {
     area: number;
     css: string;
