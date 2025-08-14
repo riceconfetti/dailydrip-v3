@@ -11,39 +11,6 @@ import CharacterCard from "$components/card/CharacterCard.astro";
 import BannerCard from "$components/card/BannerCard.astro";
 import Editor from "$components/Editor.svelte";
 
-interface Option {
-  key: string;
-  x: number;
-  y: number;
-  width: number;
-  height: number;
-}
-
-const defOptions: { [key: string]: Option } = {
-  portrait: {
-    key: "portrait",
-    x: 0,
-    y: 0.15,
-    width: 1600,
-    height: 1600,
-  },
-  landscape: {
-    key: "landscape",
-    x: 0,
-    y: 0.08,
-    width: 1600,
-    height: 1600,
-  },
-  icon: { key: "icon", x: 0, y: 0.02, width: 550, height: 550 },
-  banner: {
-    key: "banner",
-    x: 0,
-    y: 0.075,
-    width: 1600,
-    height: 800,
-  },
-};
-
 export const prerender = false;
 const { charId } = Astro.params;
 
@@ -69,12 +36,8 @@ let splashPad = await directus.request(
   readFile(character.splash_pad as string, { fields: ["*"] }),
 );
 
-const imgPath = character.splash_pad ? `https://directus.dailydrip.news/assets/${splashPad.id}` : false;
+const imgPath = character.splash_pad ? `https://directus.dailydrip.news/assets/${character.splash_pad}?transforms=[["extract",${JSON.stringify({left:Math.round((splashPad.width! - character.focus_width)/2),top: Math.round((splashPad.height! - character.focus_height)/2),width: character.focus_width, height: character.focus_height})}]]` : '/';
 
-const getOption = (key: string) => {
-  const option = character.options.find((opt: any) => opt.key == key);
-  return option ? option : defOptions[key];
-};
 
 if (PUBLIC_DEPLOY_MODE == "static") return Astro.rewrite("/404");
 
@@ -134,7 +97,7 @@ Object.assign(bannerEvent, event, {
           >
             <div class="w-full absolute h-1/2 border-b border-black"></div>
             <div class="h-full absolute w-1/2 border-r border-black"></div>
-            <img src={`https://directus.dailydrip.news/assets/${character.splash_pad}?transforms=[["extract",${JSON.stringify({left:Math.round((splashPad.width! - character.focus_width)/2),top: Math.round((splashPad.height! - character.focus_height)/2),width: character.focus_width, height: character.focus_height})}]]`} class="size-full" />
+            <img src={imgPath} class="size-full" />
           </div>
           <div class="flex gap-2 flex-wrap w-full">
             {
