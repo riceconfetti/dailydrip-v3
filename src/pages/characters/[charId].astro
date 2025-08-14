@@ -120,6 +120,7 @@ Object.assign(bannerEvent, event, {
           </div>
         </div>
         <BannerCard {bannerEvent} server:defer status="current" />
+        <BannerCard bannerEvent={Object.assign(bannerEvent, {debut: false})} server:defer status="current" />
       </div>
       <Editor client:load {width} {height}>
         <CharacterCard {game} {character} slot="base" />
