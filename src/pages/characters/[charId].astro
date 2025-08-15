@@ -27,11 +27,11 @@ const character = await directus.request(
       { splash_art: ["*"] },
       { splash_pad: ["*"] },
     ],
-  } as Query<Schema, Character>),
+  } as Query<Schema, Character>)
 );
 
 let game = await directus.request(
-  readItem("games", character.game as string, { fields: ["*"] }),
+  readItem("games", character.game as string, { fields: ["*"] })
 );
 
 const { splash_art, splash_pad }: { splash_art: any; splash_pad: any } =
@@ -46,7 +46,7 @@ const extract = {
 
 const imgPath =
   typeof splash_pad != "string" && typeof splash_art != "string"
-    ? `https://directus.dailydrip.news/assets/${character.splash_pad}?transforms=[["extract",${JSON.stringify(extract)}]]`
+    ? `https://directus.dailydrip.news/assets/${splash_pad.id}?transforms=[["extract",${JSON.stringify(extract)}]]`
     : "/";
 
 if (PUBLIC_DEPLOY_MODE == "static") return Astro.rewrite("/404");
