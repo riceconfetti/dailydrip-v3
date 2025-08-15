@@ -1,6 +1,6 @@
 ---
 import directus from "$services/directus";
-import type { Schema, Character } from "$types/collection";
+import type { Schema, Character, DripFile } from "$types/collection";
 import { readItem, type Query, readFile } from "@directus/sdk";
 import { PUBLIC_DEPLOY_MODE } from "astro:env/client";
 import dayjs from "dayjs";
@@ -24,6 +24,8 @@ const character = await directus.request(
           { full: ["filename_disk"] },
         ],
       },
+      { splash_art: ["*"] },
+      { splash_pad: ["*"] },
     ],
   } as Query<Schema, Character>),
 );
@@ -31,12 +33,21 @@ const character = await directus.request(
 let game = await directus.request(
   readItem("games", character.game as string, { fields: ["*"] }),
 );
-let splashPad = character.splash_pad ? await directus.request(
-  readFile(character.splash_pad as string, { fields: ["*"] }),
-) : '';
 
-const imgPath = character.splash_pad ? `https://directus.dailydrip.news/assets/${character.splash_pad}?transforms=[["extract",${JSON.stringify({left:Math.round((splashPad.width! - character.focus_width)/2),top: Math.round((splashPad.height! - character.focus_height)/2),width: character.focus_width, height: character.focus_height})}]]` : '/';
+const { splash_art, splash_pad }: { splash_art: any; splash_pad: any } =
+  character;
 
+const extract = {
+  left: Math.round((splash_pad.width! - splash_art.focal_size!) / 2),
+  top: Math.round((splash_pad.height! - splash_art.focal_size!) / 2),
+  width: splash_art.focal_size!,
+  height: splash_art.focal_size!,
+};
+
+const imgPath =
+  typeof splash_pad != "string" && typeof splash_art != "string"
+    ? `https://directus.dailydrip.news/assets/${character.splash_pad}?transforms=[["extract",${JSON.stringify(extract)}]]`
+    : "/";
 
 if (PUBLIC_DEPLOY_MODE == "static") return Astro.rewrite("/404");
 
@@ -119,7 +130,13 @@ Object.assign(bannerEvent, event, {
           </div>
         </div>
         <BannerCard {bannerEvent} server:defer status="current" />
-        <BannerCard bannerEvent={Object.assign(structuredClone(bannerEvent), {debut: false})} server:defer status="current" />
+        <BannerCard
+          bannerEvent={Object.assign(structuredClone(bannerEvent), {
+            debut: false,
+          })}
+          server:defer
+          status="current"
+        />
       </div>
       <Editor client:load {width} {height}>
         <CharacterCard {game} {character} slot="base" />

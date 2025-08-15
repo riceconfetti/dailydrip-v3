@@ -3,60 +3,48 @@ const { bannerEvent, status } = Astro.props;
 
 import { tv } from "tailwind-variants";
 import ProxyService from "$services/imgproxy";
-import directus from "$services/directus";
-import { readFile } from "@directus/sdk";
 
 import Border from "./deco-border/Border.astro";
 import BannerTime from "./BannerTime.svelte";
 import BannerCheck from "./BannerCheck.svelte";
 
 const colorIndex = 0;
-const charData = bannerEvent.character;
+const char = bannerEvent.character;
 
 const vars = {
   "--primaryColor":
-    charData.colors != null
-      ? [...charData.colors].sort(
+    char.colors != null
+      ? [...char.colors].sort(
           (a: { l: number }, b: { l: number }) => a.l - b.l,
         )[colorIndex].css
       : "oklch(20% 0 0)",
   "--secondaryColor":
-    charData.colors != null
-      ? charData.colors[charData.colors.length - 1].css
+    char.colors != null
+      ? char.colors[char.colors.length - 1].css
       : "oklch(60% 0 0)",
   "--cardAccent":
-    charData.rarity == 5
+    char.rarity == 5
       ? "var(--color-accent-gold-150)"
       : "var(--color-accent-purple-200)",
 };
 
-charData.splash_art =
-  charData.splash_art != null
-    ? await directus.request(readFile(charData.splash_pad, { fields: ["*"] }))
-    : false;
-
-const imgPath = charData.splash_pad
-  ? `https://directus.dailydrip.news/assets/${charData.splash_pad}`
+const imgPath = char.splash_pad
+  ? `https://directus.dailydrip.news/assets/${char.splash_pad.id}`
   : "/";
 
-const fp = {
-  x: charData.splash_art?.focal_point_x
-    ? charData.splash_art?.focal_point_x
-    : 0.5,
-  y: charData.splash_art?.focal_point_y
-    ? charData.splash_art?.focal_point_y
-    : 0.5,
-};
+
 const size = {
-  w: charData.splash_art?.width,
-  h: charData.splash_art?.height,
+  w: char.splash_pad?.width,
+  h: char.splash_pad?.height,
 };
+
+const focal = char.splash_art ? char.splash_art.focal_size : 200;
 
 const transforms = {
   left: 0,
-  top: Math.round((size.h - charData.focus_height * 2) / 2),
-  width: Math.round(size.w - (size.w - charData.focus_width * 4) / 2),
-  height: charData.focus_height * 4,
+  top: Math.round((size.h - focal * 3) / 2),
+  width: Math.round(size.w - (size.w - focal * 6) / 2),
+  height: focal* 6,
 };
 
 const splash = `${imgPath}/?transforms=[["extract"\,${JSON.stringify(transforms)}],["resize"\,${JSON.stringify({ width: 2000 })}]]`;
@@ -123,7 +111,7 @@ const { base, charBg, outline, name, banner, frost, holo, ornament } = card({
     <div class={outline()}>
       <div class="flex flex-col gap-1 items-start w-3/5 text-left">
         <h2 class={name()}>
-          {charData.bannerName}
+          {char.bannerName}
         </h2>
 
         <h3 class={banner()}>

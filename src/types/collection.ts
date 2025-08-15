@@ -1,5 +1,9 @@
 import { type DirectusFile } from "@directus/sdk";
 
+interface DripFile extends DirectusFile {
+  focal_size: number;
+}
+
 interface Game {
   id: string;
   name: string;
@@ -21,13 +25,13 @@ interface Attribute {
   game: Game | string;
   name: string;
   primary: boolean;
-  icon: DirectusFile;
+  icon: DripFile;
 }
 
 interface Character {
   id: string;
-  splash_art: DirectusFile | string;
-  splash_pad: DirectusFile | string;
+  splash_art: DripFile | string;
+  splash_pad: DripFile | string;
   name: string;
   game: Game | string;
   rarity: 5 | 4;
@@ -35,8 +39,6 @@ interface Character {
   primary_attribute: Attribute | number;
   secondary_attribute: Attribute | number;
   signature?: Weapon | string;
-  focus_width: number;
-  focus_height: number;
   colors: {
     area: number;
     css: string;
@@ -113,6 +115,7 @@ interface Schema {
   versions: Version[];
   events_characters: EventCharacter[];
   events_weapons: EventWeapon[];
+  directus_files: DripFile[];
 }
 
 export type {
@@ -127,4 +130,5 @@ export type {
   EventWeapon,
   Phase,
   Schema,
+  DripFile
 };

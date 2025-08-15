@@ -20,10 +20,8 @@ if (character.id.includes("placeholder")) {
   }
 }
 
-const splash_art =
-  character.splash_art != null
-    ? await directus.request(readFile(character.splash_pad, { fields: ["*"] }))
-    : false;
+const { splash_art, splash_pad }: { splash_art: any; splash_pad: any } =
+  character;
 
 const vars = {
   "--primaryColor":
@@ -57,17 +55,14 @@ const backgroundPath = game?.elementMain
 
 const placeholderPath = `/${primary.icon.filename_disk}`;
 
-const fp = {
-  x: splash_art && splash_art.focal_point_x ? splash_art.focal_point_x : 0.5,
-  y: splash_art && splash_art.focal_point_y ? splash_art.focal_point_y : 0.5,
-};
 const size = {
-  w: splash_art && splash_art.width ? splash_art.width : 1,
-  h: splash_art && splash_art.height ? splash_art.height : 1,
+  w: splash_pad && splash_pad.width ? splash_pad.width : 1,
+  h: splash_pad && splash_pad.height ? splash_pad.height : 1,
 };
 
+const focal = splash_art ? splash_art.focal_size : 200;
 
-let imgPath: string|boolean = character.splash_pad ? `https://directus.dailydrip.news/assets/${character.splash_pad}` : false;
+let imgPath: string|boolean = character.splash_pad ? `https://directus.dailydrip.news/assets/${character.splash_pad.id}` : false;
 
 Object.assign(vars, {
   "--placeholder": `url("${ProxyService.getImage(placeholderPath, [], "webp")}")`,
@@ -82,9 +77,9 @@ Object.assign(vars, {
 });
 
 const characterTransforms: Variants = {
-  portrait: `?transforms=[["extract"\,${JSON.stringify({left:Math.round((size.w - character.focus_width*3)/2),top: Math.round((size.h - character.focus_height*2.5)/2),width: character.focus_width*3, height: character.focus_height*5})}],["resize"\,${JSON.stringify({height: 1600 })}]]`,
-  landscape: `?transforms=[["extract"\,${JSON.stringify({left:Math.round((size.w - character.focus_width*5)/2),top: Math.round((size.h - character.focus_height*1.5)/2),width: character.focus_width*5, height: character.focus_height*3})}],["resize"\,${JSON.stringify({width: 1600 })}]]`,
-  icon: `?transforms=[["extract"\,${JSON.stringify({left:Math.round((size.w - character.focus_width*2)/2),top: Math.round((size.h - character.focus_height*1.5)/2),width: character.focus_width*2, height: character.focus_height*2})}]]`
+  portrait: `?transforms=[["extract"\,${JSON.stringify({left:Math.round((size.w - focal*3)/2),top: Math.round((size.h - focal*2.5)/2),width: focal*3, height: focal*5})}],["resize"\,${JSON.stringify({height: 1600 })}]]`,
+  landscape: `?transforms=[["extract"\,${JSON.stringify({left:Math.round((size.w - focal*5)/2),top: Math.round((size.h - focal*1.5)/2),width: focal*5, height: focal*3})}],["resize"\,${JSON.stringify({width: 1600 })}]]`,
+  icon: `?transforms=[["extract"\,${JSON.stringify({left:Math.round((size.w - focal*2)/2),top: Math.round((size.h - focal*1.5)/2),width: focal*2, height: focal*2})}]]`
   
 };
 

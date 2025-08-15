@@ -8,7 +8,7 @@ import dayjs from "dayjs";
 let characters = JSON.parse(Astro.url.searchParams.get("characters")!);
 characters = await Promise.all(
   characters.map(
-    async (c: string) => await directus.request(readItem("characters", c)),
+    async (c: string) => await directus.request(readItem("characters", c, {fields:["*", { splash_art: ["*"] },{ splash_pad: ["*"] },]})),
   ),
 );
 

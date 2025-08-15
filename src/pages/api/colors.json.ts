@@ -18,44 +18,6 @@ function isGraytone(r: number, g: number, b: number) {
 export const POST: APIRoute = async ({ request }) => {
   const data = await request.json();
 
-  // data = {
-  //   "id": "lauma",
-  //   "focus_width": 200,
-  //   "focus_height": 200,
-  //   "splash_art": {
-  //     "id": "519ae800-2763-4806-8796-faf019c1b379",
-  //     "storage": "s3",
-  //     "filename_disk": "519ae800-2763-4806-8796-faf019c1b379.webp",
-  //     "filename_download": "UI_Gacha_AvatarImg_Lauma.webp",
-  //     "title": "UI Gacha Avatar Img Lauma.webp",
-  //     "type": "image/webp",
-  //     "folder": "e73dbb53-c67a-4fc8-8b10-5b4833e8829c",
-  //     "uploaded_by": "1797e76e-de5d-4b30-9fe6-675a863ab085",
-  //     "created_on": "2025-08-06T20:11:17",
-  //     "modified_by": "1797e76e-de5d-4b30-9fe6-675a863ab085",
-  //     "modified_on": "2025-08-06T21:50:36",
-  //     "charset": null,
-  //     "filesize": 574732,
-  //     "width": 2048,
-  //     "height": 1024,
-  //     "duration": null,
-  //     "embed": null,
-  //     "description": null,
-  //     "location": null,
-  //     "tags": null,
-  //     "metadata": {},
-  //     "focal_point_x": 1002,
-  //     "focal_point_y": 244,
-  //     "tus_id": null,
-  //     "tus_data": null,
-  //     "uploaded_on": "2025-08-06T20:11:17",
-  //     "characters_splash_raw": [
-  //       "lauma"
-  //     ],
-  //     "characters_splash_pad": []
-  //   }
-  // }
-
   const ICON_SIDE = 200;
 
   const transformOptions = [
