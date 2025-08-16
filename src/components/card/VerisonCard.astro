@@ -67,7 +67,12 @@ let version = await directus.request(
           } else if (version.special_version) {
             if (version.tags?.includes("fate collab")) {
               return (
-                <PhaseCard {event} {game} class="col-span-full" four="false" />
+                <PhaseCard
+                  {event}
+                  {game}
+                  class="fate col-span-full"
+                  four="false"
+                />
               );
             }
           } else if (event.event_tags.includes("chronicled wish")) {

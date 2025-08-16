@@ -75,7 +75,7 @@ const count: 1 | 2 | 3 =
 const phaseCard = tv({
   slots: {
     base: "grid-rows-auto grid size-full grid-cols-2 grid-rows-[repeat(3,min-content)] gap-2",
-    box: "gap-2",
+    box: "box gap-2",
     character: "",
     weapon: "",
   },
@@ -178,3 +178,10 @@ const { base, box, character, weapon } = phaseCard({ count: count, rarity: 5 });
     </div>}
   </div>
 </div>
+
+
+<style scoped>
+  .fate .box:first-child {
+    min-height: 25cqh;
+  }
+</style>
