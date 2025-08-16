@@ -42,11 +42,11 @@ const primary = await directus.request(
   readItem("attributes", character.primary_attribute, {
     //@ts-ignore
     fields: ["*", { icon: ["filename_disk"] }],
-  }),
+  })
 );
 
 const secondary = await directus.request(
-  readItem("attributes", character.secondary_attribute),
+  readItem("attributes", character.secondary_attribute)
 );
 
 const backgroundPath = game?.elementMain
@@ -62,7 +62,9 @@ const size = {
 
 const focal = splash_art ? splash_art.focal_size : 200;
 
-let imgPath: string|boolean = character.splash_pad ? `https://directus.dailydrip.news/assets/${character.splash_pad.id}` : false;
+let imgPath: string | boolean = character.splash_pad
+  ? `https://directus.dailydrip.news/assets/${character.splash_pad.id}`
+  : false;
 
 Object.assign(vars, {
   "--placeholder": `url("${ProxyService.getImage(placeholderPath, [], "webp")}")`,
@@ -71,16 +73,19 @@ Object.assign(vars, {
     ProxyService.getImage(
       backgroundPath,
       [{ key: "crop", params: [0, 0] }],
-      "webp",
+      "webp"
     ) +
     '")',
 });
 
+const portrait = [focal * 5, focal * 7];
+const landscape = [focal * 7, focal * 5];
+const icon = [focal * 3, focal * 3];
+
 const characterTransforms: Variants = {
-  portrait: `?transforms=[["extract"\,${JSON.stringify({left:Math.round((size.w - focal*3)/2),top: Math.round((size.h - focal*2.5)/2),width: focal*3, height: focal*5})}],["resize"\,${JSON.stringify({height: 1600 })}]]`,
-  landscape: `?transforms=[["extract"\,${JSON.stringify({left:Math.round((size.w - focal*5)/2),top: Math.round((size.h - focal*1.5)/2),width: focal*5, height: focal*3})}],["resize"\,${JSON.stringify({width: 1600 })}]]`,
-  icon: `?transforms=[["extract"\,${JSON.stringify({left:Math.round((size.w - focal*2)/2),top: Math.round((size.h - focal*1.5)/2),width: focal*2, height: focal*2})}]]`
-  
+  portrait: `?transforms=[["extract"\,${JSON.stringify({ left: Math.round((size.w - portrait[0]) / 2), top: Math.round((size.h - portrait[1] / 2) / 2), width: portrait[0], height: portrait[1] })}],["resize"\,${JSON.stringify({ height: 1600 })}]]`,
+  landscape: `?transforms=[["extract"\,${JSON.stringify({ left: Math.round((size.w - landscape[0]) / 2), top: Math.round((size.h - landscape[1] / 2) / 2), width: landscape[0], height: landscape[1] })}],["resize"\,${JSON.stringify({ width: 1600 })}]]`,
+  icon: `?transforms=[["extract"\,${JSON.stringify({ left: Math.round((size.w - icon[0]) / 2), top: Math.round((size.h - icon[1] / 2) / 2), width: icon[0], height: icon[1] })}]]`,
 };
 
 const splash: Variants = variants.reduce((prev, curr) => {
@@ -95,7 +100,7 @@ const Holo: Variants = variants.reduce((prev, curr) => {
     [curr]: ProxyService.getImage(
       "/overlays/Holo_" + curr.at(0)?.toUpperCase() + curr.slice(1) + ".png",
       [],
-      "webp",
+      "webp"
     ),
   });
   return prev;
@@ -107,7 +112,7 @@ const Frost: Variants = variants.reduce((prev, curr) => {
       "/overlays/Frost_" + curr.at(0)?.toUpperCase() + curr.slice(1) + ".png",
       //@ts-ignore
       [],
-      "webp",
+      "webp"
     ),
   });
   return prev;
@@ -118,7 +123,7 @@ variants.forEach((v) => {
     vars,
     { [`--char-${v}`]: `url('${splash[v]}')` },
     { [`--holo-${v}`]: `url("${Holo[v]}")` },
-    { [`--frost-${v}`]: `url("${Frost[v]}")` },
+    { [`--frost-${v}`]: `url("${Frost[v]}")` }
   );
 });
 
@@ -186,7 +191,6 @@ const {
   debut: character.debut,
   placeholder: imgPath == false,
 });
-
 ---
 
 <div

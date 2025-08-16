@@ -15,7 +15,7 @@ const vars = {
   "--primaryColor":
     char.colors != null
       ? [...char.colors].sort(
-          (a: { l: number }, b: { l: number }) => a.l - b.l,
+          (a: { l: number }, b: { l: number }) => a.l - b.l
         )[colorIndex].css
       : "oklch(20% 0 0)",
   "--secondaryColor":
@@ -32,7 +32,6 @@ const imgPath = char.splash_pad
   ? `https://directus.dailydrip.news/assets/${char.splash_pad.id}`
   : "/";
 
-
 const size = {
   w: char.splash_pad?.width,
   h: char.splash_pad?.height,
@@ -40,14 +39,16 @@ const size = {
 
 const focal = char.splash_art ? char.splash_art.focal_size : 200;
 
-const transforms = {
+const extract = {
   left: 0,
-  top: Math.round((size.h - focal * 3) / 2),
-  width: Math.round(size.w - (size.w - focal * 6) / 2),
-  height: focal* 6,
+  top: Math.round((size.h - focal - 200) / 2),
+  width: Math.round(size.w - (size.w - focal - 700) / 2),
+  height: Math.round(focal * 6),
 };
 
-const splash = `${imgPath}/?transforms=[["extract"\,${JSON.stringify(transforms)}],["resize"\,${JSON.stringify({ width: 2000 })}]]`;
+const splash = `${imgPath}/?transforms=[["extract"\,${JSON.stringify(extract)}],["resize"\,${JSON.stringify({ width: 2000 })}]]`;
+
+console.log(splash);
 const Holo = ProxyService.getImage("/overlays/Holo_Landscape.png", [], "webp");
 
 Object.assign(vars, { [`--char`]: `url('${splash}')` });
