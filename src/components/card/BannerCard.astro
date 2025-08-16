@@ -48,7 +48,6 @@ const extract = {
 
 const splash = `${imgPath}/?transforms=[["extract"\,${JSON.stringify(extract)}],["resize"\,${JSON.stringify({ width: 2000 })}]]`;
 
-console.log(splash);
 const Holo = ProxyService.getImage("/overlays/Holo_Landscape.png", [], "webp");
 
 Object.assign(vars, { [`--char`]: `url('${splash}')` });
