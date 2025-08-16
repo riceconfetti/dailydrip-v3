@@ -12,6 +12,7 @@
     "@astrojs/node": "^9.1.0",
     "@astrojs/svelte": "^7.0.4",
     "@directus/sdk": "^19.0.1",
+    "@directus/visual-editing": "^1.1.0",
     "@fontsource-variable/playfair-display": "^5.1.1",
     "@fontsource/crimson-pro": "^5.1.1",
     "@fontsource/crimson-text": "^5.1.1",

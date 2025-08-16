@@ -33,16 +33,25 @@ const { baseURL } = Astro.props;
   >
     {
       games.map((g) => (
-        <a href={`${baseURL}${g.id}${isPreview ? "/1" : ""}`}>{g.name}</a>
+        <a
+          href={`${baseURL}${g.id}${isPreview ? "/1" : ""}`}
+          class="hover:text-accent-gold-200"
+        >
+          {g.name}
+        </a>
       ))
     }
 
     <!-- <a href={baseURL+'/calendar'} >Calendar</a> -->
     <!-- <li>Archive</li> -->
-    <button class="questions_gear pointer-cursor z-20">
+    <button
+      class="questions_gear pointer-cursor z-20 hover:cursor-pointer hover:text-accent-gold-200"
+    >
       <i class="ri-question-line"></i>
     </button>
-    <button class="settings_gear pointer-cursor z-20">
+    <button
+      class="settings_gear pointer-cursor z-20 hover:cursor-pointer hover:text-accent-gold-200"
+    >
       <i class="ri-settings-4-line"></i>
     </button>
   </div>
