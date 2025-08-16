@@ -25,7 +25,8 @@ interface Attribute {
   game: Game | string;
   name: string;
   primary: boolean;
-  icon: DripFile;
+  image: DripFile;
+  bg: DripFile;
 }
 
 interface Character {
@@ -130,5 +131,5 @@ export type {
   EventWeapon,
   Phase,
   Schema,
-  DripFile
+  DripFile,
 };

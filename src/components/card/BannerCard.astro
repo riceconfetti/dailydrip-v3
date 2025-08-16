@@ -2,7 +2,6 @@
 const { bannerEvent, status } = Astro.props;
 
 import { tv } from "tailwind-variants";
-import ProxyService from "$services/imgproxy";
 
 import Border from "./deco-border/Border.astro";
 import BannerTime from "./BannerTime.svelte";
@@ -48,7 +47,7 @@ const extract = {
 
 const splash = `${imgPath}/?transforms=[["extract"\,${JSON.stringify(extract)}],["resize"\,${JSON.stringify({ width: 2000 })}]]`;
 
-const Holo = ProxyService.getImage("/overlays/Holo_Landscape.png", [], "webp");
+const Holo = `https://directus.dailydrip.news/assets/595ca8d3-3d23-4fb7-a6cf-1f2d48bccd4d`;
 
 Object.assign(vars, { [`--char`]: `url('${splash}')` });
 Object.assign(vars, { [`--holo`]: `url("${Holo}")` });

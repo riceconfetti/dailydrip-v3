@@ -23,22 +23,15 @@ let version = await directus.request(
           { phase: ["*"] },
           {
             featured_characters: [
-              'spec',
+              "spec",
               {
                 characters_id: [
                   "*",
                   { splash_art: ["*"] },
                   { splash_pad: ["*"] },
-                  { events: [
-                    { events_id: ['id', 'startDate']}
-                    ],
-                  },
+                  { events: [{ events_id: ["id", "startDate"] }] },
                   {
-                    signature: [
-                      "*",
-                      { icon: ["filename_disk"] },
-                      { full: ["filename_disk"] },
-                    ],
+                    signature: ["*"],
                   },
                 ],
               },
@@ -47,18 +40,14 @@ let version = await directus.request(
           {
             featured_weapons: [
               {
-                weapons_id: [
-                  "*",
-                  { icon: ["filename_disk"] },
-                  { full: ["filename_disk"] },
-                ],
+                weapons_id: ["*"],
               },
             ],
           },
         ],
       },
     ],
-  } as Query<Schema, Version>),
+  } as Query<Schema, Version>)
 );
 ---
 
@@ -77,7 +66,9 @@ let version = await directus.request(
             return <PhaseCard {event} {game} />;
           } else if (version.special_version) {
             if (version.tags?.includes("fate collab")) {
-              return <PhaseCard {event} {game} class="col-span-full" four="false" />;
+              return (
+                <PhaseCard {event} {game} class="col-span-full" four="false" />
+              );
             }
           } else if (event.event_tags.includes("chronicled wish")) {
             return <ChronicleCard {event} class="col-span-full" {game} />;

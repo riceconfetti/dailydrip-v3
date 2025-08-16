@@ -1,34 +1,25 @@
 ---
 import { tv } from "tailwind-variants";
-import ProxyService from "$services/imgproxy";
 import directus from "$services/directus";
 import { readItem, type Query } from "@directus/sdk";
 import type { Schema, Weapon } from "$types/collection";
+import { ASSETS } from "astro:env/client";
 
 const { weapon, class: className } = Astro.props;
 
 let placeholder: any = await directus.request(
   readItem("weapons", weapon.game, {
-    fields: ["*", { icon: ["filename_disk"] }, { full: ["filename_disk"] }],
-  } as Query<Schema, Weapon>),
+    fields: ["*"],
+  } as Query<Schema, Weapon>)
 );
 
-const iconPath = weapon.icon
-  ? `/${weapon.icon.filename_disk}`
-  : `/${placeholder.icon.filename_disk}`;
-const fullPath = weapon.full ? `/${weapon.full.filename_disk}` : `/`;
+const icon = weapon.icon
+  ? `${ASSETS}/${weapon.icon}`
+  : `${ASSETS}/${placeholder.icon}`;
 
-const icon = ProxyService.getImage(iconPath, [], "webp");
-const full = ProxyService.getImage(
-  fullPath,
-  [
-    {
-      key: "crop",
-      params: [0.9, 0.9],
-    },
-  ],
-  "webp",
-);
+const full = weapon.full
+  ? `${ASSETS}/${weapon.full}?transforms[["extract",${JSON.stringify({ left: 15, top: 15, width: 870, height: 1235 })}]]`
+  : `/`;
 
 const weaponCard = tv({
   slots: {

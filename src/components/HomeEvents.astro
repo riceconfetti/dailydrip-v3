@@ -38,14 +38,14 @@ let events: any = await directus.request(
         { _or: [{ spec: { _eq: false } }, { spec: { _null: true } }] },
       ],
     },
-  }),
+  })
 );
 
 events = events.map((n: any) => {
-  let { spec, id, characters_id, events_id } = n;
+  let { id, characters_id, events_id } = n;
   characters_id.events.sort(
     (a: any, b: any) =>
-      Date.parse(a.events_id.startDate) - Date.parse(b.events_id.startDate),
+      Date.parse(a.events_id.startDate) - Date.parse(b.events_id.startDate)
   );
   let event = {
     debut: characters_id.events[0].id == id,
@@ -54,20 +54,18 @@ events = events.map((n: any) => {
   return Object.assign(event, events_id, { character: characters_id });
 });
 
-// console.log("Home", events[0]);
-
 let currentEvents = events.filter(
   (event: any) =>
     dayjs(event.startDate).isBefore(dayjs().add(1, "day")) &&
     dayjs(event.endDate).isAfter(dayjs().subtract(1, "day")) &&
     event.status == "published" &&
-    event.character.rarity == 5,
+    event.character.rarity == 5
 );
 let upcomingEvents = events.filter(
   (event: any) =>
     dayjs(event.startDate).isAfter(dayjs().subtract(1, "day")) &&
     event.status == "published" &&
-    event.character.rarity == 5,
+    event.character.rarity == 5
 );
 ---
 

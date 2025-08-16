@@ -28,9 +28,7 @@ async function getPlaceholder(c: "weapons" | "characters", g: string) {
     c == "weapons"
       ? ({
           fields: [
-            "*",
-            { icon: ["filename_disk"] },
-            { full: ["filename_disk"] },
+            "*"
           ],
         } as Query<Schema, Weapon>)
       : ({ fields: ["*"] } as Query<Schema, Character>);

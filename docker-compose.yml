@@ -1,0 +1,8 @@
+services:
+  dailydrip:
+    container_name: dailydrip
+    restart: unless-stopped
+    ports:
+      - "4321:4321"
+    build:
+      context: .

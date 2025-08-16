@@ -3,9 +3,9 @@ const { character, class: className, game } = Astro.props;
 
 import { tv } from "tailwind-variants";
 import directus from "$services/directus";
-import { readItem, readFile } from "@directus/sdk";
-import ProxyService from "$services/imgproxy";
+import { readItem } from "@directus/sdk";
 import Border from "./deco-border/Border.astro";
+import { ASSETS } from "astro:env/client";
 
 const colorIndex = 0;
 const variants = ["portrait", "landscape", "icon"];
@@ -39,10 +39,7 @@ const vars = {
 };
 
 const primary = await directus.request(
-  readItem("attributes", character.primary_attribute, {
-    //@ts-ignore
-    fields: ["*", { icon: ["filename_disk"] }],
-  })
+  readItem("attributes", character.primary_attribute)
 );
 
 const secondary = await directus.request(
@@ -50,10 +47,10 @@ const secondary = await directus.request(
 );
 
 const backgroundPath = game?.elementMain
-  ? `/backgrounds/${game?.id}/${primary?.name}.webp`
-  : `/backgrounds/${game?.id}/${secondary?.name}.webp`;
+  ? `${ASSETS}/${primary?.bg}`
+  : `${ASSETS}/${secondary?.image}`;
 
-const placeholderPath = `/${primary.icon.filename_disk}`;
+const placeholderPath = `${ASSETS}/${primary.image}`;
 
 const size = {
   w: splash_pad && splash_pad.width ? splash_pad.width : 1,
@@ -63,19 +60,12 @@ const size = {
 const focal = splash_art ? splash_art.focal_size : 200;
 
 let imgPath: string | boolean = character.splash_pad
-  ? `https://directus.dailydrip.news/assets/${character.splash_pad.id}`
+  ? `${ASSETS}/${character.splash_pad.id}`
   : false;
 
 Object.assign(vars, {
-  "--placeholder": `url("${ProxyService.getImage(placeholderPath, [], "webp")}")`,
-  "--attributeBg":
-    'url("' +
-    ProxyService.getImage(
-      backgroundPath,
-      [{ key: "crop", params: [0, 0] }],
-      "webp"
-    ) +
-    '")',
+  "--placeholder": `url("${placeholderPath}")`,
+  "--attributeBg": 'url("' + backgroundPath + '")',
 });
 
 const portrait = [focal * 5, focal * 7];
@@ -95,28 +85,17 @@ const splash: Variants = variants.reduce((prev, curr) => {
   return prev;
 }, {});
 
-const Holo: Variants = variants.reduce((prev, curr) => {
-  Object.assign(prev, {
-    [curr]: ProxyService.getImage(
-      "/overlays/Holo_" + curr.at(0)?.toUpperCase() + curr.slice(1) + ".png",
-      [],
-      "webp"
-    ),
-  });
-  return prev;
-}, {});
+const Holo: Variants = {
+  portrait: `${ASSETS}/fd24025c-ff71-44a7-a332-73e1ec4a9d6b`,
+  landscape: `${ASSETS}/595ca8d3-3d23-4fb7-a6cf-1f2d48bccd4d`,
+  icon: `${ASSETS}/fd1c27b9-3812-4bcd-928c-ef4407026be9`,
+};
 
-const Frost: Variants = variants.reduce((prev, curr) => {
-  Object.assign(prev, {
-    [curr]: ProxyService.getImage(
-      "/overlays/Frost_" + curr.at(0)?.toUpperCase() + curr.slice(1) + ".png",
-      //@ts-ignore
-      [],
-      "webp"
-    ),
-  });
-  return prev;
-}, {});
+const Frost: Variants = {
+  portrait: `${ASSETS}/04f81497-c261-460e-bf51-e828651da439`,
+  landscape: `${ASSETS}/ebb3046f-30c1-425e-bdb3-2f821e7243b1`,
+  icon: `${ASSETS}/20d8cecc-0b25-43cd-86dc-27aa1826c495`,
+};
 
 variants.forEach((v) => {
   Object.assign(
