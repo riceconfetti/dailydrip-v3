@@ -40,8 +40,8 @@ const focal = char.splash_art ? char.splash_art.focal_size : 200;
 
 const extract = {
   left: 0,
-  top: Math.round((size.h - focal - 200) / 2),
-  width: Math.round(size.w - (size.w - focal - 700) / 2),
+  top: Math.round((size.h - focal * 2.75) / 2),
+  width: Math.round(size.w - (size.w - focal * 6) / 2),
   height: Math.round(focal * 6),
 };
 
