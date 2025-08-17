@@ -3,6 +3,6 @@ services:
     container_name: dailydrip
     restart: unless-stopped
     ports:
-      - "4321:4321"
+      - "4321-4330:4321"
     build:
       context: .
