@@ -5,23 +5,21 @@ const { class: className } = Astro.props;
 
 const border = tv({
   slots: {
-    yline: "absolute z-11 border-y-1 border-(--cardAccent)",
-    hline: "absolute z-11 border-x-1 border-(--cardAccent)",
-    star: "text-[0.5rem]",
-    curve: "border-2",
-    corner: "",
-    nw: "top-[0.6rem] left-[0.6rem]",
-    ne: "top-[0.6rem] right-[0.6rem] scale-x-[-1]",
-    se: "right-[0.6rem] bottom-[0.6rem] scale-x-[-1] scale-y-[-1]",
-    sw: "bottom-[0.6rem] left-[0.6rem] scale-y-[-1]",
+    yline:
+      "absolute inset-[0.35rem] inset-x-[1.1rem] z-11 border-y-1 border-(--cardAccent) @5xs:inset-[0.6rem] @5xs:inset-x-6 @5xs:border-y-2",
+    hline:
+      "absolute inset-[0.35rem] inset-y-[1.1rem] z-11 border-x-1 border-(--cardAccent) @5xs:inset-[0.6rem] @5xs:inset-y-6 @5xs:border-x-2",
+    star: "text-[0.4rem] @5xs:text-[0.5rem]",
+    curve: "border-1 @5xs:border-2",
+    corner: "w-6 @5xs:w-8",
+    nw: "top-[0.35rem] left-[0.35rem] @5xs:top-[0.6rem] @5xs:left-[0.6rem]",
+    ne: "top-[0.35rem] right-[0.35rem] scale-x-[-1] @5xs:top-[0.6rem] @5xs:right-[0.6rem]",
+    se: "right-[0.35rem] bottom-[0.35rem] scale-x-[-1] scale-y-[-1] @5xs:right-[0.6rem] @5xs:bottom-[0.6rem]",
+    sw: "bottom-[0.35rem] left-[0.35rem] scale-y-[-1] @5xs:bottom-[0.6rem] @5xs:left-[0.6rem]",
   },
   variants: {
     size: {
-      sm: {
-        corner: "w-8",
-        yline: "inset-[0.6rem] inset-x-6 border-y-2",
-        hline: "inset-[0.6rem] inset-y-6 border-x-2",
-      },
+      sm: {},
     },
   },
 });
