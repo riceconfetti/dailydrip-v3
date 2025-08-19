@@ -5,7 +5,7 @@
 <br />
 <div align="center">
   <a href="https://github.com/riceconfetti/dailydrip-v3">
-<!--     <img src="https://github.com/rinn-ux/.github/blob/main/profile/header-tp.png?raw=true)" alt="Logo" > -->
+ <img src="https://github.com/riceconfetti/dailydrip-v3/daily-drip-main.png?raw=true)" alt="Screenshot of dailydrip.news" > 
   </a>
 
   <h3 align="center">The Daily Drip - V3</h3>
