@@ -5,7 +5,7 @@
 <br />
 <div align="center">
   <a href="https://github.com/riceconfetti/dailydrip-v3">
- <img src="https://github.com/riceconfetti/dailydrip-v3/daily-drip-main.png?raw=true)" alt="Screenshot of dailydrip.news" > 
+ <img src="https://github.com/riceconfetti/dailydrip-v3/blob/main/public/daily-drip-main.png?raw=true" alt="Screenshot of dailydrip.news" > 
   </a>
 
   <h3 align="center">The Daily Drip - V3</h3>
@@ -56,3 +56,4 @@ Project Link: [https://github.com/riceconfetti/dailydrip-v3](https://github.com/
 -   [Best-README-Template](https://github.com/othneildrew/Best-README-Template)
   
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
+
