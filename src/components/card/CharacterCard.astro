@@ -47,10 +47,10 @@ const secondary = await directus.request(
 );
 
 const backgroundPath = game?.elementMain
-  ? `${PUBLIC_DIRECTUS_PATH}/assets//${primary?.bg}`
-  : `${PUBLIC_DIRECTUS_PATH}/assets//${secondary?.image}`;
+  ? `${PUBLIC_DIRECTUS_PATH}/assets/${primary?.bg}`
+  : `${PUBLIC_DIRECTUS_PATH}/assets/${secondary?.image}`;
 
-const placeholderPath = `${PUBLIC_DIRECTUS_PATH}/assets//${primary.image}`;
+const placeholderPath = `${PUBLIC_DIRECTUS_PATH}/assets/${primary.image}`;
 
 const size = {
   w: splash_pad && splash_pad.width ? splash_pad.width : 1,
@@ -60,7 +60,7 @@ const size = {
 const focal = splash_art ? splash_art.focal_size : 200;
 
 let imgPath: string | boolean = character.splash_pad
-  ? `${PUBLIC_DIRECTUS_PATH}/assets//${character.splash_pad.id}`
+  ? `${PUBLIC_DIRECTUS_PATH}/assets/${character.splash_pad.id}`
   : false;
 
 Object.assign(vars, {
@@ -86,15 +86,15 @@ const splash: Variants = variants.reduce((prev, curr) => {
 }, {});
 
 const Holo: Variants = {
-  portrait: `${PUBLIC_DIRECTUS_PATH}/assets//fd24025c-ff71-44a7-a332-73e1ec4a9d6b`,
-  landscape: `${PUBLIC_DIRECTUS_PATH}/assets//595ca8d3-3d23-4fb7-a6cf-1f2d48bccd4d`,
-  icon: `${PUBLIC_DIRECTUS_PATH}/assets//fd1c27b9-3812-4bcd-928c-ef4407026be9`,
+  portrait: `${PUBLIC_DIRECTUS_PATH}/assets/fd24025c-ff71-44a7-a332-73e1ec4a9d6b`,
+  landscape: `${PUBLIC_DIRECTUS_PATH}/assets/595ca8d3-3d23-4fb7-a6cf-1f2d48bccd4d`,
+  icon: `${PUBLIC_DIRECTUS_PATH}/assets/fd1c27b9-3812-4bcd-928c-ef4407026be9`,
 };
 
 const Frost: Variants = {
-  portrait: `${PUBLIC_DIRECTUS_PATH}/assets//04f81497-c261-460e-bf51-e828651da439`,
-  landscape: `${PUBLIC_DIRECTUS_PATH}/assets//ebb3046f-30c1-425e-bdb3-2f821e7243b1`,
-  icon: `${PUBLIC_DIRECTUS_PATH}/assets//20d8cecc-0b25-43cd-86dc-27aa1826c495`,
+  portrait: `${PUBLIC_DIRECTUS_PATH}/assets/04f81497-c261-460e-bf51-e828651da439`,
+  landscape: `${PUBLIC_DIRECTUS_PATH}/assets/ebb3046f-30c1-425e-bdb3-2f821e7243b1`,
+  icon: `${PUBLIC_DIRECTUS_PATH}/assets/20d8cecc-0b25-43cd-86dc-27aa1826c495`,
 };
 
 variants.forEach((v) => {

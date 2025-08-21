@@ -12,7 +12,9 @@ const isPreview = PUBLIC_DEPLOY_MODE == "server";
 const { gameId, versId } = Astro.params;
 
 if ((versId != undefined || gameId != undefined) && isPreview) {
-  game = await directus.request(readItem("games", gameId!));
+  version = await directus.request(
+    readItem("versions", versId!, { fields: ["semVer", { game: ["*"] }] })
+  );
 } else {
   return Astro.rewrite("/404");
 }
@@ -21,17 +23,15 @@ const verFormat = new Intl.NumberFormat("en-US", {
   minimumFractionDigits: 1,
 });
 
-version.game = game;
-
 const title =
   "The Daily Drip | " +
-  game.name +
+  version.game.name +
   " | Version " +
   verFormat.format(version.semVer);
 ---
 
 <Layout {title}>
   <div class="p-4 md:p-6 xl:p8 w-full flex items-center justify-center">
-    <VerisonCard vId={versId} {game} />
+    <VerisonCard vId={versId} game={version.game} />
   </div>
 </Layout>

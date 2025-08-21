@@ -77,13 +77,15 @@ const { title, baseURL = "/" } = Astro.props;
     <Faq />
     <main
       id="content"
-      class="relative flex flex-col overflow-x-hidden size-full items-center pb-2">
+      class="relative flex flex-col overflow-x-hidden size-full items-center pb-2"
+    >
       <div
         id="loader"
         class:list={[
           "fixed inset-0 text-accent-gold-500 z-50 bg-dark  flex-col items-center justify-center transition-opacity",
           PUBLIC_DEPLOY_MODE == "server" ? "hidden" : "flex",
-        ]}>
+        ]}
+      >
         <l-square
           size="35"
           stroke="5"
@@ -94,12 +96,14 @@ const { title, baseURL = "/" } = Astro.props;
       </div>
       <NavBar {baseURL} />
       <div
-        class="relative z-10 p-2 w-full flex flex-1 justify-center items-center flex-col">
+        class="relative z-10 p-2 w-full flex flex-1 justify-center items-center flex-col"
+      >
         <slot />
       </div>
       <div class="w-full grid grid-cols-2 px-4">
         <p
-          class="text-[.6rem] text-dark text-opacity-50 text-balance pt-1 font-body">
+          class="text-[.6rem] text-dark text-opacity-50 text-balance pt-1 font-body"
+        >
           The Daily Drip is an unaffiliated fansite. All game contents and
           materials are trademarks and copyright of their respective companies.
         </p>
@@ -113,8 +117,19 @@ const { title, baseURL = "/" } = Astro.props;
 
     <script>
       import "../scripts/local.js";
+      import { apply } from "@directus/visual-editing";
       import { square } from "ldrs";
       square.register();
+
+      let editable = [
+        ...(document.querySelectorAll(
+          "[data-directus]"
+        ) as NodeListOf<HTMLElement>),
+      ];
+      apply({
+        directusUrl: "https://directus.dailydrip.news",
+        elements: editable,
+      });
     </script>
   </body>
 </html>

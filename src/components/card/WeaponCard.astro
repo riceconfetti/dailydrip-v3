@@ -14,11 +14,11 @@ let placeholder: any = await directus.request(
 );
 
 const icon = weapon.icon
-  ? `${PUBLIC_DIRECTUS_PATH}/assets//${weapon.icon}`
-  : `${PUBLIC_DIRECTUS_PATH}/assets//${placeholder.icon}`;
+  ? `${PUBLIC_DIRECTUS_PATH}/assets/${weapon.icon}`
+  : `${PUBLIC_DIRECTUS_PATH}/assets/${placeholder.icon}`;
 
 const full = weapon.full
-  ? `${PUBLIC_DIRECTUS_PATH}/assets//${weapon.full}?transforms[["extract",${JSON.stringify({ left: 15, top: 15, width: 870, height: 1235 })}]]`
+  ? `${PUBLIC_DIRECTUS_PATH}/assets/${weapon.full}?transforms[["extract",${JSON.stringify({ left: 15, top: 15, width: 870, height: 1235 })}]]`
   : `/`;
 
 const weaponCard = tv({
