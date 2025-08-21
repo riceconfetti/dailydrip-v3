@@ -3,7 +3,7 @@ import { tv } from "tailwind-variants";
 import directus from "$services/directus";
 import { readItem, type Query } from "@directus/sdk";
 import type { Schema, Weapon } from "$types/collection";
-import { ASSETS } from "astro:env/client";
+import { PUBLIC_DIRECTUS_PATH } from "astro:env/client";
 
 const { weapon, class: className } = Astro.props;
 
@@ -14,11 +14,11 @@ let placeholder: any = await directus.request(
 );
 
 const icon = weapon.icon
-  ? `${ASSETS}/${weapon.icon}`
-  : `${ASSETS}/${placeholder.icon}`;
+  ? `${PUBLIC_DIRECTUS_PATH}/assets//${weapon.icon}`
+  : `${PUBLIC_DIRECTUS_PATH}/assets//${placeholder.icon}`;
 
 const full = weapon.full
-  ? `${ASSETS}/${weapon.full}?transforms[["extract",${JSON.stringify({ left: 15, top: 15, width: 870, height: 1235 })}]]`
+  ? `${PUBLIC_DIRECTUS_PATH}/assets//${weapon.full}?transforms[["extract",${JSON.stringify({ left: 15, top: 15, width: 870, height: 1235 })}]]`
   : `/`;
 
 const weaponCard = tv({

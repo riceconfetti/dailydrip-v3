@@ -3,6 +3,10 @@ import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
 import timezone from "dayjs/plugin/timezone";
 import { PUBLIC_DEPLOY_MODE } from "astro:env/client";
+import { setAttr, apply } from "@directus/visual-editing"
+import { PUBLIC_VE_TOKEN } from "astro:env/client"
+
+const isVisual = Astro.url.searchParams.has("visual-editing", "true") && Astro.url.searchParams.has("token", PUBLIC_VE_TOKEN)
 const isPreview = PUBLIC_DEPLOY_MODE == "server";
 
 dayjs.extend(utc);
@@ -43,6 +47,7 @@ const tz = "+08:00";
     </p>
   </div>
   <h1
+    data-directus={isVisual ? "setAttr({ collection: 'versions', item: version.id, fields: ['name','semVer'], mode: 'popover' })": null}
     class="font-heading font-bold py-2 text-center text-text-light sm:text-2xl md:text-4xl"
   >
     {version.name ? version.name : `Version ${version.semVer} - XXXXX`}
