@@ -2,6 +2,7 @@ import { defineConfig, envField } from "astro/config";
 import svelte from "@astrojs/svelte";
 import { loadEnv } from "vite";
 const { PUBLIC_DEPLOY_MODE } = loadEnv(process.env.NODE_ENV, process.cwd(), "");
+import localStorageDriver from "unstorage/drivers/localstorage";
 
 import node from "@astrojs/node";
 
@@ -11,10 +12,19 @@ export default defineConfig({
 
   env: {
     schema: {
-      SECRET_DIRECTUS_TOKEN: envField.string({ context: "server", access: "secret" }),
-      PUBLIC_DIRECTUS_PATH: envField.string({ context: "client", access: "public" }),
-      PUBLIC_DEPLOY_MODE: envField.string({context: "client", access: "public" }),
-      PUBLIC_VE_TOKEN: envField.string({context: "client", access: "public" }),
+      SECRET_DIRECTUS_TOKEN: envField.string({
+        context: "server",
+        access: "secret",
+      }),
+      PUBLIC_DIRECTUS_PATH: envField.string({
+        context: "client",
+        access: "public",
+      }),
+      PUBLIC_DEPLOY_MODE: envField.string({
+        context: "client",
+        access: "public",
+      }),
+      PUBLIC_VE_TOKEN: envField.string({ context: "client", access: "public" }),
     },
   },
   output: PUBLIC_DEPLOY_MODE,

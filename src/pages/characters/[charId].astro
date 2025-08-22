@@ -129,12 +129,11 @@ Object.assign(bannerEvent, event, {
             }
           </div>
         </div>
-        <BannerCard {bannerEvent} server:defer status="current" />
+        <BannerCard {bannerEvent} status="current" />
         <BannerCard
           bannerEvent={Object.assign(structuredClone(bannerEvent), {
             debut: false,
           })}
-          server:defer
           status="current"
         />
       </div>

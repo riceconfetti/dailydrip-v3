@@ -2,14 +2,11 @@
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
 import timezone from "dayjs/plugin/timezone";
-import { PUBLIC_DEPLOY_MODE, PUBLIC_VE_TOKEN } from "astro:env/client";
+import { PUBLIC_DEPLOY_MODE } from "astro:env/client";
 import { setAttr } from "@directus/visual-editing";
 
-const isVisual =
-  Astro.url.searchParams.has("visual-editing", "true") &&
-  Astro.url.searchParams.has("token", PUBLIC_VE_TOKEN);
+const editActive = Astro.session?.get("editing");
 
-console.log(Astro.url.searchParams.has("token"));
 const isPreview = PUBLIC_DEPLOY_MODE == "server";
 
 dayjs.extend(utc);
@@ -35,13 +32,33 @@ const tz = "+08:00";
   <div
     class="font-heading flex justify-between border-y border-accent-gold py-1 text-[0.5rem] text-accent-gold sm:text-sm md:text-base"
   >
-    <p>Version {verFormat.format(version.semVer)}</p>
+    <p
+      data-directus={editActive
+        ? setAttr({
+            collection: "versions",
+            item: version.id,
+            fields: "semVer",
+            mode: "popover",
+          })
+        : null}
+    >
+      Version {verFormat.format(version.semVer)}
+    </p>
     {
       isPreview && (
         <a href={"/" + game.id + "/versions/" + version.id}>{version.id}</a>
       )
     }
-    <p>
+    <p
+      data-directus={editActive
+        ? setAttr({
+            collection: "events",
+            item: version.events[0].id,
+            fields: "startDate",
+            mode: "popover",
+          })
+        : null}
+    >
       {
         dayjs(startDate + "T" + phase.start + tz)
           .tz(currzone)
@@ -50,11 +67,11 @@ const tz = "+08:00";
     </p>
   </div>
   <h1
-    data-directus={isVisual
+    data-directus={editActive
       ? setAttr({
           collection: "versions",
           item: version.id,
-          fields: ["name", "semVer"],
+          fields: "name",
           mode: "popover",
         })
       : null}

@@ -7,6 +7,8 @@ import directus from "$services/directus";
 import { readItems } from "@directus/sdk";
 
 import { PUBLIC_DEPLOY_MODE } from "astro:env/client";
+
+const editActive = await Astro.session?.get("editing");
 const isPreview = PUBLIC_DEPLOY_MODE == "server";
 
 let events = await directus.request(
@@ -27,18 +29,18 @@ let events = await directus.request(
       },
     },
     limit: -1,
-  }),
+  })
 );
 
 events.sort(
   (a, b) =>
     a.version.semVer +
     Number(a.phase.phase) / 100 -
-    (b.version.semVer + Number(b.phase.phase) / 100),
+    (b.version.semVer + Number(b.phase.phase) / 100)
 );
 
 let games = await directus.request(
-  readItems("games", { fields: ["id", "color"] }),
+  readItems("games", { fields: ["id", "color"] })
 );
 
 let style: { [key: string]: string } = {};
@@ -70,7 +72,7 @@ games.reduce((p: any, c: any) => {
       <Calendar client:only="svelte" {events} />
 
       {
-        isPreview ? (
+        isPreview && !editActive ? (
           <HomeEvents server:defer>
             <div
               slot="fallback"

@@ -7,14 +7,19 @@ import CharacterCard from "./CharacterCard.astro";
 import WeaponCard from "./WeaponCard.astro";
 import PhaseHeader from "./PhaseHeader.svelte";
 import { tv } from "tailwind-variants";
+import { setAttr } from "@directus/visual-editing";
+
+const editActive = await Astro.session?.get("editing");
 
 let characters = event.featured_characters.map((c: any) => {
   let info = c.characters_id;
+  info.join_id = c.id;
   info.spec = c.spec;
   let debut = info.events.reduce((p:any, c:any) => Date.parse(c.events_id.startDate) < Date.parse(p.events_id.startDate) ? c : p)
   info.debut = debut.events_id.id == event.id;
   return info
 });
+
 let weapons = event.featured_weapons.map((w: any) => w.weapons_id);
 
 let fiveStars = characters.filter((c: any) => c.rarity == 5);
@@ -126,6 +131,8 @@ const phaseCard = tv({
   ],
 });
 
+console.log("phase", await Astro.session)
+
 const { base, box, character, weapon } = phaseCard({ count: count, rarity: 5 });
 ---
 
@@ -138,6 +145,7 @@ const { base, box, character, weapon } = phaseCard({ count: count, rarity: 5 });
     {
       fiveStars.map((c: any, index: number) => (
         <div class={box({ rarity: 5 })}>
+          <p class="absolute top-0 w-full text-white font-bold text-lg z-20">{editActive}</p>
           <CharacterCard character={c} class={character()} {game} />
           {weaponsFiveStars.length > 0 &&
             weaponsFiveStars.length == fiveStars.length && (

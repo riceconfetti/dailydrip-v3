@@ -8,7 +8,6 @@ import type { Schema, Version } from "$types/collection";
 import ChronicleCard from "./ChronicleCard.astro";
 
 let { vId, game } = Astro.props;
-// console.log(vId);
 let version = await directus.request(
   readItem("versions", vId, {
     fields: [
@@ -23,6 +22,7 @@ let version = await directus.request(
           { phase: ["*"] },
           {
             featured_characters: [
+              "id",
               "spec",
               {
                 characters_id: [
@@ -49,8 +49,6 @@ let version = await directus.request(
     ],
   } as Query<Schema, Version>)
 );
-
-
 ---
 
 <section

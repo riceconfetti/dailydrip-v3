@@ -6,7 +6,9 @@ import directus from "$services/directus";
 import { readItem } from "@directus/sdk";
 import Border from "./deco-border/Border.astro";
 import { PUBLIC_DIRECTUS_PATH } from "astro:env/client";
+import { setAttr } from "@directus/visual-editing";
 
+const editActive = await Astro.session?.get("editing");
 const colorIndex = 0;
 const variants = ["portrait", "landscape", "icon"];
 interface Variants {
@@ -184,19 +186,41 @@ const {
     <div class={overlay()}></div>
     <div class={placeholder()}></div>
     <!-- Text & Outline -->
-    <div class={outline()}>
-      <h2 class={name()}>
-        {character.name}
-      </h2>
+    <div
+      class={outline()}
+      data-directus={editActive
+        ? setAttr({
+            collection: "characters",
+            item: character.id,
+            fields: ["splash_art", "primary_attribute", "secondary_attribute"],
+            mode: "modal",
+          })
+        : null}
+    >
+      <div
+        class="flex flex-col gap-1"
+        data-directus={editActive
+          ? setAttr({
+              collection: "characters",
+              item: character.id,
+              fields: character.rarity == 5 ? ["name", "bannerName"] : "name",
+              mode: "popover",
+            })
+          : null}
+      >
+        <h2 class={name()}>
+          {character.name}
+        </h2>
 
-      <h3 class={banner()}>
-        {character.bannerName}
-      </h3>
+        <h3 class={banner()}>
+          {character.bannerName}
+        </h3>
+      </div>
     </div>
   </div>
 
   <!-- OVERLAYS -->
-  <div class="absolute inset-0">
+  <div class="absolute inset-0 pointer-events-none">
     <div class={holo()}>
       <Border />
     </div>
