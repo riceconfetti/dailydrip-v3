@@ -15,7 +15,7 @@ import Layout from "$layouts/Layout.astro";
 import VerisonCard from "$components/card/VerisonCard.astro";
 
 const editActive = Astro.cookies.get("editing")?.boolean();
-console.log(editActive);
+
 const isPreview = PUBLIC_DEPLOY_MODE == "server";
 const limit = 5;
 

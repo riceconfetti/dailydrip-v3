@@ -29,7 +29,7 @@ import "../app.css";
 import NavBar from "$components/NavBar.astro";
 import SettingsModal from "$components/SettingsModal.svelte";
 import Faq from "$components/Faq.astro";
-import { PUBLIC_DEPLOY_MODE } from "astro:env/client";
+import { PUBLIC_DEPLOY_MODE, PUBLIC_VE_TOKEN } from "astro:env/client";
 
 interface Props {
   title: string;
@@ -38,12 +38,11 @@ interface Props {
 
 const { title, baseURL = "/" } = Astro.props;
 
-if (
-  Astro.url.searchParams.has("visual-editing", "true") &&
-  Astro.url.searchParams.has("token", process.env.PUBLIC_VE_TOKEN)
-) {
-  await Astro.cookies.set("editing", "true", { maxAge: 3600 });
+// console.log(Astro.locals)
+if (Astro.url.searchParams.has("visual-editing", "true") && Astro.url.searchParams.has("token", PUBLIC_VE_TOKEN)) {
+  await Astro.cookies.set('editing', "true")
 }
+
 ---
 
 <!doctype html>

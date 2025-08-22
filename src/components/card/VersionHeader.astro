@@ -2,7 +2,7 @@
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
 import timezone from "dayjs/plugin/timezone";
-import { PUBLIC_DEPLOY_MODE } from "astro:env/client";
+import { PUBLIC_DEPLOY_MODE, PUBLIC_VE_TOKEN } from "astro:env/client";
 import { setAttr } from "@directus/visual-editing";
 
 const editActive = Astro.cookies.get("editing")?.boolean();
@@ -26,6 +26,14 @@ if (version.events.length > 0) {
 
 let currzone = dayjs.tz.guess();
 const tz = "+08:00";
+
+const route = (url:string)=>{
+  if (editActive) {
+    const search = new URLSearchParams({'visual-editing': "true", token: PUBLIC_VE_TOKEN} )
+    return url + '?'+search.toString()
+  } 
+    return url
+}
 ---
 
 <div class="flex flex-col gap-2 sm:col-span-2">
@@ -46,7 +54,7 @@ const tz = "+08:00";
     </p>
     {
       isPreview && (
-        <a href={"/" + game.id + "/versions/" + version.id}>{version.id}</a>
+        <a href={route("/" + game.id + "/versions/" + version.id)}>{version.id}</a>
       )
     }
     <p

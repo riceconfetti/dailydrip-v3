@@ -1,11 +1,19 @@
 ---
 import directus from "$services/directus";
 import { readItems } from "@directus/sdk";
-import { PUBLIC_DEPLOY_MODE } from "astro:env/client";
+import { PUBLIC_DEPLOY_MODE, PUBLIC_VE_TOKEN } from "astro:env/client";
 
 const isPreview = PUBLIC_DEPLOY_MODE == "server";
 const games = await directus.request(readItems("games", { fields: ["*"] }));
 const { baseURL } = Astro.props;
+
+const route = (url:string)=>{
+  if (Astro.url.searchParams.has("visual-editing", "true") && Astro.url.searchParams.has("token", PUBLIC_VE_TOKEN)) {
+    const search = new URLSearchParams({'visual-editing': "true", token: PUBLIC_VE_TOKEN} )
+    return url + '?'+search.toString()
+  } 
+    return url
+}
 ---
 
 <div
@@ -34,7 +42,7 @@ const { baseURL } = Astro.props;
     {
       games.map((g) => (
         <a
-          href={`${baseURL}${g.id}${isPreview ? "/1" : ""}`}
+          href={route(`${baseURL}${g.id}${isPreview ? "/1" : ""}`)}
           class="hover:text-accent-gold-200"
         >
           {g.name}
@@ -61,7 +69,7 @@ const { baseURL } = Astro.props;
 >
   {
     games.map((g) => (
-      <a class="p-3" href={`${baseURL}${g.id}${isPreview ? "/1" : ""}`}>
+      <a class="p-3" href={route(`${baseURL}${g.id}${isPreview ? "/1" : ""}`)}>
         {g.name}
       </a>
     ))
