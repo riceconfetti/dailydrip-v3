@@ -14,7 +14,8 @@ import Pagination from "$components/Pagination.svelte";
 import Layout from "$layouts/Layout.astro";
 import VerisonCard from "$components/card/VerisonCard.astro";
 
-const editActive = await Astro.session?.get("editing");
+const editActive = Astro.cookies.get("editing")?.boolean();
+console.log(editActive);
 const isPreview = PUBLIC_DEPLOY_MODE == "server";
 const limit = 5;
 

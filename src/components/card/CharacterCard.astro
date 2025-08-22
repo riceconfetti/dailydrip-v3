@@ -8,7 +8,7 @@ import Border from "./deco-border/Border.astro";
 import { PUBLIC_DIRECTUS_PATH } from "astro:env/client";
 import { setAttr } from "@directus/visual-editing";
 
-const editActive = await Astro.session?.get("editing");
+const editActive = Astro.cookies.get("editing")?.boolean();
 const colorIndex = 0;
 const variants = ["portrait", "landscape", "icon"];
 interface Variants {
@@ -192,30 +192,25 @@ const {
         ? setAttr({
             collection: "characters",
             item: character.id,
-            fields: ["splash_art", "primary_attribute", "secondary_attribute"],
+            fields: [
+              "splash_art",
+              "primary_attribute",
+              "secondary_attribute",
+              "name",
+              "bannerName",
+              "signature",
+            ],
             mode: "modal",
           })
         : null}
     >
-      <div
-        class="flex flex-col gap-1"
-        data-directus={editActive
-          ? setAttr({
-              collection: "characters",
-              item: character.id,
-              fields: character.rarity == 5 ? ["name", "bannerName"] : "name",
-              mode: "popover",
-            })
-          : null}
-      >
-        <h2 class={name()}>
-          {character.name}
-        </h2>
+      <h2 class={name()}>
+        {character.name}
+      </h2>
 
-        <h3 class={banner()}>
-          {character.bannerName}
-        </h3>
-      </div>
+      <h3 class={banner()}>
+        {character.bannerName}
+      </h3>
     </div>
   </div>
 

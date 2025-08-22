@@ -42,8 +42,7 @@ if (
   Astro.url.searchParams.has("visual-editing", "true") &&
   Astro.url.searchParams.has("token", process.env.PUBLIC_VE_TOKEN)
 ) {
-  await Astro.session?.set("editing", true);
-  console.log(await Astro.session?.get("editing"));
+  await Astro.cookies.set("editing", "true", { maxAge: 3600 });
 }
 ---
 

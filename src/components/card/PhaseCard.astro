@@ -9,7 +9,7 @@ import PhaseHeader from "./PhaseHeader.svelte";
 import { tv } from "tailwind-variants";
 import { setAttr } from "@directus/visual-editing";
 
-const editActive = await Astro.session?.get("editing");
+const editActive = Astro.cookies.get("editing")?.boolean();
 
 let characters = event.featured_characters.map((c: any) => {
   let info = c.characters_id;
@@ -36,7 +36,14 @@ async function getPlaceholder(c: "weapons" | "characters", g: string) {
             "*"
           ],
         } as Query<Schema, Weapon>)
-      : ({ fields: ["*"] } as Query<Schema, Character>);
+      : ({
+      fields: [
+        "*",
+        { splash_art: ["*"] },
+        { splash_pad: ["*"] },
+        
+      ],
+    } as Query<Schema, Character>);
 
   //@ts-ignore
   return await directus.request(readItem(c, g, query));
@@ -62,9 +69,7 @@ while (fiveStars.length < (game.id == "wuwa" ? 1 : 2)) {
         { splash_pad: ["*"] },
         {
           signature: [
-            "*",
-            { icon: ["filename_disk"] },
-            { full: ["filename_disk"] },
+            "*"
           ],
         },
       ],
@@ -131,21 +136,30 @@ const phaseCard = tv({
   ],
 });
 
-console.log("phase", await Astro.session)
-
 const { base, box, character, weapon } = phaseCard({ count: count, rarity: 5 });
 ---
 
 <div
   class:list={["flex flex-col gap-2 w-full h-full", className]}
   style={`--gridRows: repeat(${fiveStars.length - 1},min-content)`}
+  data-directus={
+              editActive
+                ? setAttr({
+                    collection: "events",
+                    item: event.id,
+                    fields: 
+                     ["startDate", "endDate", "featured_characters", "featured_weapons"],
+                    
+                    mode: "modal",
+                  })
+                : null
+            }
 >
   <PhaseHeader client:load {event} {game} />
-  <div class={base()}>
+  <div class={base()} >
     {
       fiveStars.map((c: any, index: number) => (
-        <div class={box({ rarity: 5 })}>
-          <p class="absolute top-0 w-full text-white font-bold text-lg z-20">{editActive}</p>
+        <div class={box({ rarity: 5 })} >
           <CharacterCard character={c} class={character()} {game} />
           {weaponsFiveStars.length > 0 &&
             weaponsFiveStars.length == fiveStars.length && (
@@ -177,7 +191,7 @@ const { base, box, character, weapon } = phaseCard({ count: count, rarity: 5 });
         ))
       }
     </div>
-    <div class={box({ rarity: 4 })}>
+    <div class={box({ rarity: 4 })} >
       {
         weaponsFourStars.map((w: any) => {
           return <WeaponCard weapon={w} class={weapon({ rarity: 4 })} />;

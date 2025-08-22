@@ -5,7 +5,7 @@ import timezone from "dayjs/plugin/timezone";
 import { PUBLIC_DEPLOY_MODE } from "astro:env/client";
 import { setAttr } from "@directus/visual-editing";
 
-const editActive = Astro.session?.get("editing");
+const editActive = Astro.cookies.get("editing")?.boolean();
 
 const isPreview = PUBLIC_DEPLOY_MODE == "server";
 
