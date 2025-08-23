@@ -7,13 +7,19 @@ const isPreview = PUBLIC_DEPLOY_MODE == "server";
 const games = await directus.request(readItems("games", { fields: ["*"] }));
 const { baseURL } = Astro.props;
 
-const route = (url:string)=>{
-  if (Astro.url.searchParams.has("visual-editing", "true") && Astro.url.searchParams.has("token", PUBLIC_VE_TOKEN)) {
-    const search = new URLSearchParams({'visual-editing': "true", token: PUBLIC_VE_TOKEN} )
-    return url + '?'+search.toString()
-  } 
-    return url
-}
+const route = (url: string) => {
+  if (
+    Astro.url.searchParams.has("visual-editing", "true") &&
+    Astro.url.searchParams.has("token", PUBLIC_VE_TOKEN)
+  ) {
+    const search = new URLSearchParams({
+      "visual-editing": "true",
+      token: PUBLIC_VE_TOKEN,
+    });
+    return url + "?" + search.toString();
+  }
+  return url;
+};
 ---
 
 <div
@@ -41,10 +47,7 @@ const route = (url:string)=>{
   >
     {
       games.map((g) => (
-        <a
-          href={route(`${baseURL}${g.id}${isPreview ? "/1" : ""}`)}
-          class="hover:text-accent-gold-200"
-        >
+        <a href={route(`${baseURL}${g.id}`)} class="hover:text-accent-gold-200">
           {g.name}
         </a>
       ))
@@ -69,7 +72,7 @@ const route = (url:string)=>{
 >
   {
     games.map((g) => (
-      <a class="p-3" href={route(`${baseURL}${g.id}${isPreview ? "/1" : ""}`)}>
+      <a class="p-3" href={route(`${baseURL}${g.id}`)}>
         {g.name}
       </a>
     ))

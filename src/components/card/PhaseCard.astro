@@ -6,10 +6,11 @@ import { type Query, readItem } from "@directus/sdk";
 import CharacterCard from "./CharacterCard.astro";
 import WeaponCard from "./WeaponCard.astro";
 import PhaseHeader from "./PhaseHeader.svelte";
-import { tv } from "tailwind-variants";
+import { tv } from "tailwind-variants";410
 import { setAttr } from "@directus/visual-editing";
 
 const editActive = Astro.cookies.get("editing")?.boolean();
+
 
 let characters = event.featured_characters.map((c: any) => {
   let info = c.characters_id;
@@ -75,6 +76,7 @@ while (fiveStars.length < (game.id == "wuwa" ? 1 : 2)) {
       ],
     } as Query<Schema, Character>),
   );
+  
   Object.assign(placeholder, { spec: false, debut: false });
   fiveStars.push(placeholder);
 }
@@ -143,17 +145,17 @@ const { base, box, character, weapon } = phaseCard({ count: count, rarity: 5 });
   class:list={["flex flex-col gap-2 w-full h-full", className]}
   style={`--gridRows: repeat(${fiveStars.length - 1},min-content)`}
   data-directus={
-              editActive
-                ? setAttr({
-                    collection: "events",
-                    item: event.id,
-                    fields: 
-                     ["startDate", "endDate", "featured_characters", "featured_weapons"],
-                    
-                    mode: "modal",
-                  })
-                : null
-            }
+        editActive
+          ? setAttr({
+              collection: "events",
+              item: event.id,
+              fields: 
+                ["startDate", "endDate", "featured_characters", "featured_weapons"],
+              
+              mode: "modal",
+            })
+          : null
+      }
 >
   <PhaseHeader client:load {event} {game} />
   <div class={base()} >

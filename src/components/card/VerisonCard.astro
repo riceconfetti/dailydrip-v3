@@ -8,6 +8,7 @@ import type { Schema, Version } from "$types/collection";
 import ChronicleCard from "./ChronicleCard.astro";
 
 let { vId, game } = Astro.props;
+
 let version = await directus.request(
   readItem("versions", vId, {
     fields: [

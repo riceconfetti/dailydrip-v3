@@ -82,7 +82,7 @@ const characterTransforms: Variants = {
 
 const splash: Variants = variants.reduce((prev, curr) => {
   Object.assign(prev, {
-    [curr]: `${imgPath}/${characterTransforms[curr]}`,
+    [curr]: imgPath ? `${imgPath}/${characterTransforms[curr]}` : "",
   });
   return prev;
 }, {});

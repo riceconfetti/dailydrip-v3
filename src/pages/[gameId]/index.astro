@@ -1,0 +1,81 @@
+---
+import directus from "$services/directus";
+import {
+  readItems,
+  readItem,
+  type Query,
+  type QueryFilter,
+} from "@directus/sdk";
+import type { Schema, Version } from "$types/collection";
+import { PUBLIC_DEPLOY_MODE } from "astro:env/client";
+import GenericVersionCard from "$components/fallbacks/GenericVersionCard.astro";
+import Layout from "$layouts/Layout.astro";
+import VerisonCard from "$components/card/VerisonCard.astro";
+
+const editActive = Astro.cookies.get("editing")?.boolean();
+const isPreview = PUBLIC_DEPLOY_MODE == "server";
+
+export async function getStaticPaths() {
+  const games = await directus.request(readItems("games", { fields: ["id"] }));
+
+  return games.map((game) => {
+    return { params: { gameId: game.id } };
+  });
+}
+
+const { gameId } = Astro.params;
+let game = await directus.request(readItem("games", gameId!));
+
+const query: Query<Schema, Version> = {
+  fields: ["id"],
+  sort: ["semVer"],
+  limit: -1,
+};
+
+const filter: QueryFilter<Schema, Version> = {
+  game: {
+    id: {
+      _eq: gameId,
+    },
+  },
+  status: {
+    _eq: "published",
+  },
+  events: {
+    endDate: {
+      _gte: "$NOW",
+    },
+  },
+};
+
+if (isPreview) {
+  filter.status = {
+    _neq: "archived",
+  };
+}
+
+query.filter = filter;
+
+let versions: string[] = (
+  await directus.request(readItems("versions", query))
+).map((x) => x.id);
+const title = "The Daily Drip | " + game.name;
+---
+
+<Layout {title}>
+  <div
+    class="p-0 sm:p-4 md:p-6 xl:p-8 flex flex-col gap-2 items-center justify-around w-full overflow-auto"
+  >
+    {
+      versions.map((vId) =>
+        isPreview && !editActive ? (
+          <VerisonCard {vId} {game} server:defer>
+            <GenericVersionCard slot="fallback" />
+          </VerisonCard>
+        ) : (
+          <VerisonCard {vId} {game} />
+        )
+      )
+    }
+  </div>
+</Layout>

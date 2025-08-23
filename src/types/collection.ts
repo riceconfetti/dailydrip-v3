@@ -94,7 +94,7 @@ interface Version {
   game: Game | string;
   semVer: number;
   name: string;
-  events: DripEvent[] | string;
+  events: DripEvent[] | string[];
 }
 
 interface Phase {
