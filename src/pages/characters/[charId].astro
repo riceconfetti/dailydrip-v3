@@ -17,6 +17,7 @@ const character = await directus.request(
   readItem("characters", charId!, {
     fields: [
       "*",
+      { game: ["*"] },
       {
         signature: [
           "*",
@@ -31,7 +32,8 @@ const character = await directus.request(
 );
 
 let game = await directus.request(
-  readItem("games", character.game as string, { fields: ["*"] })
+  //@ts-ignore
+  readItem("games", character.game.id as string, { fields: ["*"] })
 );
 
 const { splash_art, splash_pad }: { splash_art: any; splash_pad: any } =
