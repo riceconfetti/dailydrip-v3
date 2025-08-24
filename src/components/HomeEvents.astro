@@ -20,7 +20,7 @@ let events: any = await directus.request(
         characters_id: [
           "id",
           "rarity",
-          "game",
+          { game: ["*"] },
           "bannerName",
           "name",
           "colors",

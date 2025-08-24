@@ -11,6 +11,7 @@ interface Game {
   numOfRateUpCharacters: number;
   numOfRateUpWeapons: number;
   color: string;
+  sizes: { id: string; x: number; y: number }[];
 }
 
 interface Server {

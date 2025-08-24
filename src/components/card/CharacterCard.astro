@@ -90,15 +90,23 @@ if (character.imgopts) {
   }
 }
 
+const charSizes = game.sizes.reduce((prev: any, curr: any) => {
+  prev[curr.id] = curr;
+  return prev;
+}, {});
+// console.log(charSizes);
 const portrait = [
-  focal * 5 * options.portrait.zoom,
-  focal * 7 * options.portrait.zoom,
+  focal * charSizes.portrait.x * options.portrait.zoom,
+  focal * charSizes.portrait.y * options.portrait.zoom,
 ];
 const landscape = [
-  focal * 9 * options.landscape.zoom,
-  focal * 6 * options.landscape.zoom,
+  focal * charSizes.landscape.x * options.landscape.zoom,
+  focal * charSizes.landscape.y * options.landscape.zoom,
 ];
-const icon = [focal * 3 * options.icon.zoom, focal * 3 * options.icon.zoom];
+const icon = [
+  focal * charSizes.icon.x * options.icon.zoom,
+  focal * charSizes.icon.y * options.icon.zoom,
+];
 
 const left = (s: number) => (size.w - s) / 2;
 const top = (s: number) => (size.h - s / 2) / 2;

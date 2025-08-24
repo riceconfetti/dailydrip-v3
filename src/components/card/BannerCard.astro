@@ -53,11 +53,16 @@ if (
   options = banner;
 }
 
+const gameSize = char.game.sizes.find((x: any) => x.id == "banner");
+
 const extract = {
   left: options.pos_x,
-  top: Math.round((size.h - focal * 2.75 * options.zoom) / 2 + options.pos_y),
-  width: Math.round(size.w - (size.w - focal * 6 * options.zoom) / 2),
-  height: Math.round(focal * 6 * options.zoom),
+  top: Math.round(
+    (size.h - ((focal * (gameSize.y - 0.5)) / 2) * options.zoom) / 2 +
+      options.pos_y
+  ),
+  width: Math.round(size.w - (size.w - focal * gameSize.x * options.zoom) / 2),
+  height: Math.round(focal * gameSize.y * options.zoom),
 };
 
 const splash = `${imgPath}/?transforms=[["extract"\,${JSON.stringify(extract)}],["resize"\,${JSON.stringify({ width: 2000 })}]]`;
