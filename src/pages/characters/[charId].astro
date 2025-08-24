@@ -45,7 +45,9 @@ const extract = {
 };
 
 const imgPath =
-  typeof splash_pad != "string" && typeof splash_art != "string"
+  splash_art != null &&
+  typeof splash_pad != "string" &&
+  typeof splash_art != "string"
     ? `https://directus.dailydrip.news/assets/${splash_pad.id}?transforms=[["extract",${JSON.stringify(extract)}]]`
     : "/";
 
