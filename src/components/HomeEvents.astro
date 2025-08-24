@@ -14,7 +14,13 @@ let events: any = await directus.request(
       "id",
       "spec",
       {
-        events_id: ["startDate", "endDate", { phase: ["*"] }, "status", "game"],
+        events_id: [
+          "startDate",
+          "endDate",
+          { phase: ["*"] },
+          "status",
+          { game: ["*"] },
+        ],
       },
       {
         characters_id: [
@@ -50,8 +56,8 @@ events = events.map((n: any) => {
   let event = {
     debut: characters_id.events[0].id == id,
   };
-
-  return Object.assign(event, events_id, { character: characters_id });
+  Object.assign(event, events_id, { character: characters_id });
+  return event;
 });
 
 let currentEvents = events.filter(
