@@ -7,6 +7,7 @@ import { readItem } from "@directus/sdk";
 import Border from "./deco-border/Border.astro";
 import { PUBLIC_DIRECTUS_PATH } from "astro:env/client";
 import { setAttr } from "@directus/visual-editing";
+import { defaultErrorMap } from "astro:schema";
 
 const editActive = Astro.cookies.get("editing")?.boolean();
 const colorIndex = 0;
@@ -70,14 +71,57 @@ Object.assign(vars, {
   "--attributeBg": 'url("' + backgroundPath + '")',
 });
 
-const portrait = [focal * 5, focal * 7];
-const landscape = [focal * 9, focal * 6];
-const icon = [focal * 3, focal * 3];
+const default_opts = {
+  id: "default",
+  zoom: 1,
+  pos_x: 0,
+  pos_y: 0,
+};
+
+let options = {
+  portrait: default_opts,
+  landscape: default_opts,
+  icon: default_opts,
+} as { [key: string]: any };
+
+if (character.imgopts) {
+  for (const opt of character.imgopts) {
+    if (opt.id != "banner") options[opt.id] = opt;
+  }
+}
+
+const portrait = [
+  focal * 5 * options.portrait.zoom,
+  focal * 7 * options.portrait.zoom,
+];
+const landscape = [
+  focal * 9 * options.landscape.zoom,
+  focal * 6 * options.landscape.zoom,
+];
+const icon = [focal * 3 * options.icon.zoom, focal * 3 * options.icon.zoom];
+
+const left = (s: number) => (size.w - s) / 2;
+const top = (s: number) => (size.h - s / 2) / 2;
 
 const characterTransforms: Variants = {
-  portrait: `?transforms=[["extract"\,${JSON.stringify({ left: Math.round((size.w - portrait[0]) / 2), top: Math.round((size.h - portrait[1] / 2) / 2), width: portrait[0], height: portrait[1] })}],["resize"\,${JSON.stringify({ height: 1600 })}]]`,
-  landscape: `?transforms=[["extract"\,${JSON.stringify({ left: Math.round((size.w - landscape[0]) / 2), top: Math.round((size.h - landscape[1] / 2) / 2), width: landscape[0], height: landscape[1] })}],["resize"\,${JSON.stringify({ width: 1600 })}]]`,
-  icon: `?transforms=[["extract"\,${JSON.stringify({ left: Math.round((size.w - icon[0]) / 2), top: Math.round((size.h - icon[1] / 2) / 2), width: icon[0], height: icon[1] })}]]`,
+  portrait: `?transforms=[["extract"\,${JSON.stringify({
+    left: Math.round(left(portrait[0]) + options.portrait.pos_x),
+    top: Math.round(top(portrait[1]) + options.portrait.pos_y),
+    width: portrait[0],
+    height: portrait[1],
+  })}],["resize"\,${JSON.stringify({ height: 1600 })}]]`,
+  landscape: `?transforms=[["extract"\,${JSON.stringify({
+    left: Math.round(left(landscape[0]) + options.landscape.pos_x),
+    top: Math.round(top(landscape[1]) + options.landscape.pos_y),
+    width: landscape[0],
+    height: landscape[1],
+  })}],["resize"\,${JSON.stringify({ width: 1600 })}]]`,
+  icon: `?transforms=[["extract"\,${JSON.stringify({
+    left: Math.round(left(icon[0]) + options.icon.pos_x),
+    top: Math.round(top(icon[1]) + options.icon.pos_y),
+    width: icon[0],
+    height: icon[1],
+  })}]]`,
 };
 
 const splash: Variants = variants.reduce((prev, curr) => {

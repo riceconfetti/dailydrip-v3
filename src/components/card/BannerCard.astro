@@ -6,6 +6,7 @@ import { tv } from "tailwind-variants";
 import Border from "./deco-border/Border.astro";
 import BannerTime from "./BannerTime.svelte";
 import BannerCheck from "./BannerCheck.svelte";
+import { optional, undefined } from "astro:schema";
 
 const colorIndex = 0;
 const char = bannerEvent.character;
@@ -38,11 +39,26 @@ const size = {
 
 const focal = char.splash_art ? char.splash_art.focal_size : 200;
 
+let options = {
+  id: "default",
+  zoom: 1,
+  pos_x: 0,
+  pos_y: 0,
+};
+
+if (
+  char.imgopts &&
+  char.imgopts.find((x: any) => x.id == "banner") != undefined
+) {
+  const banner = char.imgopts.find((x: any) => x.id == "banner");
+  options = banner;
+}
+
 const extract = {
-  left: 0,
-  top: Math.round((size.h - focal * 2.75) / 2),
-  width: Math.round(size.w - (size.w - focal * 6) / 2),
-  height: Math.round(focal * 6),
+  left: options.pos_x,
+  top: Math.round((size.h - focal * 2.75 * options.zoom) / 2 + options.pos_y),
+  width: Math.round(size.w - (size.w - focal * 6 * options.zoom) / 2),
+  height: Math.round(focal * 6 * options.zoom),
 };
 
 const splash = `${imgPath}/?transforms=[["extract"\,${JSON.stringify(extract)}],["resize"\,${JSON.stringify({ width: 2000 })}]]`;

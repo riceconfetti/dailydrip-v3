@@ -69,10 +69,18 @@
 
   function landscape() {
     height = "3xs";
+    width = "md";
   }
   function portrait() {
     height = "md";
+    width = "3xs";
   }
+
+  function icon() {
+    height = "3xs";
+    width = "3xs";
+  }
+
   function swap() {
     const temp = width;
     width = height;
@@ -96,19 +104,21 @@
         <option value={size}>{size}</option>
       {/each}
     </select>
-    <!-- <button onclick={landscape}>Landscape</button>
-    <button onclick={portrait}>Portrait</button> -->
-    <button onclick={swap}>Swap</button>
-    <button onclick={()=> show = !show}>Grid</button>
+    <button onclick={() => (show = !show)}>Grid</button>
+  </div>
+  <div class="flex gap-5">
+    <button onclick={landscape}>Landscape</button>
+    <button onclick={portrait}>Portrait</button>
+    <button onclick={icon}>Icon</button>
   </div>
   <div class="w-full flex flex-wrap justify-center gap-4">
     <div class={[preview({ width: width, height: height }), "relative"]}>
       {#if show}
-      <div class="w-full absolute h-1/4 border-b border-black/50 z-20"></div>
-      <div class="h-full absolute w-1/2 border-r border-black/50  z-20"></div>
-      <div
-        class="absolute size-18 aspect-square rounded-full overflow-clip border border-black/50 z-20 left-1/2 -translate-x-1/2 top-1/4 -translate-y-1/2"
-      ></div>
+        <div class="w-full absolute h-1/4 border-b border-black/50 z-20"></div>
+        <div class="h-full absolute w-1/2 border-r border-black/50 z-20"></div>
+        <div
+          class="absolute size-18 aspect-square rounded-full overflow-clip border border-black/50 z-20 left-1/2 -translate-x-1/2 top-1/4 -translate-y-1/2"
+        ></div>
       {/if}
       <slot name="base" />
     </div>

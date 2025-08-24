@@ -40,6 +40,7 @@ interface Character {
   primary_attribute: Attribute | number;
   secondary_attribute: Attribute | number;
   signature?: Weapon | string;
+  imgopts: { id: string; zoom: number; pos_x: number; pos_y: number }[];
   colors: {
     area: number;
     css: string;
