@@ -38,11 +38,12 @@ interface Props {
 
 const { title, baseURL = "/" } = Astro.props;
 
-// console.log(Astro.locals)
-if (Astro.url.searchParams.has("visual-editing", "true") && Astro.url.searchParams.has("token", PUBLIC_VE_TOKEN)) {
-  await Astro.cookies.set('editing', "true")
+if (
+  Astro.url.searchParams.has("visual-editing", "true") &&
+  Astro.url.searchParams.has("token", PUBLIC_VE_TOKEN)
+) {
+  await Astro.cookies.set("editing", "true");
 }
-
 ---
 
 <!doctype html>
