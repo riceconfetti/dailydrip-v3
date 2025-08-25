@@ -1,9 +1,8 @@
 ---
 import directus from "$services/directus";
 import { readItems } from "@directus/sdk";
-import { PUBLIC_DEPLOY_MODE, PUBLIC_VE_TOKEN } from "astro:env/client";
+import { PUBLIC_VE_TOKEN } from "astro:env/client";
 
-const isPreview = PUBLIC_DEPLOY_MODE == "server";
 const games = await directus.request(readItems("games", { fields: ["*"] }));
 const { baseURL } = Astro.props;
 
@@ -17,8 +16,9 @@ const route = (url: string) => {
       token: PUBLIC_VE_TOKEN,
     });
     return url + "?" + search.toString();
+  } else {
+    return url;
   }
-  return url;
 };
 ---
 
