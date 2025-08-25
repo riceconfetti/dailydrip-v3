@@ -20,7 +20,11 @@ const route = (url: string) => {
     return url;
   }
 };
-console.log(Astro.url.searchParams);
+
+const links = games.map((g) => ({
+  name: g.name,
+  url: route(`${baseURL}${g.id}`),
+}));
 ---
 
 <div
@@ -47,9 +51,9 @@ console.log(Astro.url.searchParams);
     class="hidden lg:flex list-none text-light gap-6 text-sm items-center font-heading font-bold"
   >
     {
-      games.map((g) => (
-        <a href={route(`${baseURL}${g.id}`)} class="hover:text-accent-gold-200">
-          {g.name}
+      links.map((link) => (
+        <a href={link.url} class="hover:text-accent-gold-200">
+          {link.name}
         </a>
       ))
     }
