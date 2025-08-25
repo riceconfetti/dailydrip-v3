@@ -12,7 +12,6 @@ import GenericVersionCard from "$components/fallbacks/GenericVersionCard.astro";
 import Layout from "$layouts/Layout.astro";
 import VerisonCard from "$components/card/VerisonCard.astro";
 
-
 const editActive = Astro.cookies.get("editing")?.boolean();
 const isPreview = PUBLIC_DEPLOY_MODE == "server";
 
@@ -24,8 +23,11 @@ export async function getStaticPaths() {
   });
 }
 
+if (Astro.params == undefined || Astro.params == null) {
+  return Astro.redirect("/");
+}
 const { gameId } = Astro.params;
-let game =  (await directus.request(readItem("games", gameId!))).name ;
+let game = (await directus.request(readItem("games", gameId!))).name;
 
 const query: Query<Schema, Version> = {
   fields: ["id"],
@@ -74,9 +76,9 @@ const title = "The Daily Drip | " + game;
             <GenericVersionCard slot="fallback" />
           </VerisonCard>
         ) : (
-          <VerisonCard {vId}/>
+          <VerisonCard {vId} />
         )
       )
     }
   </div>
-</Layout> 
+</Layout>
