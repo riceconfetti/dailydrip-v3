@@ -30,8 +30,7 @@ let events: any = await directus.request(
           "bannerName",
           "name",
           "colors",
-          //@ts-ignore
-          { events: ["*.*"] },
+          { events: [{events_id: ["id", "startDate"]}] },
           { splash_art: ["*"] },
           { splash_pad: ["*"] },
         ],

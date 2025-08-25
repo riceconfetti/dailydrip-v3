@@ -1,6 +1,5 @@
 <script lang="ts">
   const { events } = $props();
-  import serverJSON from "$store/servers.json";
   import { Calendar } from "bits-ui";
   import { settings, getTimezones } from "$store/settings.svelte";
   import {
@@ -16,6 +15,15 @@
     game: {
       id: string;
     };
+    version: {
+      semVer: number;
+    };
+    featured_characters: {
+      id: string;
+      characters_id: { name: string };
+      spec: boolean;
+    };
+    event_tags: any;
     startDate: any;
     endDate: any;
     iso: any;

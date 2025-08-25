@@ -11,7 +11,6 @@ import { setAttr } from "@directus/visual-editing";
 
 const editActive = Astro.cookies.get("editing")?.boolean();
 
-
 let characters = event.featured_characters.map((c: any) => {
   let info = c.characters_id;
   info.join_id = c.id;

@@ -10,7 +10,7 @@
   let { bannerEvent, children, class: className, status } = $props();
   let game = bannerEvent.game.id;
 
-  console.log(game);
+ 
   import { getServer } from "$store/settings.svelte";
   const server = $derived(getServer(game));
   let currzone = dayjs.tz.guess();

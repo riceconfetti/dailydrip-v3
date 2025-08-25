@@ -8,7 +8,6 @@ import { readItems } from "@directus/sdk";
 
 import { PUBLIC_DEPLOY_MODE } from "astro:env/client";
 
-const editActive = Astro.cookies.get("editing")?.boolean();
 const isPreview = PUBLIC_DEPLOY_MODE == "server";
 
 let events = await directus.request(
@@ -72,7 +71,7 @@ games.reduce((p: any, c: any) => {
       <Calendar client:only="svelte" {events} />
 
       {
-        isPreview && !editActive ? (
+        isPreview  ? (
           <HomeEvents server:defer>
             <div
               slot="fallback"

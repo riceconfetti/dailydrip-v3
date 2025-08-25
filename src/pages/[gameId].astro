@@ -12,6 +12,7 @@ import GenericVersionCard from "$components/fallbacks/GenericVersionCard.astro";
 import Layout from "$layouts/Layout.astro";
 import VerisonCard from "$components/card/VerisonCard.astro";
 
+
 const editActive = Astro.cookies.get("editing")?.boolean();
 const isPreview = PUBLIC_DEPLOY_MODE == "server";
 
@@ -24,7 +25,7 @@ export async function getStaticPaths() {
 }
 
 const { gameId } = Astro.params;
-let game = await directus.request(readItem("games", gameId!));
+let game =  (await directus.request(readItem("games", gameId!))).name ;
 
 const query: Query<Schema, Version> = {
   fields: ["id"],
@@ -59,7 +60,7 @@ query.filter = filter;
 let versions: string[] = (
   await directus.request(readItems("versions", query))
 ).map((x) => x.id);
-const title = "The Daily Drip | " + game.name;
+const title = "The Daily Drip | " + game;
 ---
 
 <Layout {title}>
@@ -69,13 +70,13 @@ const title = "The Daily Drip | " + game.name;
     {
       versions.map((vId) =>
         isPreview && !editActive ? (
-          <VerisonCard {vId} {game} server:defer>
+          <VerisonCard {vId} server:defer>
             <GenericVersionCard slot="fallback" />
           </VerisonCard>
         ) : (
-          <VerisonCard {vId} {game} />
+          <VerisonCard {vId}/>
         )
       )
     }
   </div>
-</Layout>
+</Layout> 
