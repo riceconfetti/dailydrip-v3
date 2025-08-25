@@ -8,7 +8,7 @@
   dayjs.extend(relativeTime);
 
   let { bannerEvent } = $props();
-  let game = bannerEvent.game;
+  let game = bannerEvent.game.id;
 
   import { getServer } from "$store/settings.svelte";
   const server = $derived(getServer(game));
