@@ -42,7 +42,7 @@ if (
   Astro.url.searchParams.has("visual-editing", "true") &&
   Astro.url.searchParams.has("token", PUBLIC_VE_TOKEN)
 ) {
-  await Astro.cookies.set("editing", "true");
+  await Astro.cookies.set("editing", "true", { sameSite: "none" });
 }
 ---
 
