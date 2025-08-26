@@ -54,7 +54,7 @@ const route = (url:string)=>{
     </p>
     {
       isPreview && (
-        <a href={route("/" + game.id + "/versions/" + version.id)}>{version.id}</a>
+        <a href={route( "/versions/" + version.id)}>{version.id}</a>
       )
     }
     <p
