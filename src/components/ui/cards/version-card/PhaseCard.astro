@@ -3,8 +3,8 @@ const { event, game, class: className, four="true" } = Astro.props;
 import directus from "$services/directus";
 import type { Schema, Weapon, Character } from "$types/collection";
 import { type Query, readItem } from "@directus/sdk";
-import CharacterCard from "./CharacterCard.astro";
-import WeaponCard from "./WeaponCard.astro";
+import CharacterCard from "../CharacterCard.astro";
+import WeaponCard from "../WeaponCard.astro";
 import PhaseHeader from "./PhaseHeader.svelte";
 import { tv } from "tailwind-variants";410
 import { setAttr } from "@directus/visual-editing";

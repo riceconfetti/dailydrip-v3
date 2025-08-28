@@ -4,10 +4,9 @@ const { character, class: className, game } = Astro.props;
 import { tv } from "tailwind-variants";
 import directus from "$services/directus";
 import { readItem } from "@directus/sdk";
-import Border from "./deco-border/Border.astro";
+import Border from "../borders/debut/Border.astro";
 import { PUBLIC_DIRECTUS_PATH } from "astro:env/client";
 import { setAttr } from "@directus/visual-editing";
-import { defaultErrorMap } from "astro:schema";
 
 const editActive = Astro.cookies.get("editing")?.boolean();
 const colorIndex = 0;
