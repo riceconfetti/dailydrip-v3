@@ -5,27 +5,18 @@
   dayjs.extend(utc);
   dayjs.extend(timezone);
 
-  let { event, game, classlist = [
-  "tracking-normal",
-  "h-min",
-  "font-semibold",
-  "font-subheading",
-  "flex",
-  "w-full",
-  "justify-between",
-  "border",
-  "border-black/10",
-  "p-2",
-  "text-xs",
-  "sm:text-sm"
-] } = $props();
+  let { item, text, classlist } = $props();
 
+  const {event, game, start, end,...rest} = item
   import { getServer } from "$store/settings.svelte";
   const server = $derived(getServer(game.id));
   let currzone = dayjs.tz.guess();
   const tz = $derived(
-    event.phase.phase == "1" ? "+08:00" : server?.value?.timezone,
+    rest.server_start ? "+08:00" : server?.value?.timezone,
   );
+
+
+    // console.log(server)
 // [` ${event.phase.phase == "1" ? "bg-[#BFBFBF] text-text-light" : "bg-dark text-accent-gold order-0"}`]
 
 
@@ -34,13 +25,13 @@
 <div
   class={classlist}
 >
-  <h1>Phase {event.phase.phase}</h1>
+  <h1>{text}</h1>
   <p class="font-light italic">
-    {dayjs(event.startDate + "T" + event.phase.start + tz)
+    {dayjs(event.startDate + "T" + start + tz)
       .tz(currzone)
       .format("MMM D") +
       " @" +
-      dayjs(event.startDate + "T" + event.phase.start + tz)
+      dayjs(event.startDate + "T" + start + tz)
         .tz(currzone)
         .format("h a")}
   </p>

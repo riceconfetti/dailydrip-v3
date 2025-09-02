@@ -11,17 +11,17 @@ const isPreview = PUBLIC_DEPLOY_MODE == "server";
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
-let { version, game } = Astro.props;
+let { version } = Astro.props;
 const verFormat = new Intl.NumberFormat("en-US", {
   minimumFractionDigits: 1,
 });
-let startDate, phase;
+let startDate, layout;
 if (version.events.length > 0) {
   startDate = version.events[0].startDate;
-  phase = version.events[0].phase;
+  layout = version.events[0].layout;
 } else {
   startDate = "2020-01-01";
-  phase = { start: "12:00" };
+  layout = { start: "12:00" };
 }
 
 let currzone = dayjs.tz.guess();
@@ -68,7 +68,7 @@ const route = (url:string)=>{
         : null}
     >
       {
-        dayjs(startDate + "T" + phase.start + tz)
+        dayjs(startDate + "T" + layout.start + tz)
           .tz(currzone)
           .format("MMMM DD YYYY")
       }

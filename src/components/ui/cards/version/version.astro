@@ -1,11 +1,10 @@
 ---
 import VersionHeader from "./version-header.astro";
-import PhaseCard from "./version-phase.astro";
+import { Block } from "$components/ui/blocks";
 
 import directus from "$services/directus";
 import { readItem, type Query } from "@directus/sdk";
 import type { Schema, Version } from "$types/collection";
-import ChronicleCard from "../ChronicleCard.astro";
 
 let { vId } = Astro.props;
 
@@ -13,19 +12,18 @@ let version = await directus.request(
   readItem("versions", vId, {
     fields: [
       "id",
+      { game: ["*"] },
       "semVer",
       "name",
-      "special_version",
-      "tags",
-      { game: ["*"] },
       {
         events: [
           "*",
-          { phase: ["*"] },
+          // fetaured_characters
           {
             featured_characters: [
               "id",
               "spec",
+              // character_id
               {
                 characters_id: [
                   "*",
@@ -39,10 +37,21 @@ let version = await directus.request(
               },
             ],
           },
+          // featured_weapons
           {
             featured_weapons: [
+              // weapons_id
               {
                 weapons_id: ["*"],
+              },
+            ],
+          },
+          // layout
+          {
+            layout: [
+              "*",
+              {
+                blocks: ["*.*.*.*.*"],
               },
             ],
           },
@@ -62,24 +71,13 @@ let version = await directus.request(
     class="h-full grow flex flex-col gap-3 md:grid md:grid-cols-2 lg:gap-5 w-full"
   >
     {
-      typeof version.events != "string" &&
-        version.events!.map((event: any) => {
-          if (event.event_tags == null) {
-            return <PhaseCard {event} game={version.game} />;
-          } else if (version.special_version) {
-            <div>
-              <p>TEMP BOX</p>
-            </div>;
-          } else if (event.event_tags.includes("chronicled wish")) {
-            return (
-              <ChronicleCard
-                {event}
-                class="col-span-full"
-                game={version.game}
-              />
-            );
-          }
-        })
+      version.events!.map((event: any) => {
+        const { layout, ...rest } = event;
+        let item = structuredClone(layout);
+        item.event = rest;
+        item.game = version.game;
+        return <Block {item} />;
+      })
     }
   </div>
 </section>

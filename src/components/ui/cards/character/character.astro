@@ -1,6 +1,5 @@
 ---
-const { character, class: className, game } = Astro.props;
-
+const { character, classlist, item } = Astro.props;
 import { tv } from "tailwind-variants";
 import directus from "$services/directus";
 import { readItem } from "@directus/sdk";
@@ -41,14 +40,14 @@ const vars = {
 };
 
 const primary = await directus.request(
-  readItem("attributes", character.primary_attribute)
+  readItem("attributes", character.primary_attribute),
 );
 
 const secondary = await directus.request(
-  readItem("attributes", character.secondary_attribute)
+  readItem("attributes", character.secondary_attribute),
 );
 
-const backgroundPath = game?.elementMain
+const backgroundPath = item.game?.elementMain
   ? `${PUBLIC_DIRECTUS_PATH}/assets/${primary?.bg}`
   : `${PUBLIC_DIRECTUS_PATH}/assets/${secondary?.image}`;
 
@@ -89,7 +88,7 @@ if (character.imgopts) {
   }
 }
 
-const charSizes = game.sizes.reduce((prev: any, curr: any) => {
+const charSizes = item.game.sizes.reduce((prev: any, curr: any) => {
   prev[curr.id] = curr;
   return prev;
 }, {});
@@ -155,7 +154,7 @@ variants.forEach((v) => {
     vars,
     { [`--char-${v}`]: `url('${splash[v]}')` },
     { [`--holo-${v}`]: `url("${Holo[v]}")` },
-    { [`--frost-${v}`]: `url("${Frost[v]}")` }
+    { [`--frost-${v}`]: `url("${Frost[v]}")` },
   );
 });
 
@@ -226,10 +225,13 @@ const {
 ---
 
 <div
-  class:list={[
-    "@container-[size] size-full relative min-h-16 min-w-16",
-    className,
-  ]}
+  class:list={classlist.concat([
+    "@container-[size] ",
+    "size-full",
+    "relative",
+    "min-h-16",
+    "min-w-16",
+  ])}
   style={vars}
 >
   <div class={base()}>

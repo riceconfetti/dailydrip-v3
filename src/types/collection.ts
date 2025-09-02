@@ -155,4 +155,5 @@ export type {
   Layout,
   Schema,
   DripFile,
+  Block
 };

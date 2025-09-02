@@ -1,0 +1,43 @@
+---
+import Header from "./header/Header.svelte";
+import { CharacterCard } from "../cards/character";
+const { item } = Astro.props;
+const { tag: Tag, event, game } = item;
+---
+
+<Tag class:list={[item.classlist]}>
+  {
+    item.blocks != undefined &&
+      item.blocks.map((block: any) => {
+        switch (block.collection) {
+          case "block_container": {
+            let new_item = structuredClone(block.item);
+            new_item.event = event;
+            new_item.game = game;
+            return <Astro.self item={new_item} />;
+          }
+          case "block_header": {
+            const { text, classlist } = block.item;
+            return <Header {text} {classlist} {item} />;
+          }
+          case "block_character": {
+            const { index, classlist } = block.item;
+            if (event.featured_characters.length > index) {
+              const { characters_id, ...rest } =
+                event.featured_characters[index];
+              const character = structuredClone(characters_id);
+              character.spec = rest.spec;
+
+              if (character.rarity == 5) {
+                // console.log(character.signature)
+              }
+
+              return (
+                <CharacterCard {character} classlist={classlist} {item} />
+              );
+            }
+          }
+        }
+      })
+  }
+</Tag>
