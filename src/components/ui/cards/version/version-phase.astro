@@ -1,0 +1,210 @@
+---
+const { event, game, class: className, four="true" } = Astro.props;
+import directus from "$services/directus";
+import type { Schema, Weapon, Character } from "$types/collection";
+import { type Query, readItem } from "@directus/sdk";
+import CharacterCard from "../character/character.astro";
+import WeaponCard from "../weapon/weapon.astro";
+import PhaseHeader from "./version-phase-header.svelte";
+import { tv } from "tailwind-variants";410
+import { setAttr } from "@directus/visual-editing";
+
+const editActive = Astro.cookies.get("editing")?.boolean();
+
+let characters = event.featured_characters.map((c: any) => {
+  let info = c.characters_id;
+  info.join_id = c.id;
+  info.spec = c.spec;
+  let debut = info.events.reduce((p:any, c:any) => Date.parse(c.events_id.startDate) < Date.parse(p.events_id.startDate) ? c : p)
+  info.debut = debut.events_id.id == event.id;
+  return info
+});
+
+let weapons = event.featured_weapons.map((w: any) => w.weapons_id);
+
+let fiveStars = characters.filter((c: any) => c.rarity == 5);
+
+let fourStars = characters.filter((c: any) => c.rarity == 4);
+let weaponsFiveStars = weapons.filter((w: any) => w.rarity == 5);
+let weaponsFourStars = weapons.filter((w: any) => w.rarity == 4);
+
+async function getPlaceholder(c: "weapons" | "characters", g: string) {
+  let query =
+    c == "weapons"
+      ? ({
+          fields: [
+            "*"
+          ],
+        } as Query<Schema, Weapon>)
+      : ({
+      fields: [
+        "*",
+        { splash_art: ["*"] },
+        { splash_pad: ["*"] },
+        
+      ],
+    } as Query<Schema, Character>);
+
+  //@ts-ignore
+  return await directus.request(readItem(c, g, query));
+}
+
+while (weaponsFourStars.length < game.numOfRateUpWeapons) {
+  let placeholder = await getPlaceholder("weapons", game.id);
+  placeholder.rarity = 4;
+  weaponsFourStars.push(placeholder);
+}
+
+while (fourStars.length < game.numOfRateUpCharacters) {
+  let placeholder = await getPlaceholder("characters", game.id);
+  fourStars.push(placeholder);
+}
+
+while (fiveStars.length < (game.id == "wuwa" ? 1 : 2)) {
+  let placeholder = await directus.request(
+    readItem("characters", game.id + "_placeholder", {
+      fields: [
+        "*",
+        { splash_art: ["*"] },
+        { splash_pad: ["*"] },
+        {
+          signature: [
+            "*"
+          ],
+        },
+      ],
+    } as Query<Schema, Character>),
+  );
+  
+  Object.assign(placeholder, { spec: false, debut: false });
+  fiveStars.push(placeholder);
+}
+
+const count: 1 | 2 | 3 =
+  fiveStars.length == 1 ? 1 : fiveStars.length == 2 ? 2 : 3;
+
+const phaseCard = tv({
+  slots: {
+    base: "grid-rows-auto grid size-full grid-cols-2 grid-rows-[repeat(3,min-content)] gap-2",
+    box: "box gap-2",
+    character: "",
+    weapon: "",
+  },
+  variants: {
+    count: {
+      1: {
+        //1 limited
+        base: "grid-cols-1",
+      },
+      2: {},
+      3: {
+        //3 or more limited
+        base: `grid-cols-[5fr_3fr_1fr] grid-rows-(--gridRows)`,
+      },
+    },
+    rarity: {
+      5: {
+        box: "first:min-h-[50cqw]",
+      },
+      4: {
+        box: "col-span-full grid grid-flow-row grid-cols-[repeat(auto-fit,_minmax(15%,_1fr))]",
+        character: "aspect-square",
+      },
+    },
+  },
+  compoundVariants: [
+    {
+      rarity: 5,
+      count: 1,
+      class: {
+        box: "col-span-full row-span-2 grid grid-rows-[5fr_1fr]",
+      },
+    },
+    {
+      rarity: 5,
+      count: 2,
+      class: {
+        box: "row-span-1 grid grid-rows-[5fr_1fr]",
+      },
+    },
+    {
+      rarity: 5,
+      count: 3,
+      class: {
+        box: "col-span-2 col-start-2 grid grid-cols-subgrid first:col-span-1 first:col-start-1 first:row-span-full first:grid-rows-[5fr_1fr]",
+      },
+    },
+  ],
+});
+
+const { base, box, character, weapon } = phaseCard({ count: count, rarity: 5 });
+---
+
+<div
+  class:list={["flex flex-col gap-2 w-full h-full", className]}
+  style={`--gridRows: repeat(${fiveStars.length - 1},min-content)`}
+  data-directus={
+        editActive
+          ? setAttr({
+              collection: "events",
+              item: event.id,
+              fields: 
+                ["startDate", "endDate", "featured_characters", "featured_weapons"],
+              
+              mode: "modal",
+            })
+          : null
+      }
+>
+  <PhaseHeader client:load {event} {game} />
+  <div class={base()} >
+    {
+      fiveStars.map((c: any, index: number) => (
+        <div class={box({ rarity: 5 })} >
+          <CharacterCard character={c} class={character()} {game} />
+          {weaponsFiveStars.length > 0 &&
+            weaponsFiveStars.length == fiveStars.length && (
+              <WeaponCard
+                weapon={weaponsFiveStars[index]}
+                class={weapon({ rarity: 5 })}
+              />
+            )}
+          {weaponsFiveStars.length > 0 &&
+            weaponsFiveStars.length > fiveStars.length &&
+            weaponsFiveStars.map((w: any) => (
+              <WeaponCard weapon={w} class={weapon({ rarity: 5 })} />
+            ))}
+          {weaponsFiveStars.length == 0 && (
+            <WeaponCard weapon={c.signature} class={weapon({ rarity: 5 })} />
+          )}
+        </div>
+      ))
+    }
+    {four == "true" && <div class={box({ rarity: 4 })}>
+      {
+        fourStars.map((c: any) => (
+          <CharacterCard
+            character={c}
+            variant="portrait"
+            {game}
+            class={character({ rarity: 4 })}
+          />
+        ))
+      }
+    </div>
+    <div class={box({ rarity: 4 })} >
+      {
+        weaponsFourStars.map((w: any) => {
+          return <WeaponCard weapon={w} class={weapon({ rarity: 4 })} />;
+        })
+      }
+    </div>}
+  </div>
+</div>
+
+
+<style scoped>
+  .fate .box:first-child {
+    min-height: 25cqh;
+  }
+</style>

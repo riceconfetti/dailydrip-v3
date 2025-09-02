@@ -1,0 +1,149 @@
+---
+const { bannerEvent, status } = Astro.props;
+
+import { tv } from "tailwind-variants";
+
+import Border from "../../borders/debut/Border.astro";
+import BannerTime from "./banner-time.svelte";
+import BannerCheck from "./banner-check.svelte";
+
+const colorIndex = 0;
+const char = bannerEvent.character;
+
+const vars = {
+  "--primaryColor":
+    char.colors != null
+      ? [...char.colors].sort(
+          (a: { l: number }, b: { l: number }) => a.l - b.l
+        )[colorIndex].css
+      : "oklch(20% 0 0)",
+  "--secondaryColor":
+    char.colors != null
+      ? char.colors[char.colors.length - 1].css
+      : "oklch(60% 0 0)",
+  "--cardAccent":
+    char.rarity == 5
+      ? "var(--color-accent-gold-150)"
+      : "var(--color-accent-purple-200)",
+};
+
+const imgPath = char.splash_pad
+  ? `https://directus.dailydrip.news/assets/${char.splash_pad.id}`
+  : "/";
+
+const size = {
+  w: char.splash_pad?.width,
+  h: char.splash_pad?.height,
+};
+
+const focal = char.splash_art ? char.splash_art.focal_size : 200;
+
+let options = {
+  id: "default",
+  zoom: 1,
+  pos_x: 0,
+  pos_y: 0,
+};
+
+if (
+  char.imgopts &&
+  char.imgopts.find((x: any) => x.id == "banner") != undefined
+) {
+  const banner = char.imgopts.find((x: any) => x.id == "banner");
+  options = banner;
+}
+
+const gameSize = char.game.sizes.find((x: any) => x.id == "banner");
+
+const extract = {
+  left: options.pos_x,
+  top: Math.round(
+    (size.h - ((focal * (gameSize.y - 0.5)) / 2) * options.zoom) / 2 +
+      options.pos_y
+  ),
+  width: Math.round(size.w - (size.w - focal * gameSize.x * options.zoom) / 2),
+  height: Math.round(focal * gameSize.y * options.zoom),
+};
+
+const splash = `${imgPath}/?transforms=[["extract"\,${JSON.stringify(extract)}],["resize"\,${JSON.stringify({ width: 2000 })}]]`;
+
+const Holo = `https://directus.dailydrip.news/assets/595ca8d3-3d23-4fb7-a6cf-1f2d48bccd4d`;
+
+Object.assign(vars, { [`--char`]: `url('${splash}')` });
+Object.assign(vars, { [`--holo`]: `url("${Holo}")` });
+
+const card = tv({
+  slots: {
+    base: "size-full bg-linear-90 from-(--primaryColor) to-(--secondaryColor) bg-cover bg-center bg-no-repeat",
+    charBg:
+      "absolute inset-0 bg-[image:var(--char)] bg-contain bg-right bg-no-repeat mask-to-l",
+    outline:
+      "absolute inset-[0.15rem] z-10 flex items-center rounded-sm border-1 border-(--cardAccent) p-2 text-center text-(--cardAccent) inset-shadow-card @5xs:inset-1 @5xs:border-2 @3xs:@min-h-5xs:p-4 @xl:@min-h-lg:p-8",
+    name: "font-heading text-xs font-bold text-balance shadow-black drop-shadow-md @4xs:text-sm @sm:text-lg @xl:text-xl @2xl:text-2xl",
+    banner:
+      "font-subheading text-[0.5rem] text-balance italic shadow-black drop-shadow-md @3xs:text-xs @5xs:@min-h-5xs:text-sm @xs:@min-h-2xs:text-base @sm:@min-h-xs:text-base @xl:@min-h-lg:text-xl",
+    frost:
+      "z-10 hidden size-full bg-[image:var(--frost)] bg-cover mix-blend-screen",
+    holo: "absolute inset-0 z-10 hidden size-full bg-[image:var(--holo)] bg-cover opacity-75 mix-blend-screen",
+    ornament: "absolute inset-0 z-11 hidden",
+  },
+  variants: {
+    debut: {
+      true: {
+        holo: "block",
+        ornament: "block",
+        outline: "p-4 @3xs:@min-h-5xs:p-4 @xl:@min-h-lg:p-6",
+      },
+    },
+    speculation: {
+      true: {
+        frost: "block",
+      },
+    },
+    rarity: {
+      5: {
+        banner: "@max-6xs:hidden @icon:hidden @max-h-6xs:hidden",
+      },
+      4: {
+        banner: "hidden",
+      },
+    },
+  },
+});
+
+const { base, charBg, outline, name, banner, frost, holo, ornament } = card({
+  debut: bannerEvent.debut,
+});
+---
+
+<!-- CARD -->
+<BannerCheck
+  client:load
+  class="@container-[size] w-full aspect-10/3 relative min-h-16 min-w-16 transition"
+  {bannerEvent}
+  {status}
+>
+  <div class={base()} style={vars}>
+    <div class={charBg()}></div>
+
+    <!-- Text & Outline -->
+    <div class={outline()}>
+      <div class="flex flex-col gap-1 items-start w-3/5 text-left">
+        <h2 class={name()}>
+          {char.bannerName}
+        </h2>
+
+        <h3 class={banner()}>
+          <BannerTime client:load {bannerEvent} />
+        </h3>
+      </div>
+    </div>
+  </div>
+
+  <!-- OVERLAYS -->
+  <div class="absolute inset-0" style={vars}>
+    <Border class={ornament()} />
+    <div class={holo()}></div>
+    <div class={frost()}></div>
+  </div>
+</BannerCheck>

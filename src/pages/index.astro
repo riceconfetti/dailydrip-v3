@@ -15,7 +15,7 @@ let events = await directus.request(
     fields: [
       "id",
       { game: ["id"] },
-      { phase: ["phase", "start"] },
+      { layout: ["name", "start"] },
       "startDate",
       "endDate",
       { version: ["semVer"] },
@@ -29,13 +29,6 @@ let events = await directus.request(
     },
     limit: -1,
   })
-);
-
-events.sort(
-  (a, b) =>
-    a.version.semVer +
-    Number(a.phase.phase) / 100 -
-    (b.version.semVer + Number(b.phase.phase) / 100)
 );
 
 let games = await directus.request(
@@ -71,7 +64,7 @@ games.reduce((p: any, c: any) => {
       <Calendar client:only="svelte" {events} />
 
       {
-        isPreview  ? (
+        isPreview ? (
           <HomeEvents server:defer>
             <div
               slot="fallback"

@@ -6,7 +6,7 @@ dayjs.extend(utc);
 dayjs.extend(timezone);
 import directus from "$services/directus";
 import { readItems } from "@directus/sdk";
-import BannerCard from "$components/card/BannerCard.astro";
+import { BannerCard } from "$components/ui/cards/banner";
 
 let events: any = await directus.request(
   readItems("events_characters", {
@@ -17,7 +17,7 @@ let events: any = await directus.request(
         events_id: [
           "startDate",
           "endDate",
-          { phase: ["*"] },
+          { layout: ["*"] },
           "status",
           { game: ["*"] },
         ],
@@ -30,7 +30,7 @@ let events: any = await directus.request(
           "bannerName",
           "name",
           "colors",
-          { events: [{events_id: ["id", "startDate"]}] },
+          { events: [{ events_id: ["id", "startDate"] }] },
           { splash_art: ["*"] },
           { splash_pad: ["*"] },
         ],

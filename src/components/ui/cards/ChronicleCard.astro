@@ -1,7 +1,7 @@
 ---
 const { event, class: className } = Astro.props;
-import CharacterCard from "./CharacterCard.astro";
-import WeaponCard from "./WeaponCard.astro";
+import { CharacterCard } from "../cards/character";
+import { WeaponCard } from "../cards/weapon";
 
 let characters = event.featured_characters;
 let weapons = event.featured_weapons;

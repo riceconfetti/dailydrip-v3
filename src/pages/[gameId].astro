@@ -6,11 +6,10 @@ import {
   type Query,
   type QueryFilter,
 } from "@directus/sdk";
+import Layout from "$layouts/Layout.astro";
 import type { Schema, Version } from "$types/collection";
 import { PUBLIC_DEPLOY_MODE } from "astro:env/client";
-import GenericVersionCard from "$components/fallbacks/GenericVersionCard.astro";
-import Layout from "$layouts/Layout.astro";
-import VerisonCard from "$components/card/VerisonCard.astro";
+import { VersionCard, VersionFallback } from "$components/ui/cards/version";
 
 const editActive = Astro.cookies.get("editing")?.boolean();
 const isPreview = PUBLIC_DEPLOY_MODE == "server";
@@ -33,31 +32,26 @@ const query: Query<Schema, Version> = {
   fields: ["id"],
   sort: ["semVer"],
   limit: -1,
-};
-
-const filter: QueryFilter<Schema, Version> = {
-  game: {
-    id: {
-      _eq: gameId,
+  filter: {
+    game: {
+      id: {
+        _eq: gameId,
+      },
+    },
+    status: isPreview
+      ? {
+          _neq: "archived",
+        }
+      : {
+          _eq: "published",
+        },
+    events: {
+      endDate: {
+        _gte: "$NOW",
+      },
     },
   },
-  status: {
-    _eq: "published",
-  },
-  events: {
-    endDate: {
-      _gte: "$NOW",
-    },
-  },
 };
-
-if (isPreview) {
-  filter.status = {
-    _neq: "archived",
-  };
-}
-
-query.filter = filter;
 
 let versions: string[] = (
   await directus.request(readItems("versions", query))
@@ -72,11 +66,11 @@ const title = "The Daily Drip | " + game;
     {
       versions.map((vId) =>
         isPreview && !editActive ? (
-          <VerisonCard {vId} server:defer>
-            <GenericVersionCard slot="fallback" />
-          </VerisonCard>
+          <VersionCard {vId} server:defer>
+            <VersionFallback slot="fallback" />
+          </VersionCard>
         ) : (
-          <VerisonCard {vId} />
+          <VersionCard {vId} />
         )
       )
     }

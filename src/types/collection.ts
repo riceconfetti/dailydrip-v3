@@ -64,7 +64,7 @@ interface DripEvent {
   id: string;
   game: Game | string;
   version: Version | string;
-  phase: Phase | number;
+  layout: Layout | number;
   full_version: boolean;
   startDate: string;
   endDate: string;
@@ -99,12 +99,33 @@ interface Version {
   events: DripEvent[] | string[];
 }
 
-interface Phase {
+interface LayoutBlock {
   id: number;
+  layouts_id: number;
+  item: Block | string;
+  collection: string;
+}
+
+interface Block {
+  id: number;
+  class: string;
+}
+
+interface BlockGrid extends Block {
+  blocks: Block[] | string[];
+}
+
+interface BlockFlex extends Block {
+  blocks: Block[] | string[];
+}
+
+interface Layout {
+  id: number;
+  name: string;
   game: Game | string;
-  phase: string;
   start: string;
   end: string;
+  blocks: LayoutBlock[];
 }
 
 interface Schema {
@@ -113,7 +134,7 @@ interface Schema {
   characters: Character[];
   servers: Server[];
   weapons: Weapon[];
-  phases: Phase[];
+  layouts: Layout[];
   events: DripEvent[];
   versions: Version[];
   events_characters: EventCharacter[];
@@ -131,7 +152,7 @@ export type {
   EventCharacter,
   Version,
   EventWeapon,
-  Phase,
+  Layout,
   Schema,
   DripFile,
 };

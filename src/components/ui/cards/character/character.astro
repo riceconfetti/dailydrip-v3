@@ -1,0 +1,275 @@
+---
+const { character, class: className, game } = Astro.props;
+
+import { tv } from "tailwind-variants";
+import directus from "$services/directus";
+import { readItem } from "@directus/sdk";
+import Border from "$components/ui/borders/debut/Border.astro";
+import { PUBLIC_DIRECTUS_PATH } from "astro:env/client";
+import { setAttr } from "@directus/visual-editing";
+
+const editActive = Astro.cookies.get("editing")?.boolean();
+const colorIndex = 0;
+const variants = ["portrait", "landscape", "icon"];
+interface Variants {
+  [key: string]: any;
+}
+
+if (character.id.includes("placeholder")) {
+  character.debut = false;
+  if (character.id == character.game + "_placeholder") {
+    character.spec = false;
+  }
+}
+
+const { splash_art, splash_pad }: { splash_art: any; splash_pad: any } =
+  character;
+
+const vars = {
+  "--primaryColor":
+    character.colors != null
+      ? `oklch(20% ${character.colors[colorIndex].c} ${character.colors[colorIndex].h})`
+      : "oklch(20% 0 0)",
+  "--secondaryColor":
+    character.colors != null
+      ? `oklch(60% ${character.colors[colorIndex].c} ${character.colors[colorIndex].h} /15%)`
+      : "oklch(60% 0 0 /15%)",
+  "--cardAccent":
+    character.rarity == 5
+      ? "var(--color-accent-gold-150)"
+      : "var(--color-accent-purple-200)",
+};
+
+const primary = await directus.request(
+  readItem("attributes", character.primary_attribute)
+);
+
+const secondary = await directus.request(
+  readItem("attributes", character.secondary_attribute)
+);
+
+const backgroundPath = game?.elementMain
+  ? `${PUBLIC_DIRECTUS_PATH}/assets/${primary?.bg}`
+  : `${PUBLIC_DIRECTUS_PATH}/assets/${secondary?.image}`;
+
+const placeholderPath = `${PUBLIC_DIRECTUS_PATH}/assets/${primary.image}`;
+
+const size = {
+  w: splash_pad && splash_pad.width ? splash_pad.width : 1,
+  h: splash_pad && splash_pad.height ? splash_pad.height : 1,
+};
+
+const focal = splash_art ? splash_art.focal_size : 200;
+
+let imgPath: string | boolean = character.splash_pad
+  ? `${PUBLIC_DIRECTUS_PATH}/assets/${character.splash_pad.id}`
+  : false;
+
+Object.assign(vars, {
+  "--placeholder": `url("${placeholderPath}")`,
+  "--attributeBg": 'url("' + backgroundPath + '")',
+});
+
+const default_opts = {
+  id: "default",
+  zoom: 1,
+  pos_x: 0,
+  pos_y: 0,
+};
+
+let options = {
+  portrait: default_opts,
+  landscape: default_opts,
+  icon: default_opts,
+} as { [key: string]: any };
+
+if (character.imgopts) {
+  for (const opt of character.imgopts) {
+    if (opt.id != "banner") options[opt.id] = opt;
+  }
+}
+
+const charSizes = game.sizes.reduce((prev: any, curr: any) => {
+  prev[curr.id] = curr;
+  return prev;
+}, {});
+// console.log(charSizes);
+const portrait = [
+  focal * charSizes.portrait.x * options.portrait.zoom,
+  focal * charSizes.portrait.y * options.portrait.zoom,
+];
+const landscape = [
+  focal * charSizes.landscape.x * options.landscape.zoom,
+  focal * charSizes.landscape.y * options.landscape.zoom,
+];
+const icon = [
+  focal * charSizes.icon.x * options.icon.zoom,
+  focal * charSizes.icon.y * options.icon.zoom,
+];
+
+const left = (s: number) => (size.w - s) / 2;
+const top = (s: number) => (size.h - s / 2) / 2;
+
+const characterTransforms: Variants = {
+  portrait: `?transforms=[["extract"\,${JSON.stringify({
+    left: Math.round(left(portrait[0]) + options.portrait.pos_x),
+    top: Math.round(top(portrait[1]) + options.portrait.pos_y),
+    width: portrait[0],
+    height: portrait[1],
+  })}],["resize"\,${JSON.stringify({ height: 1600 })}]]`,
+  landscape: `?transforms=[["extract"\,${JSON.stringify({
+    left: Math.round(left(landscape[0]) + options.landscape.pos_x),
+    top: Math.round(top(landscape[1]) + options.landscape.pos_y),
+    width: landscape[0],
+    height: landscape[1],
+  })}],["resize"\,${JSON.stringify({ width: 1600 })}]]`,
+  icon: `?transforms=[["extract"\,${JSON.stringify({
+    left: Math.round(left(icon[0]) + options.icon.pos_x),
+    top: Math.round(top(icon[1]) + options.icon.pos_y),
+    width: icon[0],
+    height: icon[1],
+  })}]]`,
+};
+
+const splash: Variants = variants.reduce((prev, curr) => {
+  Object.assign(prev, {
+    [curr]: imgPath ? `${imgPath}/${characterTransforms[curr]}` : "",
+  });
+  return prev;
+}, {});
+
+const Holo: Variants = {
+  portrait: `${PUBLIC_DIRECTUS_PATH}/assets/fd24025c-ff71-44a7-a332-73e1ec4a9d6b`,
+  landscape: `${PUBLIC_DIRECTUS_PATH}/assets/595ca8d3-3d23-4fb7-a6cf-1f2d48bccd4d`,
+  icon: `${PUBLIC_DIRECTUS_PATH}/assets/fd1c27b9-3812-4bcd-928c-ef4407026be9`,
+};
+
+const Frost: Variants = {
+  portrait: `${PUBLIC_DIRECTUS_PATH}/assets/04f81497-c261-460e-bf51-e828651da439`,
+  landscape: `${PUBLIC_DIRECTUS_PATH}/assets/ebb3046f-30c1-425e-bdb3-2f821e7243b1`,
+  icon: `${PUBLIC_DIRECTUS_PATH}/assets/20d8cecc-0b25-43cd-86dc-27aa1826c495`,
+};
+
+variants.forEach((v) => {
+  Object.assign(
+    vars,
+    { [`--char-${v}`]: `url('${splash[v]}')` },
+    { [`--holo-${v}`]: `url("${Holo[v]}")` },
+    { [`--frost-${v}`]: `url("${Frost[v]}")` }
+  );
+});
+
+const card = tv({
+  slots: {
+    base: "size-full bg-linear-0 bg-(image:--attributeBg) from-(--primaryColor) via-(--secondaryColor) bg-cover bg-center bg-no-repeat",
+    charBg:
+      "absolute inset-0 bg-cover bg-top bg-no-repeat @icon:bg-(image:--char-icon) @landscape:bg-(image:--char-landscape) @portrait:bg-(image:--char-portrait) @square:bg-(image:--char-landscape)",
+
+    overlay:
+      "absolute inset-0 bg-linear-0 from-(--primaryColor) via-(--secondaryColor)",
+    outline:
+      "absolute inset-[0.15rem] z-10 flex flex-col justify-end rounded-sm border-1 border-(--cardAccent) p-1 text-center text-(--cardAccent) inset-shadow-card @5xs:inset-1 @5xs:border-2 @5xs:p-3 @3xs:@min-h-5xs:p-4 @xl:@min-h-lg:p-8",
+    placeholder:
+      "absolute inset-0 hidden bg-[image:var(--placeholder)] bg-[50%_45%] bg-no-repeat @icon:bg-[size:35cqw_35cqw] @landscape:bg-[size:35cqh_35cqh] @portrait:bg-[size:45cqw_45cqw]",
+    name: "font-heading text-xs font-bold text-balance shadow-black drop-shadow-md @6xs:text-sm @5xs:@min-h-5xs:text-xl @sm:@min-h-xs:text-2xl @xl:@min-h-lg:text-3xl",
+    banner:
+      "font-subheading text-[0.5rem] text-balance italic shadow-black drop-shadow-md @3xs:text-xs @5xs:@min-h-5xs:text-sm @xs:@min-h-2xs:text-base @sm:@min-h-xs:text-lg @xl:@min-h-lg:text-xl",
+    frost:
+      "z-10 hidden size-full bg-cover mix-blend-screen @icon:bg-(image:--frost-icon) @landscape:bg-(image:--frost-landscape) @portrait:bg-(image:--frost-portrait) @square:bg-(image:--frost-icon)",
+    holo: "absolute inset-0 z-10 hidden size-full bg-cover mix-blend-screen @icon:bg-(image:--holo-icon) @landscape:bg-(image:--holo-landscape) @portrait:bg-(image:--holo-portrait) @square:bg-(image:--holo-icon)",
+  },
+  variants: {
+    debut: {
+      true: {
+        holo: "block",
+        outline: "p-2 @3xs:@min-h-5xs:p-4 @xl:@min-h-lg:p-6",
+      },
+    },
+    speculation: {
+      true: {
+        frost: "block",
+      },
+    },
+    placeholder: {
+      true: {
+        placeholder: "block",
+      },
+    },
+    rarity: {
+      5: {
+        banner: "@max-6xs:hidden @icon:hidden @max-h-6xs:hidden",
+      },
+      4: {
+        banner: "hidden",
+      },
+    },
+  },
+  compoundVariants: [{ rarity: 4 }],
+});
+
+const {
+  base,
+  charBg,
+  overlay,
+  outline,
+  placeholder,
+  name,
+  banner,
+  frost,
+  holo,
+} = card({
+  rarity: character.rarity,
+  speculation: character.spec,
+  debut: character.debut,
+  placeholder: imgPath == false,
+});
+---
+
+<div
+  class:list={[
+    "@container-[size] size-full relative min-h-16 min-w-16",
+    className,
+  ]}
+  style={vars}
+>
+  <div class={base()}>
+    <div class={charBg()}></div>
+    <div class={overlay()}></div>
+    <div class={placeholder()}></div>
+    <!-- Text & Outline -->
+    <div
+      class={outline()}
+      data-directus={editActive
+        ? setAttr({
+            collection: "characters",
+            item: character.id,
+            fields: [
+              "splash_art",
+              "primary_attribute",
+              "secondary_attribute",
+              "name",
+              "bannerName",
+              "signature",
+            ],
+            mode: "modal",
+          })
+        : null}
+    >
+      <h2 class={name()}>
+        {character.name}
+      </h2>
+
+      <h3 class={banner()}>
+        {character.bannerName}
+      </h3>
+    </div>
+  </div>
+
+  <!-- OVERLAYS -->
+  <div class="absolute inset-0 pointer-events-none">
+    <div class={holo()}>
+      <Border />
+    </div>
+    <div class={frost()}></div>
+  </div>
+</div>
