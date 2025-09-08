@@ -15,16 +15,16 @@
   const server = $derived(getServer(game));
   let currzone = dayjs.tz.guess();
   const tz = $derived(
-    bannerEvent.phase.phase == "1" ? "+08:00" : server?.value?.timezone,
+    bannerEvent.layout.server_start? "+08:00" : server?.value?.timezone,
   );
 
   let startString = $derived(
-    bannerEvent.startDate + "T" + bannerEvent.phase.start + tz,
+    bannerEvent.startDate + "T" + bannerEvent.layout.start + tz,
   );
   let startDate = $derived(dayjs(startString).tz(currzone));
 
   let endString = $derived(
-    bannerEvent.endDate + "T" + bannerEvent.phase.end + server?.value?.timezone,
+    bannerEvent.endDate + "T" + bannerEvent.layout.end + server?.value?.timezone,
   );
   let endDate = $derived(dayjs(endString).tz(currzone));
 

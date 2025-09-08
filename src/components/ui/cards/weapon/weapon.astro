@@ -4,8 +4,9 @@ import directus from "$services/directus";
 import { readItem, type Query } from "@directus/sdk";
 import type { Schema, Weapon } from "$types/collection";
 import { PUBLIC_DIRECTUS_PATH } from "astro:env/client";
+import { classlist } from "$components/ui/blocks/gridclass";
 
-const { weapon, class: className } = Astro.props;
+const { weapon, item } = Astro.props;
 
 let placeholder: any = await directus.request(
   readItem("weapons", weapon.game, {
@@ -23,7 +24,7 @@ const full = weapon.full
 
 const weaponCard = tv({
   slots: {
-    base: "@container-[size] relative size-full min-h-16 min-w-16 overflow-clip before:absolute before:-inset-1 before:bg-black before:bg-[image:var(--overlay),var(--bgFull)] before:bg-cover before:bg-center before:blur-xs before:content-['']",
+    base: "@container-[size] relative size-full min-h-12 min-w-16 overflow-clip before:absolute before:-inset-1 before:bg-black before:bg-[image:var(--overlay),var(--bgFull)] before:bg-cover before:bg-center before:blur-xs before:content-['']",
     outline: "absolute inset-1 z-10 rounded-xs border-2",
     box: "absolute inset-0 flex size-full items-center justify-center p-2 @7xs:justify-between @squarish:justify-center @squarish:bg-linear-130 @landscape-aspect:flex-row-reverse @landscape-aspect:bg-linear-90 @portrait-aspect:flex-col @portrait-aspect:bg-linear-0",
     image: "aspect-square h-full object-contain p-1",
@@ -54,12 +55,18 @@ const vars = {
   "--overlay": `linear-gradient(var(--overlayColor),var(--overlayColor))`,
 };
 
+
+
 const { base, outline, box, image, name } = weaponCard({
   rarity: weapon.rarity,
 });
+
+const grid = classlist(base().split(" "), item)
+
+Object.assign(grid.style, vars)
 ---
 
-<div class:list={[base(), className]} style={vars}>
+<div class:list={grid.list} style={grid.style}>
   <div class={outline()}></div>
   <div class={box()}>
     <img src={icon} class={image()} />

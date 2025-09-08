@@ -6,8 +6,8 @@ import { PUBLIC_DEPLOY_MODE } from "astro:env/client";
 import dayjs from "dayjs";
 
 import Layout from "$layouts/Layout.astro";
-import CharacterCard from "$components/card/CharacterCard.astro";
-import BannerCard from "$components/card/BannerCard.astro";
+import { CharacterCard } from "$components/ui/cards/character"
+import {BannerCard} from "$components/ui/cards/banner";
 import Editor from "$components/Editor.svelte";
 
 export const prerender = false;
@@ -17,14 +17,6 @@ const character = await directus.request(
   readItem("characters", charId!, {
     fields: [
       "*",
-      { game: ["*"] },
-      {
-        signature: [
-          "*",
-          { icon: ["filename_disk"] },
-          { full: ["filename_disk"] },
-        ],
-      },
       { splash_art: ["*"] },
       { splash_pad: ["*"] },
     ],
@@ -33,7 +25,7 @@ const character = await directus.request(
 
 let game = await directus.request(
   //@ts-ignore
-  readItem("games", character.game.id as string, { fields: ["*"] })
+  readItem("games", character.game as string, { fields: ["*"] })
 );
 
 const { splash_art, splash_pad }: { splash_art: any; splash_pad: any } =
@@ -80,17 +72,23 @@ const sizes = [
 const width = Astro.url.searchParams.get("width") || "3xs";
 const height = Astro.url.searchParams.get("height") || "md";
 
+const item = {
+  game: game
+}
+
 const { events, ...rest } = character;
 let event: any = {
   startDate: dayjs().subtract(7, "days").format("YYYY-MM-DD"),
   endDate: dayjs().add(7, "days").format("YYYY-MM-DD"),
 };
 // console.log(event);
-let phase = await directus.request(readItem("phases", 1));
-let bannerEvent = { phase };
+let layout = await directus.request(readItem("layouts", 1));
+let bannerEvent = { layout };
+const bannerCharacter = structuredClone(character);
+bannerCharacter.game = game;
 Object.assign(bannerEvent, event, {
-  character: character,
-  game: character.game,
+  character: bannerCharacter,
+  game: game,
   debut: true,
 });
 // console.log("Character", bannerEvent);
@@ -142,19 +140,19 @@ Object.assign(bannerEvent, event, {
         />
       </div>
       <Editor client:load {width} {height}>
-        <CharacterCard {game} {character} slot="base" />
+        <CharacterCard {item} {character} slot="base" />
         <CharacterCard
-          {game}
+          {item}
           character={Object.assign(structuredClone(character), { debut: true })}
           slot="debut"
         />
         <CharacterCard
-          {game}
+          {item}
           character={Object.assign(structuredClone(character), { spec: true })}
           slot="spec"
         />
         <CharacterCard
-          {game}
+          {item}
           character={Object.assign(structuredClone(character), {
             debut: true,
             spec: true,

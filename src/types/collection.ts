@@ -4,6 +4,57 @@ interface DripFile extends DirectusFile {
   focal_size: number;
 }
 
+interface Grid {
+  size: "sm" | "md" | "lg" | "xl";
+  row_start: number;
+  row_span: number;
+  col_start: number;
+  col_span: number;
+}
+
+interface Block {
+  id: number;
+  grid: Grid[];
+  classlist: string[];
+}
+
+interface Layout {
+  id: number;
+  name: string;
+  game: Game | string;
+  start: string;
+  end: string;
+  tag: "div" | "section" | "article";
+  grid: Grid[];
+  blocks: LayoutBlock[];
+}
+
+interface LayoutBlock {
+  id: number;
+  layouts_id: number;
+  item: Block | string;
+  collection: string;
+}
+
+interface BlockContainer extends Block {
+  tag: "div" | "section" | "article";
+  blocks: Block[] | string[];
+}
+
+interface BlockHeader extends Block {
+  type: string;
+  text: string;
+}
+
+interface BlockCharacter extends Block {
+  index: number;
+}
+
+interface BlockWeapon extends Block {
+  index: number;
+  signature: boolean;
+}
+
 interface Game {
   id: string;
   name: string;
@@ -97,35 +148,11 @@ interface Version {
   semVer: number;
   name: string;
   events: DripEvent[] | string[];
-}
-
-interface LayoutBlock {
-  id: number;
-  layouts_id: number;
-  item: Block | string;
-  collection: string;
-}
-
-interface Block {
-  id: number;
-  class: string;
-}
-
-interface BlockGrid extends Block {
-  blocks: Block[] | string[];
-}
-
-interface BlockFlex extends Block {
-  blocks: Block[] | string[];
-}
-
-interface Layout {
-  id: number;
-  name: string;
-  game: Game | string;
-  start: string;
-  end: string;
-  blocks: LayoutBlock[];
+  grid: {
+    size: "sm" | "md" | "lg" | "xl";
+    rows: number;
+    cols: number;
+  }[];
 }
 
 interface Schema {
@@ -140,6 +167,10 @@ interface Schema {
   events_characters: EventCharacter[];
   events_weapons: EventWeapon[];
   directus_files: DripFile[];
+  block_container: BlockContainer[];
+  block_character: BlockCharacter[];
+  block_header: BlockHeader[];
+  block_weapon: BlockHeader[];
 }
 
 export type {
@@ -155,5 +186,9 @@ export type {
   Layout,
   Schema,
   DripFile,
-  Block
+  Block,
+  BlockCharacter,
+  BlockContainer,
+  BlockHeader,
+  BlockWeapon,
 };

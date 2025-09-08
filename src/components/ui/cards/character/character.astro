@@ -1,11 +1,12 @@
 ---
-const { character, classlist, item } = Astro.props;
+const { character, item} = Astro.props;
 import { tv } from "tailwind-variants";
 import directus from "$services/directus";
 import { readItem } from "@directus/sdk";
 import Border from "$components/ui/borders/debut/Border.astro";
 import { PUBLIC_DIRECTUS_PATH } from "astro:env/client";
 import { setAttr } from "@directus/visual-editing";
+import { classlist } from "$components/ui/blocks/gridclass";
 
 const editActive = Astro.cookies.get("editing")?.boolean();
 const colorIndex = 0;
@@ -222,17 +223,21 @@ const {
   debut: character.debut,
   placeholder: imgPath == false,
 });
----
 
-<div
-  class:list={classlist.concat([
+const grid = classlist([
     "@container-[size] ",
     "size-full",
     "relative",
-    "min-h-16",
+    "min-h-12",
     "min-w-16",
-  ])}
-  style={vars}
+  ].concat(item.classlist), item)
+
+Object.assign(grid.style, vars)
+---
+
+<div
+  class:list={grid.list}
+  style={grid.style}
 >
   <div class={base()}>
     <div class={charBg()}></div>

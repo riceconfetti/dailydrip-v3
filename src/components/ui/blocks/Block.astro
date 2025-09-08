@@ -1,40 +1,61 @@
 ---
 import Header from "./header/Header.svelte";
+import { classlist } from "./gridclass";
 import { CharacterCard } from "../cards/character";
+import { WeaponCard } from "../cards/weapon";
 const { item } = Astro.props;
-const { tag: Tag, event, game } = item;
+const { tag: Tag, event, game, blocks, id, ...rest } = item;
+const parrent = rest;
+
+const list = ["grid", "grid-rows-subgrid", "grid-cols-subgrid"];
 ---
 
-<Tag class:list={[item.classlist]}>
+<Tag
+  class:list={classlist(list, item).list}
+  style={classlist(list, item).style}
+>
   {
-    item.blocks != undefined &&
-      item.blocks.map((block: any) => {
+    blocks != undefined &&
+      blocks.map((block: any) => {
+        let item = block.item;
+        item.event = event;
+        item.game = game;
+        item.base = parrent;
+
         switch (block.collection) {
           case "block_container": {
-            let new_item = structuredClone(block.item);
-            new_item.event = event;
-            new_item.game = game;
-            return <Astro.self item={new_item} />;
+            item.event = event;
+            item.game = game;
+            return <Astro.self {item} />;
           }
           case "block_header": {
-            const { text, classlist } = block.item;
-            return <Header {text} {classlist} {item} />;
+            return <Header {item} />;
           }
           case "block_character": {
-            const { index, classlist } = block.item;
-            if (event.featured_characters.length > index) {
+            if (event.featured_characters.length > item.index) {
               const { characters_id, ...rest } =
-                event.featured_characters[index];
+                event.featured_characters[item.index];
               const character = structuredClone(characters_id);
               character.spec = rest.spec;
 
-              if (character.rarity == 5) {
-                // console.log(character.signature)
-              }
+              return <CharacterCard {character} {item} />;
+            }
+          }
 
-              return (
-                <CharacterCard {character} classlist={classlist} {item} />
-              );
+          case "block_weapon": {
+            if (
+              item.signature &&
+              event.featured_characters.length > item.index
+            ) {
+              const { characters_id, ...rest } =
+                event.featured_characters[item.index];
+              const character = structuredClone(characters_id);
+              const weapon = character.signature;
+              return <WeaponCard {weapon} {item} />;
+            } else if (event.featured_weapons.length > item.index) {
+              const { weapons_id } = event.featured_weapons[item.index];
+              const weapon = structuredClone(weapons_id);
+              return <WeaponCard {weapon} {item} />;
             }
           }
         }

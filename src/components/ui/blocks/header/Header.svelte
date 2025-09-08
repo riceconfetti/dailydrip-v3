@@ -5,27 +5,37 @@
   dayjs.extend(utc);
   dayjs.extend(timezone);
 
-  let { item, text, classlist } = $props();
+  let { item } = $props();
 
-  const {event, game, start, end,...rest} = item
+  const {
+    base,
+    event,
+    game,
+    row_span,
+    row_start,
+    col_span,
+    col_start,
+    ...rest
+  } = item;
+  const { start, end } = base;
+
   import { getServer } from "$store/settings.svelte";
+  import { classlist } from "../gridclass";
   const server = $derived(getServer(game.id));
   let currzone = dayjs.tz.guess();
-  const tz = $derived(
-    rest.server_start ? "+08:00" : server?.value?.timezone,
-  );
 
-
-    // console.log(server)
-// [` ${event.phase.phase == "1" ? "bg-[#BFBFBF] text-text-light" : "bg-dark text-accent-gold order-0"}`]
-
-
+  const tz = $derived(!rest.server_start ? "+08:00" : server?.value?.timezone);
+  const grid = classlist(["tracking-normal", 'font-semibold', 'flex', "w-full", "justify-between", "border", "border-black/10", 'bg-(--header_bg)', "text-(--header_text)", "font-subheading", "p-2", "h-full", "items-center", 'text-xs', "sm:text-sm", "h-min"], item);
 </script>
 
 <div
-  class={classlist}
+  class={grid.list}
+  style={Object.entries(grid.style).reduce(
+    (p, c) => (p += `${c[0]}:${c[1]}; `),
+    "",
+  )}
 >
-  <h1>{text}</h1>
+  <h1>{item.text}</h1>
   <p class="font-light italic">
     {dayjs(event.startDate + "T" + start + tz)
       .tz(currzone)
