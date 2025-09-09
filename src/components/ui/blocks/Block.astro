@@ -47,11 +47,16 @@ const p_weap = await directus.request(
             const char_list = event.featured_characters.filter(
               (x: any) => x.characters_id.rarity == item.rarity
             );
+            const grid = classlist(item.classlist, item);
             if (char_list && char_list.length > item.index) {
               const { characters_id, ...rest } = char_list[item.index];
               const character = structuredClone(characters_id);
               character.spec = rest.spec;
-              return <CharacterCard {character} {item} />;
+              return (
+                <div class:list={grid.list} style={grid.style}>
+                  <CharacterCard {character} {item} />
+                </div>
+              );
             } else {
               let character: { [key: string]: any } = structuredClone(p_char);
               character.spec = false;
@@ -60,7 +65,11 @@ const p_weap = await directus.request(
                 item.rarity == 5 ? undefined : character.splash_art;
               character.splash_pad =
                 item.rarity == 5 ? undefined : character.splash_pad;
-              return <CharacterCard {character} {item} />;
+              return (
+                <div class:list={grid.list} style={grid.style}>
+                  <CharacterCard {character} {item} />
+                </div>
+              );
             }
           }
 

@@ -15,7 +15,7 @@ let version = await directus.request(
       { game: ["*"] },
       "semVer",
       "name",
-      "grid",
+      { grid: ["vars"] },
       {
         events: [
           "*",
@@ -62,28 +62,31 @@ let version = await directus.request(
   } as Query<Schema, Version>)
 );
 
-const style = version.grid
+const style = version.grid.vars
   .map((x) => ({
-    [`--${x.size}_rows`]: `min-content repeat(${x.rows-1}, minmax(3rem, 1fr))`,
-    [`--${x.size}_cols`]: `repeat(${x.cols}, minmax(0, 1fr))`,
+    [`--${x.size}_rows`]: x.rows,
+    [`--${x.size}_cols`]: x.cols,
   }))
   .reduce((p, c) => Object.assign(p, c), {});
 ---
 
 <section
- 
   class="@container w-full flex flex-col gap-2 bg-white p-2 sm:p-4 shadow-md max-w-7xl"
-   style={style}
+  style={style}
 >
   <VersionHeader {version} game={version.game} />
 
-  <div class="grid grid-rows-(--sm_rows) grid-cols-(--sm_cols) md:grid-rows-(--md_rows) md:grid-cols-(--md_cols) gap-3">{
-    version.events!.map((event: any) => {
-      const { layout, ...rest } = event;
-      let item = structuredClone(layout);
-      item.event = rest;
-      item.game = version.game;
-      return <Block {item} />;
-    })
-  }</div>
+  <div
+    class="grid grid-rows-(--sm_rows) grid-cols-(--sm_cols) md:grid-rows-(--md_rows) md:grid-cols-(--md_cols) gap-3"
+  >
+    {
+      version.events!.map((event: any) => {
+        const { layout, ...rest } = event;
+        let item = structuredClone(layout);
+        item.event = rest;
+        item.game = version.game;
+        return <Block {item} />;
+      })
+    }
+  </div>
 </section>

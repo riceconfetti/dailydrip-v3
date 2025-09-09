@@ -139,6 +139,16 @@ interface Weapon {
   type: Attribute | number;
 }
 
+interface GridLayout {
+  id: string;
+  sort: number;
+  vars: {
+    size: "sm" | "md" | "lg" | "xl";
+    rows: string;
+    cols: string;
+  }[];
+}
+
 interface Version {
   id: string;
   status: string;
@@ -148,11 +158,7 @@ interface Version {
   semVer: number;
   name: string;
   events: DripEvent[] | string[];
-  grid: {
-    size: "sm" | "md" | "lg" | "xl";
-    rows: number;
-    cols: number;
-  }[];
+  grid: GridLayout;
 }
 
 interface Schema {

@@ -1,5 +1,5 @@
 ---
-const { character, item} = Astro.props;
+const { character, item } = Astro.props;
 import { tv } from "tailwind-variants";
 import directus from "$services/directus";
 import { readItem } from "@directus/sdk";
@@ -41,11 +41,11 @@ const vars = {
 };
 
 const primary = await directus.request(
-  readItem("attributes", character.primary_attribute),
+  readItem("attributes", character.primary_attribute)
 );
 
 const secondary = await directus.request(
-  readItem("attributes", character.secondary_attribute),
+  readItem("attributes", character.secondary_attribute)
 );
 
 const backgroundPath = item.game?.elementMain
@@ -155,7 +155,7 @@ variants.forEach((v) => {
     vars,
     { [`--char-${v}`]: `url('${splash[v]}')` },
     { [`--holo-${v}`]: `url("${Holo[v]}")` },
-    { [`--frost-${v}`]: `url("${Frost[v]}")` },
+    { [`--frost-${v}`]: `url("${Frost[v]}")` }
   );
 });
 
@@ -223,21 +223,17 @@ const {
   debut: character.debut,
   placeholder: imgPath == false,
 });
-
-const grid = classlist([
-    "@container-[size] ",
-    "size-full",
-    "relative",
-    "min-h-12",
-    "min-w-16",
-  ].concat(item.classlist), item)
-
-Object.assign(grid.style, vars)
 ---
 
 <div
-  class:list={grid.list}
-  style={grid.style}
+  class:list={[
+    "@container-[size]",
+    "size-full",
+    "relative",
+    "min-h-16",
+    "min-w-16",
+  ]}
+  style={vars}
 >
   <div class={base()}>
     <div class={charBg()}></div>
