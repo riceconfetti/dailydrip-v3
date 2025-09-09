@@ -10,16 +10,15 @@
   const {
     base,
     event,
-    game,
-    ...rest
+    game
   } = item;
-  const { start, end, server_start, server_end} = base;
+  const { start, server_start} = base;
 
   import { getServer } from "$store/settings.svelte";
   import { classlist } from "../gridclass";
 
   const server = $derived(getServer(game.id));
-  const tz = $derived(!base.server_start ? "+08:00" : server?.value?.timezone);
+  const tz = $derived(server_start ? "+08:00" : server?.value?.timezone);
   const grid = classlist(
     [
       "tracking-normal",

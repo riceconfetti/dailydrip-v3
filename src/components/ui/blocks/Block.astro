@@ -3,11 +3,23 @@ import Header from "./header/Header.svelte";
 import { classlist } from "./gridclass";
 import { CharacterCard } from "../cards/character";
 import { WeaponCard } from "../cards/weapon";
+import directus from "$services/directus";
+import { readItem } from "@directus/sdk";
 const { item } = Astro.props;
 const { tag: Tag, event, game, blocks, id, ...rest } = item;
 const parrent = rest;
 
 const list = ["grid", "grid-rows-subgrid", "grid-cols-subgrid"];
+const p_char = await directus.request(
+  readItem("characters", game.id, {
+    fields: ["*", { splash_art: ["*"] }, { splash_pad: ["*"] }],
+  })
+);
+const p_weap = await directus.request(
+  readItem("weapons", game.id, {
+    fields: ["*"],
+  })
+);
 ---
 
 <Tag
@@ -29,7 +41,7 @@ const list = ["grid", "grid-rows-subgrid", "grid-cols-subgrid"];
             return <Astro.self {item} />;
           }
           case "block_header": {
-            return <Header {item} />;
+            return <Header {item} client:load />;
           }
           case "block_character": {
             if (event.featured_characters.length > item.index) {
@@ -37,7 +49,15 @@ const list = ["grid", "grid-rows-subgrid", "grid-cols-subgrid"];
                 event.featured_characters[item.index];
               const character = structuredClone(characters_id);
               character.spec = rest.spec;
-
+              return <CharacterCard {character} {item} />;
+            } else {
+              let character: { [key: string]: any } = structuredClone(p_char);
+              character.spec = false;
+              character.rarity = item.index < 2 ? 5 : 4;
+              character.splash_art =
+                item.index < 2 ? undefined : character.splash_art;
+              character.splash_pad =
+                item.index < 2 ? undefined : character.splash_pad;
               return <CharacterCard {character} {item} />;
             }
           }
@@ -55,6 +75,10 @@ const list = ["grid", "grid-rows-subgrid", "grid-cols-subgrid"];
             } else if (event.featured_weapons.length > item.index) {
               const { weapons_id } = event.featured_weapons[item.index];
               const weapon = structuredClone(weapons_id);
+              return <WeaponCard {weapon} {item} />;
+            } else {
+              let weapon: { [key: string]: any } = structuredClone(p_weap);
+              weapon.rarity = item.signature ? 5 : 4;
               return <WeaponCard {weapon} {item} />;
             }
           }
