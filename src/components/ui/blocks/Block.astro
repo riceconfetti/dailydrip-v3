@@ -46,18 +46,20 @@ const p_weap = await directus.request(
           case "block_character": {
             if (event.featured_characters.length > item.index) {
               const { characters_id, ...rest } =
-                event.featured_characters[item.index];
+                event.featured_characters.filter(
+                  (x: any) => x.rarity == item.rarity
+                )[item.index];
               const character = structuredClone(characters_id);
               character.spec = rest.spec;
               return <CharacterCard {character} {item} />;
             } else {
               let character: { [key: string]: any } = structuredClone(p_char);
               character.spec = false;
-              character.rarity = item.index < 2 ? 5 : 4;
+              character.rarity = item.rarity;
               character.splash_art =
-                item.index < 2 ? undefined : character.splash_art;
+                item.rarity == 5 ? undefined : character.splash_art;
               character.splash_pad =
-                item.index < 2 ? undefined : character.splash_pad;
+                item.rarity == 5 ? undefined : character.splash_pad;
               return <CharacterCard {character} {item} />;
             }
           }
