@@ -21,11 +21,12 @@
 
   import { getServer } from "$store/settings.svelte";
   import { classlist } from "../gridclass";
+  
   const server = $derived(getServer(game.id));
-  let currzone = dayjs.tz.guess();
-
   const tz = $derived(!rest.server_start ? "+08:00" : server?.value?.timezone);
   const grid = classlist(["tracking-normal", 'font-semibold', 'flex', "w-full", "justify-between", "border", "border-black/10", 'bg-(--header_bg)', "text-(--header_text)", "font-subheading", "p-2", "h-full", "items-center", 'text-xs', "sm:text-sm", "h-min"], item);
+
+   let currzone = dayjs.tz.guess();
 </script>
 
 <div
