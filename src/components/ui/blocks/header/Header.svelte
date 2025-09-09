@@ -38,7 +38,7 @@
   );
 
   let currzone = dayjs.tz.guess();
-  $inspect(event.startDate + "T" + start + tz, currzone);
+  // $inspect(event.startDate + "T" + start + tz, currzone);
 </script>
 
 <div
