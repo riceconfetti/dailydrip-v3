@@ -7,18 +7,14 @@
 
   let { item } = $props();
 
-  const {
-    base,
-    event,
-    game
-  } = item;
-  const { start, server_start} = base;
+  const { base, event, game } = item;
+  const { start, server_start } = base;
 
   import { getServer } from "$store/settings.svelte";
   import { classlist } from "../gridclass";
 
   const server = $derived(getServer(game.id));
-  const tz = $derived(server_start ? "+08:00" : server?.value?.timezone);
+  const tz = $derived(!server_start ? "+08:00" : server?.value?.timezone);
   const grid = classlist(
     [
       "tracking-normal",
@@ -42,6 +38,7 @@
   );
 
   let currzone = dayjs.tz.guess();
+  $inspect(event.startDate + "T" + start + tz, currzone);
 </script>
 
 <div
