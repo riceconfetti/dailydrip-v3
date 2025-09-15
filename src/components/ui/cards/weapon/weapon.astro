@@ -4,7 +4,7 @@ import directus from "$services/directus";
 import { readItem, type Query } from "@directus/sdk";
 import type { Schema, Weapon } from "$types/collection";
 import { PUBLIC_DIRECTUS_PATH } from "astro:env/client";
-import { classlist } from "$components/ui/blocks/gridclass";
+import { twMerge } from "tailwind-merge";
 
 const { weapon, item } = Astro.props;
 
@@ -55,18 +55,14 @@ const vars = {
   "--overlay": `linear-gradient(var(--overlayColor),var(--overlayColor))`,
 };
 
-
-
 const { base, outline, box, image, name } = weaponCard({
   rarity: weapon.rarity,
 });
 
-const grid = classlist(base().split(" "), item)
-
-Object.assign(grid.style, vars)
+Object.assign(vars, item.style);
 ---
 
-<div class:list={grid.list} style={grid.style}>
+<div class={twMerge(base().split(" "), item.classlist)} style={vars}>
   <div class={outline()}></div>
   <div class={box()}>
     <img src={icon} class={image()} />

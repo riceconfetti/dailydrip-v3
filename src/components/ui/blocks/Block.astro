@@ -1,15 +1,17 @@
 ---
 import Header from "./header/Header.svelte";
-import { classlist } from "./gridclass";
 import { CharacterCard } from "../cards/character";
 import { WeaponCard } from "../cards/weapon";
 import directus from "$services/directus";
 import { readItem } from "@directus/sdk";
-const { item } = Astro.props;
-const { tag: Tag, event, game, blocks, id, ...rest } = item;
-const parrent = rest;
+const { item, container = false } = Astro.props;
+const { tag: Tag, event, game, id, grid, style, events, ...rest } = item;
+const base = item.base ? item.base : rest;
 
-const list = ["grid", "grid-rows-subgrid", "grid-cols-subgrid"];
+const list = item.classlist
+  ? item.classlist
+  : ["grid", "grid-rows-subgrid", "grid-cols-subgrid"];
+
 const p_char = await directus.request(
   readItem("characters", game.id, {
     fields: ["*", { splash_art: ["*"] }, { splash_pad: ["*"] }],
@@ -20,25 +22,30 @@ const p_weap = await directus.request(
     fields: ["*"],
   })
 );
+
+const junction: any = container ? "block_container_blocks" : "layouts_blocks";
+
+const blocks = await Promise.all(
+  item.blocks.map(
+    async (bid: any) =>
+      await directus.request(readItem(junction, bid, { fields: ["*.*"] }))
+  )
+);
 ---
 
-<Tag
-  class:list={classlist(list, item).list}
-  style={classlist(list, item).style}
->
+<Tag class:list={list} style={item.style}>
   {
     blocks != undefined &&
       blocks.map((block: any) => {
         let item = block.item;
         item.event = event;
         item.game = game;
-        item.base = parrent;
+        item.base = base;
 
         switch (block.collection) {
           case "block_container": {
-            item.event = event;
-            item.game = game;
-            return <Astro.self {item} />;
+            const container = true;
+            return <Astro.self {item} {container} />;
           }
           case "block_header": {
             return <Header {item} client:load />;
@@ -47,13 +54,13 @@ const p_weap = await directus.request(
             const char_list = event.featured_characters.filter(
               (x: any) => x.characters_id.rarity == item.rarity
             );
-            const grid = classlist(item.classlist, item);
+
             if (char_list && char_list.length > item.index) {
               const { characters_id, ...rest } = char_list[item.index];
               const character = structuredClone(characters_id);
               character.spec = rest.spec;
               return (
-                <div class:list={grid.list} style={grid.style}>
+                <div class:list={item.classlist}>
                   <CharacterCard {character} {item} />
                 </div>
               );
@@ -66,7 +73,7 @@ const p_weap = await directus.request(
               character.splash_pad =
                 item.rarity == 5 ? undefined : character.splash_pad;
               return (
-                <div class:list={grid.list} style={grid.style}>
+                <div class:list={item.classlist}>
                   <CharacterCard {character} {item} />
                 </div>
               );
