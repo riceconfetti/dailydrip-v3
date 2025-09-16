@@ -8,9 +8,9 @@ let version: any = {};
 
 export const prerender = false;
 const isPreview = PUBLIC_DEPLOY_MODE == "server";
-const { gameId, versId } = Astro.params;
+const { versId } = Astro.params;
 
-if ((versId != undefined || gameId != undefined) && isPreview) {
+if (versId != undefined && isPreview) {
   version = await directus.request(
     readItem("versions", versId!, { fields: ["semVer", { game: ["*"] }] })
   );

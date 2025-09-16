@@ -4,17 +4,8 @@ interface DripFile extends DirectusFile {
   focal_size: number;
 }
 
-interface Grid {
-  size: "sm" | "md" | "lg" | "xl";
-  row_start: number;
-  row_span: number;
-  col_start: number;
-  col_span: number;
-}
-
 interface Block {
   id: number;
-  grid: Grid[];
   classlist: string[];
 }
 
@@ -25,7 +16,7 @@ interface Layout {
   start: string;
   end: string;
   tag: "div" | "section" | "article";
-  grid: Grid[];
+  grid: GridLayout[];
   blocks: LayoutBlock[];
 }
 
@@ -122,7 +113,6 @@ interface DripEvent {
   featured_characters: EventCharacter[] | any[];
   featured_weapons: EventWeapon[] | any[];
   status: "published" | "draft" | "archived";
-  event_tags: string[];
 }
 
 interface EventWeapon {

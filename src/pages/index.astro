@@ -19,8 +19,13 @@ let events = await directus.request(
       "startDate",
       "endDate",
       { version: ["semVer"] },
-      { featured_characters: ["id", { characters_id: ["name", "rarity"] }, "spec"] },
-      "event_tags",
+      {
+        featured_characters: [
+          "id",
+          { characters_id: ["name", "rarity"] },
+          "spec",
+        ],
+      },
     ],
     filter: {
       status: {
