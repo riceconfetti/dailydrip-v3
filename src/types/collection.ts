@@ -7,6 +7,7 @@ interface DripFile extends DirectusFile {
 interface Block {
   id: number;
   classlist: string[];
+  opt: boolean;
 }
 
 interface Layout {

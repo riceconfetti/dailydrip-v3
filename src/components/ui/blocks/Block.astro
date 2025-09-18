@@ -31,9 +31,43 @@ const blocks = await Promise.all(
       await directus.request(readItem(junction, bid, { fields: ["*.*"] }))
   )
 );
+
+let show = true;
+if (item.opt && blocks) {
+  let display = blocks.length;
+  blocks.forEach((block: any) => {
+    const char_list = event.featured_characters.filter(
+      (x: any) => x.characters_id.rarity == block.item.rarity
+    );
+    switch (block.collection) {
+      case "block_character": {
+        if (char_list.length < block.item.index + 1 && block.item.opt) {
+          display--;
+        }
+        break;
+      }
+      case "block_weapon": {
+        if (
+          ((item.signature && char_list.length < block.item.index + 1) ||
+            event.featured_weapons.length < block.item.index + 1) &&
+          block.item.opt
+        ) {
+          display--;
+        }
+        break;
+      }
+      case "block_container": {
+        if (item.opt) {
+          display--;
+        }
+      }
+    }
+  });
+  show = display != 0;
+}
 ---
 
-<Tag class:list={list} style={item.style}>
+<Tag class:list={list.concat([show ? "" : "hidden"])} style={item.style}>
   {
     blocks != undefined &&
       blocks.map((block: any) => {
@@ -64,7 +98,7 @@ const blocks = await Promise.all(
                   <CharacterCard {character} {item} />
                 </div>
               );
-            } else {
+            } else if (!item.opt) {
               let character: { [key: string]: any } = structuredClone(p_char);
               character.spec = false;
               character.rarity = item.rarity;
@@ -79,7 +113,6 @@ const blocks = await Promise.all(
               );
             }
           }
-
           case "block_weapon": {
             if (
               item.signature &&
@@ -94,7 +127,7 @@ const blocks = await Promise.all(
               const { weapons_id } = event.featured_weapons[item.index];
               const weapon = structuredClone(weapons_id);
               return <WeaponCard {weapon} {item} />;
-            } else {
+            } else if (!item.opt) {
               let weapon: { [key: string]: any } = structuredClone(p_weap);
               weapon.rarity = item.signature ? 5 : 4;
               return <WeaponCard {weapon} {item} />;
