@@ -20,10 +20,9 @@
     };
     featured_characters: {
       id: string;
-      characters_id: { name: string, rarity: number };
+      characters_id: { name: string; rarity: number };
       spec: boolean;
     };
-    event_tags: any;
     startDate: any;
     endDate: any;
     iso: any;
@@ -31,10 +30,9 @@
 
   let timeZones = $derived(getTimezones(settings));
   events.forEach((e: Event) => {
-    const tz =
-      e.layout.server_start
-        ? "+08:00"
-        : timeZones.find(({ key }) => key == e.game.id)?.value;
+    const tz = e.layout.server_start
+      ? "+08:00"
+      : timeZones.find(({ key }) => key == e.game.id)?.value;
     const isoString = e.startDate + "T" + e.layout.start + tz;
     e.iso = isoString;
   });
@@ -46,10 +44,9 @@
 
   $effect(() => {
     events.forEach((e: Event) => {
-      const tz =
-        e.layout.server_start
-          ? "+08:00"
-          : timeZones.find(({ key }) => key == e.game.id)?.value;
+      const tz = e.layout.server_start
+        ? "+08:00"
+        : timeZones.find(({ key }) => key == e.game.id)?.value;
       const isoString = e.startDate + "T" + e.layout.start + tz;
       e.iso = isoString;
     });
@@ -195,7 +192,9 @@
                                   class="first:pl-[25cqw] hidden md:flex italic font-subheading text-[clamp(0.6rem,8cqw,0.725rem)] font-semibold w-full lg:gap-1 sm:gap-2"
                                 >
                                   <p
-                                    class={["text-ellipsis w-full overflow-hidden leading-snug text-balance text-right"]}
+                                    class={[
+                                      "text-ellipsis w-full overflow-hidden leading-snug text-balance text-right",
+                                    ]}
                                   >
                                     {char.characters_id.name}
                                   </p>
