@@ -16,6 +16,8 @@ interface Layout {
   game: Game | string;
   start: string;
   end: string;
+  server_start: boolean;
+  server_end: boolean;
   tag: "div" | "section" | "article";
   grid: GridLayout[];
   blocks: LayoutBlock[];

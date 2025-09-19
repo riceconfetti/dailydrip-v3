@@ -15,7 +15,7 @@ let events = await directus.request(
     fields: [
       "id",
       { game: ["id"] },
-      { layout: ["name", "start"] },
+      { layout: ["name", "start", "server_start"] },
       "startDate",
       "endDate",
       { version: ["semVer"] },
@@ -30,6 +30,9 @@ let events = await directus.request(
     filter: {
       status: {
         _eq: "published",
+      },
+      layout: {
+        _nnull: true,
       },
     },
     limit: -1,

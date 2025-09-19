@@ -56,84 +56,90 @@ if (item.opt && blocks) {
         }
         break;
       }
-      case "block_container": {
-        if (item.opt) {
-          display--;
-        }
-      }
     }
   });
   show = display != 0;
 }
+list.push(
+  "empty:hidden",
+  "only-of-type:grid",
+  "only-of-type:grid-rows-7",
+  "group"
+);
 ---
 
-<Tag class:list={list.concat([show ? "" : "hidden"])} style={item.style}>
-  {
-    blocks != undefined &&
-      blocks.map((block: any) => {
-        let item = block.item;
-        item.event = event;
-        item.game = game;
-        item.base = base;
+{
+  show && (
+    <Tag class:list={list} style={item.style}>
+      {blocks != undefined &&
+        blocks.map((block: any) => {
+          let item = block.item;
+          item.event = event;
+          item.game = game;
+          item.base = base;
 
-        switch (block.collection) {
-          case "block_container": {
-            const container = true;
-            return <Astro.self {item} {container} />;
-          }
-          case "block_header": {
-            return <Header {item} client:load />;
-          }
-          case "block_character": {
-            const char_list = event.featured_characters.filter(
-              (x: any) => x.characters_id.rarity == item.rarity
-            );
+          switch (block.collection) {
+            case "block_container": {
+              const container = true;
+              return <Astro.self {item} {container} />;
+            }
+            case "block_header": {
+              return <Header {item} client:load />;
+            }
+            case "block_character": {
+              const char_list = event.featured_characters.filter(
+                (x: any) => x.characters_id.rarity == item.rarity
+              );
+              item.classlist.push("basis-2/3", "group-only-of-type:row-span-6");
 
-            if (char_list && char_list.length > item.index) {
-              const { characters_id, ...rest } = char_list[item.index];
-              const character = structuredClone(characters_id);
-              character.spec = rest.spec;
-              return (
-                <div class:list={item.classlist}>
-                  <CharacterCard {character} {item} />
-                </div>
-              );
-            } else if (!item.opt) {
-              let character: { [key: string]: any } = structuredClone(p_char);
-              character.spec = false;
-              character.rarity = item.rarity;
-              character.splash_art =
-                item.rarity == 5 ? undefined : character.splash_art;
-              character.splash_pad =
-                item.rarity == 5 ? undefined : character.splash_pad;
-              return (
-                <div class:list={item.classlist}>
-                  <CharacterCard {character} {item} />
-                </div>
-              );
+              if (char_list && char_list.length > item.index) {
+                const { characters_id, ...rest } = char_list[item.index];
+                const character = structuredClone(characters_id);
+                character.spec = rest.spec;
+                return (
+                  <div class:list={item.classlist}>
+                    <CharacterCard {character} {item} />
+                  </div>
+                );
+              } else if (!item.opt) {
+                let character: { [key: string]: any } = structuredClone(p_char);
+                character.spec = false;
+                character.rarity = item.rarity;
+                character.splash_art =
+                  item.rarity == 5 ? undefined : character.splash_art;
+                character.splash_pad =
+                  item.rarity == 5 ? undefined : character.splash_pad;
+
+                return (
+                  <div class:list={item.classlist}>
+                    <CharacterCard {character} {item} />
+                  </div>
+                );
+              }
+            }
+            case "block_weapon": {
+              item.classlist.push("basis-1/3", "group-only-of-type:row-span-1");
+              if (
+                item.signature &&
+                event.featured_characters.length > item.index
+              ) {
+                const { characters_id, ...rest } =
+                  event.featured_characters[item.index];
+                const character = structuredClone(characters_id);
+                const weapon = character.signature;
+                return <WeaponCard {weapon} {item} />;
+              } else if (event.featured_weapons.length > item.index) {
+                const { weapons_id } = event.featured_weapons[item.index];
+                const weapon = structuredClone(weapons_id);
+                return <WeaponCard {weapon} {item} />;
+              } else if (!item.opt) {
+                let weapon: { [key: string]: any } = structuredClone(p_weap);
+                weapon.rarity = item.signature ? 5 : 4;
+                return <WeaponCard {weapon} {item} />;
+              }
             }
           }
-          case "block_weapon": {
-            if (
-              item.signature &&
-              event.featured_characters.length > item.index
-            ) {
-              const { characters_id, ...rest } =
-                event.featured_characters[item.index];
-              const character = structuredClone(characters_id);
-              const weapon = character.signature;
-              return <WeaponCard {weapon} {item} />;
-            } else if (event.featured_weapons.length > item.index) {
-              const { weapons_id } = event.featured_weapons[item.index];
-              const weapon = structuredClone(weapons_id);
-              return <WeaponCard {weapon} {item} />;
-            } else if (!item.opt) {
-              let weapon: { [key: string]: any } = structuredClone(p_weap);
-              weapon.rarity = item.signature ? 5 : 4;
-              return <WeaponCard {weapon} {item} />;
-            }
-          }
-        }
-      })
-  }
-</Tag>
+        })}
+    </Tag>
+  )
+}
