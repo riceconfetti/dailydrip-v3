@@ -25,41 +25,48 @@ const p_weap = await directus.request(
 
 const junction: any = container ? "block_container_blocks" : "layouts_blocks";
 
-const blocks = await Promise.all(
-  item.blocks.map(
-    async (bid: any) =>
-      await directus.request(readItem(junction, bid, { fields: ["*.*"] }))
+let blocks = (
+  await Promise.all(
+    item.blocks.map(
+      async (bid: any) =>
+        await directus.request(readItem(junction, bid, { fields: ["*.*"] }))
+    )
   )
-);
-
-let show = true;
-if (item.opt && blocks) {
-  let display = blocks.length;
-  blocks.forEach((block: any) => {
-    const char_list = event.featured_characters.filter(
-      (x: any) => x.characters_id.rarity == block.item.rarity
-    );
+).filter((block: any) => {
+  if (block.item.opt) {
     switch (block.collection) {
       case "block_character": {
-        if (char_list.length < block.item.index + 1 && block.item.opt) {
-          display--;
+        const char_list = event.featured_characters.filter(
+          (x: any) => x.characters_id.rarity == block.item.rarity
+        );
+        if (char_list.length > block.item.index) {
+          return block;
         }
         break;
       }
       case "block_weapon": {
-        if (
-          ((item.signature && char_list.length < block.item.index + 1) ||
-            event.featured_weapons.length < block.item.index + 1) &&
-          block.item.opt
+        const char_list = event.featured_characters.filter(
+          (x: any) => x.characters_id.rarity == 5
+        );
+        if (block.item.signature && char_list.length > block.item.index) {
+          return block;
+        } else if (
+          !block.item.signature &&
+          event.featured_weapons.length > block.item.index
         ) {
-          display--;
+          return block;
         }
         break;
       }
+      default: {
+        return block;
+      }
     }
-  });
-  show = display != 0;
-}
+  } else {
+    return block;
+  }
+});
+
 list.push(
   "empty:hidden",
   "only-of-type:grid",
@@ -69,7 +76,7 @@ list.push(
 ---
 
 {
-  show && (
+  blocks.length > 0 && (
     <Tag class:list={list} style={item.style}>
       {blocks != undefined &&
         blocks.map((block: any) => {
@@ -116,19 +123,24 @@ list.push(
                   </div>
                 );
               }
+              break;
             }
             case "block_weapon": {
+              const char_list = event.featured_characters.filter(
+                (x: any) => x.characters_id.rarity == 5
+              );
               item.classlist.push("basis-1/3", "group-only-of-type:row-span-1");
-              if (
-                item.signature &&
-                event.featured_characters.length > item.index
-              ) {
+
+              if (item.signature && char_list.length > item.index) {
                 const { characters_id, ...rest } =
                   event.featured_characters[item.index];
                 const character = structuredClone(characters_id);
                 const weapon = character.signature;
                 return <WeaponCard {weapon} {item} />;
-              } else if (event.featured_weapons.length > item.index) {
+              } else if (
+                !item.signature &&
+                event.featured_weapons.length > item.index
+              ) {
                 const { weapons_id } = event.featured_weapons[item.index];
                 const weapon = structuredClone(weapons_id);
                 return <WeaponCard {weapon} {item} />;
@@ -137,6 +149,7 @@ list.push(
                 weapon.rarity = item.signature ? 5 : 4;
                 return <WeaponCard {weapon} {item} />;
               }
+              break;
             }
           }
         })}

@@ -7,19 +7,24 @@ import { PUBLIC_DIRECTUS_PATH } from "astro:env/client";
 import { twMerge } from "tailwind-merge";
 
 const { weapon, item } = Astro.props;
+let placeholder: any;
 
-let placeholder: any = await directus.request(
-  readItem("weapons", weapon.game, {
-    fields: ["*"],
-  } as Query<Schema, Weapon>)
-);
+try {
+  placeholder = await directus.request(
+    readItem("weapons", weapon?.game, {
+      fields: ["*"],
+    } as Query<Schema, Weapon>)
+  );
+} catch (e) {
+  console.log(weapon);
+}
 
-const icon = weapon.icon
-  ? `${PUBLIC_DIRECTUS_PATH}/assets/${weapon.icon}`
-  : `${PUBLIC_DIRECTUS_PATH}/assets/${placeholder.icon}`;
+const icon = weapon?.icon
+  ? `${PUBLIC_DIRECTUS_PATH}/assets/${weapon?.icon}`
+  : `${PUBLIC_DIRECTUS_PATH}/assets/${placeholder?.icon}`;
 
-const full = weapon.full
-  ? `${PUBLIC_DIRECTUS_PATH}/assets/${weapon.full}?transforms[["extract",${JSON.stringify({ left: 15, top: 15, width: 870, height: 1235 })}]]`
+const full = weapon?.full
+  ? `${PUBLIC_DIRECTUS_PATH}/assets/${weapon?.full}?transforms[["extract",${JSON.stringify({ left: 15, top: 15, width: 870, height: 1235 })}]]`
   : `/`;
 
 const weaponCard = tv({
@@ -51,12 +56,12 @@ const weaponCard = tv({
 const vars = {
   "--bgFull": `url("${full}")`,
   "--bgIcon": `url("${icon}")`,
-  "--overlayColor": `oklch(from var(${weapon.rarity == 5 ? "--color-accent-gold-800" : "--color-accent-purple-800"}) l c h / .5)`,
+  "--overlayColor": `oklch(from var(${weapon?.rarity == 5 ? "--color-accent-gold-800" : "--color-accent-purple-800"}) l c h / .5)`,
   "--overlay": `linear-gradient(var(--overlayColor),var(--overlayColor))`,
 };
 
 const { base, outline, box, image, name } = weaponCard({
-  rarity: weapon.rarity,
+  rarity: weapon?.rarity,
 });
 
 Object.assign(vars, item.style);
@@ -67,7 +72,7 @@ Object.assign(vars, item.style);
   <div class={box()}>
     <img src={icon} class={image()} />
     <h2 class={name()}>
-      {weapon.name}
+      {weapon?.name}
     </h2>
   </div>
 </div>
