@@ -66,13 +66,6 @@ let blocks = (
     return block;
   }
 });
-
-list.push(
-  "empty:hidden",
-  "only-of-type:grid",
-  "only-of-type:grid-rows-7",
-  "group"
-);
 ---
 
 {
@@ -97,7 +90,6 @@ list.push(
               const char_list = event.featured_characters.filter(
                 (x: any) => x.characters_id.rarity == item.rarity
               );
-              item.classlist.push("basis-2/3", "group-only-of-type:row-span-6");
 
               if (char_list && char_list.length > item.index) {
                 const { characters_id, ...rest } = char_list[item.index];
@@ -129,7 +121,6 @@ list.push(
               const char_list = event.featured_characters.filter(
                 (x: any) => x.characters_id.rarity == 5
               );
-              item.classlist.push("basis-1/3", "group-only-of-type:row-span-1");
 
               if (item.signature && char_list.length > item.index) {
                 const { characters_id, ...rest } =

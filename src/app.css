@@ -6,7 +6,7 @@
 
 @layer theme, base, components, utilities;
 
-@source inline("{sm:,md:,lg:,xl:,}{grid-cols-{1..100..1},grid-rows-{1..100..1},col-span-{full,{1..100..1}},row-span-{full,{1..100..1}},col-start-{1..100..1},row-start-{1..100..1},grid}");
+@source inline("{group-only-of-type:,only-of-type:,empty:,sm:,md:,lg:,xl:,}{grid-cols-{1..100..1},grid-rows-{1..100..1},col-span-{full,{1..100..1}},row-span-{full,{1..100..1}},col-start-{1..100..1},row-start-{1..100..1},grid,basis-{1...5}/{1...5}}");
 
 @theme {
   --spacing-corner-sm: 0.4rem;
