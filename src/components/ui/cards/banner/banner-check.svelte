@@ -10,12 +10,11 @@
   let { bannerEvent, children, class: className, status } = $props();
   let game = bannerEvent.game.id;
 
- 
   import { getServer } from "$store/settings.svelte";
   const server = $derived(getServer(game));
   let currzone = dayjs.tz.guess();
   const tz = $derived(
-    bannerEvent.layout.server_start? "+08:00" : server?.value?.timezone,
+    bannerEvent.layout.server_start ? server?.value?.timezone : "+08:00",
   );
 
   let startString = $derived(
@@ -24,7 +23,10 @@
   let startDate = $derived(dayjs(startString).tz(currzone));
 
   let endString = $derived(
-    bannerEvent.endDate + "T" + bannerEvent.layout.end + server?.value?.timezone,
+    bannerEvent.endDate +
+      "T" +
+      bannerEvent.layout.end +
+      server?.value?.timezone,
   );
   let endDate = $derived(dayjs(endString).tz(currzone));
 
@@ -33,6 +35,11 @@
   );
 
   const upcomingDisplay = $derived(startDate.isAfter(dayjs()) ? "" : "hidden");
+
+  if (bannerEvent.character.name == "Dan Heng: Permansor Terrae") {
+    console.log(tz);
+    console.log(startDate.toISOString(), endDate.toISOString());
+  }
 
   const display = $derived(
     status == "current" ? currentDisplay : upcomingDisplay,
